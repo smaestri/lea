@@ -5,12 +5,13 @@ import org.springframework.data.annotation.Id;
 
 import java.util.Set;
 
-public class Livre {
+public class Livre extends BaseDocumentImpl {
 
-    @Id
-    protected String id;
 
-    private Utilisateur user;
+    // FK
+    private String userId;
+    private String categorieId;
+    private Set<String> listAvisId;
 
     private String titreBook;
 
@@ -24,19 +25,7 @@ public class Livre {
 
     private String isbn;
 
-    private Categorie categorie;
-
     private StatutEmprunt statut;
-
-    private Set<Avis> avis;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
 
     public String getAuteur() {
@@ -55,21 +44,6 @@ public class Livre {
         this.titreBook = titreBook;
     }
 
-    public Categorie getCategorie() {
-        return categorie;
-    }
-
-    public void setCategorie(Categorie categorie) {
-        this.categorie = categorie;
-    }
-
-    public Utilisateur getUser() {
-        return user;
-    }
-
-    public void setUser(Utilisateur user) {
-        this.user = user;
-    }
 
     public StatutEmprunt getStatut() {
         return statut;
@@ -95,14 +69,6 @@ public class Livre {
         this.description = description;
     }
 
-    public Set<Avis> getAvis() {
-        return avis;
-    }
-
-    public void setAvis(Set<Avis> avis) {
-        this.avis = avis;
-    }
-
     public String getIsbn() {
         return isbn;
     }
@@ -119,20 +85,45 @@ public class Livre {
         this.editeur = editeur;
     }
 
+
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getCategorieId() {
+        return categorieId;
+    }
+
+    public void setCategorieId(String categorieId) {
+        this.categorieId = categorieId;
+    }
+
+    public Set<String> getListAvisId() {
+        return listAvisId;
+    }
+
+    public void setListAvisId(Set<String> listAvisId) {
+        this.listAvisId = listAvisId;
+    }
+
     @Override
     public String toString() {
         return "Livre{" +
-                "id=" + id +
-                ", user=" + user +
+                "userId='" + userId + '\'' +
+                ", categorieId='" + categorieId + '\'' +
+                ", listAvisId=" + listAvisId +
                 ", titreBook='" + titreBook + '\'' +
                 ", description='" + description + '\'' +
                 ", auteur='" + auteur + '\'' +
                 ", editeur='" + editeur + '\'' +
                 ", image='" + image + '\'' +
                 ", isbn='" + isbn + '\'' +
-                ", categorie=" + categorie +
                 ", statut=" + statut +
-                ", avis=" + avis + ((this.categorie != null) ? categorie.getId() + categorie.getLibelleCat() : "") +
                 '}';
     }
 }

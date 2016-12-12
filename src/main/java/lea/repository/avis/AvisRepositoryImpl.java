@@ -10,7 +10,7 @@ import java.util.List;
 public class AvisRepositoryImpl implements AvisRepository {
 
     @Autowired
-    private MongoAvisRepository mongoAvisRepository = null;
+    private MongoAvisRepository mongoAvisRepository;
 
     @Override
     public List<Avis> getLastAvis() {

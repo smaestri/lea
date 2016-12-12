@@ -1,26 +1,17 @@
 package lea.modele;
 
-import org.springframework.data.annotation.Id;
-
 import java.util.Date;
 
+public class Commentaire extends BaseDocumentImpl implements Comparable<Commentaire> {
 
-public class Commentaire implements Comparable<Commentaire> {
 
-    @Id
-    protected String id;
-    private Emprunt emprunt;
+    //FORIGN KEY
+    private String empruntId;
+    private String userId;
+
     private String message;
     private Date dateMessage;
-    private Utilisateur user;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getMessage() {
         return message;
@@ -30,12 +21,12 @@ public class Commentaire implements Comparable<Commentaire> {
         this.message = message;
     }
 
-    public Emprunt getEmprunt() {
-        return emprunt;
+    public String getEmpruntId() {
+        return empruntId;
     }
 
-    public void setEmprunt(Emprunt emprunt) {
-        this.emprunt = emprunt;
+    public void setEmpruntId(String empruntId) {
+        this.empruntId = empruntId;
     }
 
     public Date getDateMessage() {
@@ -46,12 +37,12 @@ public class Commentaire implements Comparable<Commentaire> {
         this.dateMessage = dateMessage;
     }
 
-    public Utilisateur getUser() {
-        return user;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUser(Utilisateur user) {
-        this.user = user;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     @Override
@@ -60,5 +51,15 @@ public class Commentaire implements Comparable<Commentaire> {
             return dateMessage.compareTo(o.getDateMessage());
         }
         return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Commentaire{" +
+                "empruntId='" + empruntId + '\'' +
+                ", message='" + message + '\'' +
+                ", dateMessage=" + dateMessage +
+                ", userId='" + userId + '\'' +
+                '}';
     }
 }

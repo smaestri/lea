@@ -10,7 +10,7 @@ import java.util.List;
 public class CategorieRepositoryImpl implements CategorieRepository {
 
     @Autowired
-    private MongoCategorieRepository mongoCategorieRepository = null;
+    private MongoCategorieRepository mongoCategorieRepository;
 
     @Override
     public List<Categorie> findAll() {

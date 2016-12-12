@@ -22,20 +22,20 @@ public class EmpruntRepositoryImpl implements EmpruntRepository {
 
     @Override
     public List<Emprunt> findEmprunts(String idUser, boolean actif) {
-        Criteria criteria = Criteria.where("actif").in(actif).and("emprunteur.id").is(idUser);
+        Criteria criteria = Criteria.where("actif").in(actif).and("emprunteurId").is(idUser);
         Query query = new Query(criteria);
         return mongoTemplate.find(query, Emprunt.class);
     }
 
     @Override
-    public Set<Commentaire> getCommentaires(String empruntId) {
+    public Set<String> getCommentaires(String empruntId) {
         Emprunt one = mongoEmpruntRepository.findOne(empruntId);
-        return one.getListeCommentaire();
+        return one.getListeCommentaireid();
     }
 
     @Override
     public List<Emprunt> findPrets(String idUser, boolean actif) {
-        Criteria criteria = Criteria.where("actif").in(actif).and("preteur.id").is(idUser);
+        Criteria criteria = Criteria.where("actif").in(actif).and("preteurId").is(idUser);
         Query query = new Query(criteria);
         return mongoTemplate.find(query, Emprunt.class);
     }

@@ -1,8 +1,10 @@
 package lea.controller;
 
 import lea.dto.AmiBean;
+import lea.dto.UtilisateurBean;
 import lea.modele.*;
 import lea.repository.emprunt.EmpruntRepository;
+import lea.repository.livre.LivreRepository;
 import lea.repository.pendingfriend.PendingFriendRepository;
 import lea.repository.userprofile.UserProfileRepository;
 import lea.service.CustomUserDetailsService;
@@ -30,6 +32,8 @@ import javax.servlet.ServletException;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -49,6 +53,9 @@ public class UserController extends CommonController {
     private UserProfileRepository userProfileRepository;
 
     @Autowired
+    private LivreRepository livreRepository;
+
+    @Autowired
     //@Qualifier("mockMail")
     @Qualifier("realMail")
     private MailService mailService;
@@ -57,23 +64,24 @@ public class UserController extends CommonController {
     @RequestMapping(value = "/users/{userId}", method = RequestMethod.GET)
     public String userDetail(@PathVariable("userId") String userDetail, Model model) throws ServletException, IOException {
         Utilisateur userConnected = initSearchFormAndPrincipal(model, false);
-
-        //cause probleme with hibernate
         Utilisateur friend = userRepository.findOne(userDetail);
 
-        Utilisateur userReturn = new Utilisateur();
+        UtilisateurBean userReturn = new UtilisateurBean();
 
-        if (!friend.getLivres().isEmpty()) {
-            for (Livre livre : friend.getLivres()) {
+        if (!friend.getListLivresId().isEmpty()) {
+            List<Livre> listeLivre = livreRepository.findAll(friend.getListLivresId());
+
+            for (Livre livre : listeLivre) {
                 LivreController.setBookImage(livre);
             }
-            userReturn.setLivres(friend.getLivres());
+            userReturn.setLivres(listeLivre);
         }
 
-        for (Utilisateur user : friend.getUserFriends()) {
-            if (user.getId() != userConnected.getId()) {
-                user = userRepository.findOne(user.getId());
-                for (Livre livre : user.getLivres()) {
+        for (String userFriendId : friend.getListFriendsId()) {
+            if (userFriendId != userConnected.getId()) {
+                Utilisateur user = userRepository.findOne(userFriendId);
+                List<Livre> listeLivre = livreRepository.findAll(user.getListLivresId());
+                for (Livre livre : listeLivre) {
                     LivreController.setBookImage(livre);
                 }
                 userReturn.getUserFriends().add(user);
@@ -99,12 +107,14 @@ public class UserController extends CommonController {
         List<Emprunt> emprunts = empruntRepository.findEmprunts(userConnected.getId(), false);
 
 
-        for (Emprunt emp : prets) {
-            LivreController.setBookImage(emp.getLivre());
+        for (Emprunt pret : prets) {
+            Livre livre = livreRepository.findOne(pret.getLivreId());
+            LivreController.setBookImage(livre);
         }
         model.addAttribute("pretsHistories", prets);
         for (Emprunt emp : emprunts) {
-            LivreController.setBookImage(emp.getLivre());
+            Livre livre = livreRepository.findOne(emp.getLivreId());
+            LivreController.setBookImage(livre);
         }
         model.addAttribute("empruntsHistories", emprunts);
         model.addAttribute("livre", new Livre());
@@ -176,7 +186,9 @@ public class UserController extends CommonController {
         }
 
         UserProfile profileUser = userProfileRepository.getProfileUser();
-        user.getUserProfiles().add(profileUser);
+        Set<String> set = new HashSet<String>();
+        set.add(profileUser.getId());
+        user.setListUserProfilesId(set);
         user.setEnabled(true);
         userRepository.saveUser(user);
 
@@ -185,7 +197,9 @@ public class UserController extends CommonController {
 
         // si ce nouvel utilisateur est solicité en tant qu'ami alors rediriger sur la page adequate
         String mail = user.getEmail();
-        List<Utilisateur> requestedFriends = pendingFriendRepository.findRequestedFriends(mail);
+        List<PendingFriend> requestedFriends = pendingFriendRepository.findRequestedFriends(mail);
+        //TODO
+
         if (requestedFriends.isEmpty()) {
             return "redirect:/";
         }
@@ -211,7 +225,8 @@ public class UserController extends CommonController {
     @RequestMapping(value = "/myRequestedFriends", method = RequestMethod.GET)
     public String mypendingFriends(Model model) {
         Utilisateur user = initSearchFormAndPrincipal(model, false);
-        List<Utilisateur> requestedFriends = pendingFriendRepository.findRequestedFriends(user.getEmail());
+        List<PendingFriend> requestedFriends = pendingFriendRepository.findRequestedFriends(user.getEmail());
+        //TODO
         if (requestedFriends.isEmpty()) {
             return "redirect:/";
         }
@@ -256,17 +271,19 @@ public class UserController extends CommonController {
         Utilisateur userConnected = initSearchFormAndPrincipal(model, false);
         Utilisateur userDetail = userRepository.findOne(userConnected.getId());
         Utilisateur userFriend = userRepository.findOne(idFriend);
-        userDetail.getUserFriends().add(userFriend);
+
+        userDetail.getListFriendsId().add(idFriend);
         userRepository.saveUser(userDetail);
 
-        userFriend.getUserFriends().add(userDetail);
+        userFriend.getListFriendsId().add(userConnected.getId());
         userRepository.saveUser(userFriend);
         //Get pending friend of friend and desactivate
 
-        Set<PendingFriend> pendingEmails = userFriend.getEmailUsers();
+        Set<String> pendingFriendId = userFriend.getListPendingFriendsId();
+        List<PendingFriend> pendingFriend = pendingFriendRepository.findAll(pendingFriendId);
         String emailUserConnected = userDetail.getEmail();
 
-        for (PendingFriend pf : pendingEmails) {
+        for (PendingFriend pf : pendingFriend) {
             if (pf.getEmail().equals(emailUserConnected)) {
                 pf.setActif(false);
                 pendingFriendRepository.save(pf);
@@ -288,7 +305,7 @@ public class UserController extends CommonController {
 
     private void addPendingFriendAndSendMail(String email, Utilisateur user, String emailEmetteur) throws UnsupportedEncodingException, MessagingException {
         PendingFriend emailUser = new PendingFriend(email);
-        emailUser.setUtilisateur(user);
+        emailUser.setUserId(user.getId());
         emailUser.setActif(true);
         pendingFriendRepository.save(emailUser);
         sendMailAmi(emailEmetteur, email);

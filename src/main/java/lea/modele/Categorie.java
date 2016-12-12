@@ -1,21 +1,8 @@
 package lea.modele;
 
-import org.springframework.data.annotation.Id;
-
-public class Categorie {
-
-    @Id
-    protected String id;
+public class Categorie extends BaseDocumentImpl{
 
     private String libelleCat;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getLibelleCat() {
         return libelleCat;
@@ -25,4 +12,10 @@ public class Categorie {
         this.libelleCat = libelleCat;
     }
 
+    @Override
+    public String toString() {
+        return "Categorie{" +
+                "libelleCat='" + libelleCat + '\'' +
+                '}';
+    }
 }

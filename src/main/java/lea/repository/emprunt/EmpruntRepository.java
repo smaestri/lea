@@ -10,7 +10,7 @@ public interface EmpruntRepository {
 
     List<Emprunt> findEmprunts(String idEmprunt, boolean b);
 
-    Set<Commentaire> getCommentaires(String empruntId);
+    Set<String> getCommentaires(String empruntId);
 
     List<Emprunt> findPrets(String id, boolean b);
 

@@ -1,15 +1,14 @@
 package lea.repository.pendingfriend;
 
 import lea.modele.PendingFriend;
-import lea.modele.Utilisateur;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 class PendingFriendRepositoryImpl implements PendingFriendRepository {
@@ -21,17 +20,11 @@ class PendingFriendRepositoryImpl implements PendingFriendRepository {
     private MongoTemplate mongoTemplate = null;
 
     @Override
-    public List<Utilisateur> findRequestedFriends(String mail) {
+    public List<PendingFriend> findRequestedFriends(String mail) {
         Criteria criteria = Criteria.where("email").in(mail).and("actif").is(true);
         Query query = new Query(criteria);
         List<PendingFriend> pendingFriends = mongoTemplate.find(query, PendingFriend.class);
-        // TODO find a bettar way to retrieve users
-        List<Utilisateur> users = new ArrayList<Utilisateur>();
-        for (PendingFriend pf : pendingFriends) {
-            users.add(pf.getUtilisateur());
-        }
-        return users;
-
+        return pendingFriends;
     }
 
     @Override
@@ -45,6 +38,14 @@ class PendingFriendRepositoryImpl implements PendingFriendRepository {
     @Override
     public PendingFriend save(PendingFriend pf) {
         return mongoPendingFriendRepository.save(pf);
+    }
+
+    @Override
+    public List<PendingFriend> findAll(Set<String> pendingFriendId) {
+        Criteria criteria = Criteria.where("id").in(pendingFriendId);
+        Query query = new Query(criteria);
+        List<PendingFriend> pendingFriends = mongoTemplate.find(query, PendingFriend.class);
+        return pendingFriends;
     }
 
 }

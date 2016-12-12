@@ -1,31 +1,19 @@
 package lea.modele;
 
-import org.springframework.data.annotation.Id;
-
 import java.util.Date;
 
-public class Avis {
-
-    @Id
-    protected String id;
+public class Avis extends BaseDocumentImpl {
 
     private Livre livre;
 
-    private Utilisateur auteur;
+    // FOREIGN KEY
+    private String userId;
 
     private String libelle;
 
     private int note;
 
     private Date dateavis;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public Livre getLivre() {
         return livre;
@@ -51,20 +39,20 @@ public class Avis {
         this.note = note;
     }
 
-    public Utilisateur getAuteur() {
-        return auteur;
+
+    public String getUserId() {
+        return userId;
     }
 
-    public void setAuteur(Utilisateur auteur) {
-        this.auteur = auteur;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     @Override
     public String toString() {
         return "Avis{" +
-                "id='" + id + '\'' +
                 ", livre=" + livre +
-                ", auteur=" + auteur +
+                ", userId=" + userId +
                 ", libelle='" + libelle + '\'' +
                 ", note=" + note +
                 ", dateavis=" + dateavis +

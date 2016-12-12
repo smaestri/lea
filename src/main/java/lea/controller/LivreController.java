@@ -4,6 +4,7 @@ import lea.modele.Categorie;
 import lea.modele.Livre;
 import lea.modele.Utilisateur;
 import lea.repository.livre.LivreRepository;
+import lea.repository.user.UserRepository;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -27,6 +28,10 @@ public class LivreController extends CommonController {
 
     @Autowired
     LivreRepository livreRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
 
     public static void setBookImage(Livre livre) throws IOException {
         CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -54,17 +59,21 @@ public class LivreController extends CommonController {
                              @RequestParam("categorie") String categorieId) throws ServletException, IOException {
         Utilisateur principal = initSearchFormAndPrincipal(model, true);
         List<Livre> result = new ArrayList<Livre>();
-        for (Utilisateur friend : principal.getUserFriends()) {
+        for (String friendId : principal.getListFriendsId()) {
+            Utilisateur friend = userRepository.findOne(friendId);
             Utilisateur userDetail = userRepository.findOne(friend.getId());
-            for (Livre livre : userDetail.getLivres()) {
+            for (String livreId : userDetail.getListLivresId()) {
+                Livre livre = this.livreRepository.findOne(livreId);
                 addBookinlist(result, livre, categorieId, titre);
             }
-            for (Utilisateur friend2level : userDetail.getUserFriends()) {
-                Utilisateur userDetail2level = userRepository.findOne(friend2level.getId());
-                //L'ami d'ami ne doit pas etre l'utilisateur connecté
-                if (!friend2level.getEmail().equals(principal.getEmail())) {
-                    for (Livre livre : userDetail2level.getLivres()) {
+            for (String friend2levelId : userDetail.getListFriendsId()) {
 
+                Utilisateur userDetail2level = userRepository.findOne(friend2levelId);
+                //L'ami d'ami ne doit pas etre l'utilisateur connecté
+                if (!userDetail2level.getEmail().equals(principal.getEmail())) {
+                    for (String livreId : userDetail2level.getListLivresId()) {
+
+                        Livre livre = this.livreRepository.findOne(livreId);
                         //Si le livre n'a pas deja été ajoute (ami nbiveau 1 peut avoir le livre)
                         if (!isBookInside(result, livre.getId())) {
                             addBookinlist(result, livre, categorieId, titre);
@@ -82,7 +91,7 @@ public class LivreController extends CommonController {
         }
         if (categorieId != null && StringUtils.hasText(categorieId)) {
             Categorie cat = categorieRepository.findOne(categorieId);
-            livreRetour.setCategorie(cat);
+            livreRetour.setCategorieId(cat.getId());
         }
 
         model.addAttribute("command", livreRetour);
@@ -96,7 +105,7 @@ public class LivreController extends CommonController {
         boolean addLivre = true;
 
         if (categorieId != null && StringUtils.hasText(categorieId)) {
-            if (livre.getCategorie().getId().equals(categorieId)) {
+            if (livre.getCategorieId().equals(categorieId)) {
                 addLivre = false;
             }
         }
@@ -183,12 +192,12 @@ public class LivreController extends CommonController {
             return "livre/add-book";
         }
 
-        if (livre.getCategorie() == null || livre.getCategorie().getId() == null) {
+        if (livre.getCategorieId() == null) {
             result.rejectValue("categorie", "categorie.notvalid", "Veuillez indiquer une catégorie");
             return "livre/add-book";
         }
 
-        livre.setUser(user);
+        livre.setUserId(user.getId());
         livreRepository.saveLivre(livre);
         return "redirect:/myBooks";
     }
@@ -200,9 +209,10 @@ public class LivreController extends CommonController {
         Utilisateur user = initSearchFormAndPrincipal(model, false);
 
         //Convert to list to get ordrer
-        List<Livre> listeRetour = new ArrayList<Livre>(user.getLivres());
+        List<String> listeRetour = new ArrayList<String>(user.getListLivresId());
 
-        for (Livre livre : listeRetour) {
+        for (String livreId : listeRetour) {
+            Livre livre = livreRepository.findOne(livreId);
             this.setBookImage(livre);
         }
 
@@ -216,7 +226,9 @@ public class LivreController extends CommonController {
     public String deleteLivre(@ModelAttribute("book_id") String bookId) throws Exception {
         Utilisateur user = getPrincipal();
         Livre livre = livreRepository.findOne(bookId);
-        if (!livre.getUser().getEmail().equals(user.getEmail())) {
+        Utilisateur proprietaire = this.userRepository.findOne(livre.getUserId());
+
+        if (!proprietaire.getEmail().equals(user.getEmail())) {
             throw new Exception("Probleme de securite");
         }
         livreRepository.supprimerLivre(bookId);

@@ -1,33 +1,24 @@
 package lea.modele;
 
-import org.springframework.data.annotation.Id;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
-public class Emprunt implements Serializable {
+public class Emprunt extends BaseDocumentImpl implements Serializable {
 
-    @Id
-    protected String id;
-    private Utilisateur emprunteur;
-    private Utilisateur preteur;
-    private Livre livre;
+    // FOREIGN KEYS
+    private String emprunteurId;
+    private String preteurId;
+    private String livreId;
+    private Set<String> listeCommentaireid;
+
     private Date debutEmprunt;
     private Date finEmprunt;
     private boolean actif;
     private Date dateDemande;
-    private Set<Commentaire> listeCommentaire;
+
     private String motifRefus;
     private String intermediaire;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getIntermediaire() {
         return intermediaire;
@@ -37,37 +28,38 @@ public class Emprunt implements Serializable {
         this.intermediaire = intermediaire;
     }
 
-    public Set<Commentaire> getListeCommentaire() {
-        return listeCommentaire;
+    public String getLivreId() {
+        return livreId;
     }
 
-    public void setListeCommentaire(Set<Commentaire> listeCommentaire) {
-        this.listeCommentaire = listeCommentaire;
+    public void setLivreId(String livreId) {
+        this.livreId = livreId;
     }
 
-    public Utilisateur getEmprunteur() {
-        return emprunteur;
+    public Set<String> getListeCommentaireid() {
+        return listeCommentaireid;
     }
 
-    public void setEmprunteur(Utilisateur emprunteur) {
-        this.emprunteur = emprunteur;
+    public void setListeCommentaireid(Set<String> listeCommentaireid) {
+        this.listeCommentaireid = listeCommentaireid;
     }
 
-    public Utilisateur getPreteur() {
-        return preteur;
+    public String getEmprunteurId() {
+        return emprunteurId;
     }
 
-    public void setPreteur(Utilisateur preteur) {
-        this.preteur = preteur;
+    public void setEmprunteurId(String emprunteurId) {
+        this.emprunteurId = emprunteurId;
     }
 
-    public Livre getLivre() {
-        return livre;
+    public String getPreteurId() {
+        return preteurId;
     }
 
-    public void setLivre(Livre livre) {
-        this.livre = livre;
+    public void setPreteurId(String preteurId) {
+        this.preteurId = preteurId;
     }
+
 
     public Date getDebutEmprunt() {
         return debutEmprunt;
@@ -109,8 +101,19 @@ public class Emprunt implements Serializable {
         this.dateDemande = dateDemande;
     }
 
+    @Override
     public String toString() {
-        return "preteur=" + this.preteur.getFirstName() + " emprunteur=" + this.emprunteur.getLastName() + " livre=" + this.livre.getId();
+        return "Emprunt{" +
+                "emprunteurId='" + emprunteurId + '\'' +
+                ", preteurId='" + preteurId + '\'' +
+                ", livreId='" + livreId + '\'' +
+                ", listeCommentaireid=" + listeCommentaireid +
+                ", debutEmprunt=" + debutEmprunt +
+                ", finEmprunt=" + finEmprunt +
+                ", actif=" + actif +
+                ", dateDemande=" + dateDemande +
+                ", motifRefus='" + motifRefus + '\'' +
+                ", intermediaire='" + intermediaire + '\'' +
+                '}';
     }
-
 }

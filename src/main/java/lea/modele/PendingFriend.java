@@ -1,30 +1,19 @@
 package lea.modele;
 
-import org.springframework.data.annotation.Id;
-
 import java.io.Serializable;
 
-public class PendingFriend implements Serializable {
+public class PendingFriend extends BaseDocumentImpl implements Serializable {
 
-    @Id
-    protected String id;
+    // FK
+    private String userId;
 
     private String email;
 
     private Boolean actif;
 
-    private Utilisateur utilisateur;
 
     public PendingFriend(String email) {
         this.email = email;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getEmail() {
@@ -35,12 +24,16 @@ public class PendingFriend implements Serializable {
         this.email = email;
     }
 
-    public Utilisateur getUtilisateur() {
-        return utilisateur;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUtilisateur(Utilisateur utilisateur) {
-        this.utilisateur = utilisateur;
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public Boolean getActif() {
+        return actif;
     }
 
     public Boolean isActif() {
@@ -49,5 +42,14 @@ public class PendingFriend implements Serializable {
 
     public void setActif(Boolean actif) {
         this.actif = actif;
+    }
+
+    @Override
+    public String toString() {
+        return "PendingFriend{" +
+                "userId='" + userId + '\'' +
+                ", email='" + email + '\'' +
+                ", actif=" + actif +
+                '}';
     }
 }

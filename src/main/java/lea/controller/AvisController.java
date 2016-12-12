@@ -30,7 +30,7 @@ public class AvisController extends CommonController {
         avis.setDateavis(new Date());
         avis.setLibelle(avisBean.getLibelle());
         avis.setNote(avisBean.getNote());
-        avis.setAuteur(principal);
+        avis.setUserId(principal.getId());
         avis.setLivre(livreDetail);
         avisRepository.save(avis);
 

@@ -1,21 +1,8 @@
 package lea.modele;
 
-import org.springframework.data.annotation.Id;
-
-public class UserProfile {
-
-    @Id
-    protected String id;
+public class UserProfile extends BaseDocumentImpl {
 
     private String type = UserProfileType.USER.getUserProfileType();
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getType() {
         return type;
@@ -34,8 +21,6 @@ public class UserProfile {
         if (!(obj instanceof UserProfile))
             return false;
         UserProfile other = (UserProfile) obj;
-        if (id != other.id)
-            return false;
         if (type == null) {
             if (other.type != null)
                 return false;
@@ -46,7 +31,7 @@ public class UserProfile {
 
     @Override
     public String toString() {
-        return "UserProfile [id=" + id + ",  type=" + type + "]";
+        return "UserProfile [ type=" + type + "]";
     }
 
 }

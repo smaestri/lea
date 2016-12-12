@@ -8,10 +8,15 @@ import org.springframework.stereotype.Repository;
 public class CommentaireRepositoryImpl implements CommentaireRepository {
 
     @Autowired
-    private MongoCommentaireRepository mongoCommentaireRepository = null;
+    private MongoCommentaireRepository mongoCommentaireRepository;
 
     @Override
     public Commentaire save(Commentaire comm) {
         return mongoCommentaireRepository.save(comm);
+    }
+
+    @Override
+    public Commentaire findOne(String comId) {
+        return mongoCommentaireRepository.findOne(comId);
     }
 }

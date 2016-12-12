@@ -8,10 +8,16 @@ import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Utilisateur {
+public class Utilisateur extends BaseDocumentImpl {
 
-    @Id
-    protected String id;
+    // FK
+    private Set<String> listLivresId;
+    private Set<String> listEmpruntsId;
+    private Set<String> listPretsId;
+    private Set<String> listUserProfilesId = new HashSet<String>();
+    private Set<String> listFriendsId = new HashSet<String>();
+    private Set<String> listPendingFriendsId = new HashSet<String>();
+
 
     @Size(min = 2, max = 14, message = "Le mot de passe doit comprendre entre 2 et 14 caractères")
     private String password;
@@ -29,23 +35,8 @@ public class Utilisateur {
 
     private Boolean enabled;
 
-    @JsonIgnore
-    private Set<Livre> livres;
 
-    @JsonIgnore
-    private Set<Emprunt> emprunts;
 
-    @JsonIgnore
-    private Set<Emprunt> prets;
-
-    @JsonIgnore
-    private Set<UserProfile> userProfiles = new HashSet<UserProfile>();
-
-    @JsonIgnore
-    private Set<Utilisateur> userFriends = new HashSet<Utilisateur>();
-
-    @JsonIgnore
-    private Set<PendingFriend> emailUsers = new HashSet<PendingFriend>();
 
     private boolean isEdit = false;
 
@@ -89,14 +80,6 @@ public class Utilisateur {
         this.email = email;
     }
 
-    public Set<UserProfile> getUserProfiles() {
-        return userProfiles;
-    }
-
-    public void setUserProfiles(Set<UserProfile> userProfiles) {
-        this.userProfiles = userProfiles;
-    }
-
     public Boolean getEnabled() {
         return enabled;
     }
@@ -105,52 +88,52 @@ public class Utilisateur {
         this.enabled = enabled;
     }
 
-    public Set<Livre> getLivres() {
-        return livres;
+    public Set<String> getListLivresId() {
+        return listLivresId;
     }
 
-    public void setLivres(Set<Livre> livres) {
-        this.livres = livres;
+    public void setListLivresId(Set<String> listLivresId) {
+        this.listLivresId = listLivresId;
     }
 
-    public Set<Emprunt> getEmprunts() {
-        return emprunts;
+    public Set<String> getListEmpruntsId() {
+        return listEmpruntsId;
     }
 
-    public void setEmprunts(Set<Emprunt> emprunts) {
-        this.emprunts = emprunts;
+    public void setListEmpruntsId(Set<String> listEmpruntsId) {
+        this.listEmpruntsId = listEmpruntsId;
     }
 
-    public Set<Emprunt> getPrets() {
-        return prets;
+    public Set<String> getListPretsId() {
+        return listPretsId;
     }
 
-    public void setPrets(Set<Emprunt> prets) {
-        this.prets = prets;
+    public void setListPretsId(Set<String> listPretsId) {
+        this.listPretsId = listPretsId;
     }
 
-    public Set<Utilisateur> getUserFriends() {
-        return userFriends;
+    public Set<String> getListUserProfilesId() {
+        return listUserProfilesId;
     }
 
-    public void setUserFriends(Set<Utilisateur> userFriends) {
-        this.userFriends = userFriends;
+    public void setListUserProfilesId(Set<String> listUserProfilesId) {
+        this.listUserProfilesId = listUserProfilesId;
     }
 
-    public Set<PendingFriend> getEmailUsers() {
-        return emailUsers;
+    public Set<String> getListFriendsId() {
+        return listFriendsId;
     }
 
-    public void setEmailUsers(Set<PendingFriend> emailUsers) {
-        this.emailUsers = emailUsers;
+    public void setListFriendsId(Set<String> listFriendsId) {
+        this.listFriendsId = listFriendsId;
     }
 
-    public String getId() {
-        return id;
+    public Set<String> getListPendingFriendsId() {
+        return listPendingFriendsId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setListPendingFriendsId(Set<String> listPendingFriendsId) {
+        this.listPendingFriendsId = listPendingFriendsId;
     }
 
     @Override
@@ -171,12 +154,6 @@ public class Utilisateur {
         return false;
     }
 
-    @Override
-    public String toString() {
-        return "User [id=" + id + ", password=" + password
-                + ", firstName=" + firstName + ", lastName=" + lastName
-                + ", email=" + email + ", userProfiles=" /*+ userProfiles + "]"*/;
-    }
 
     public String getFullName() {
         return StringUtils.capitalize(this.firstName) + " " + StringUtils.capitalize(this.lastName);
@@ -188,5 +165,24 @@ public class Utilisateur {
 
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
+    }
+
+    @Override
+    public String toString() {
+        return "Utilisateur{" +
+                "listLivresId=" + listLivresId +
+                ", listEmpruntsId=" + listEmpruntsId +
+                ", listPretsId=" + listPretsId +
+                ", listUserProfilesId=" + listUserProfilesId +
+                ", listFriendsId=" + listFriendsId +
+                ", listPendingFriendsId=" + listPendingFriendsId +
+                ", password='" + password + '\'' +
+                ", confirmPassword='" + confirmPassword + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", enabled=" + enabled +
+                ", isEdit=" + isEdit +
+                '}';
     }
 }

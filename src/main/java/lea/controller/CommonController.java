@@ -24,6 +24,7 @@ public class CommonController {
     @Autowired
     UserRepository userRepository;
 
+
     @Autowired
     PendingFriendRepository pendingFriendRepository;
 

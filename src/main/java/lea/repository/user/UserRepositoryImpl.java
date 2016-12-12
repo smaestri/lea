@@ -46,11 +46,6 @@ public class UserRepositoryImpl implements UserRepository {
         return mongoUserRepository.save(userDetail);
     }
 
-    @Override
-    public UserProfile getProfileUser() {
-        Criteria criteria = Criteria.where("type").in("USER");
-        Query query = new Query(criteria);
-        mongoTemplate.find(query, UserProfile.class);
-    }
+
 
 }

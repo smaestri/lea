@@ -2,7 +2,9 @@ package lea.controller;
 
 import lea.modele.Avis;
 import lea.modele.Livre;
+import lea.modele.UserProfile;
 import lea.repository.avis.AvisRepository;
+import lea.repository.userprofile.MongoUserProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,8 +25,24 @@ public class LoginController extends CommonController {
     @Autowired
     AvisRepository avisRepository;
 
+    /*
+    @Autowired
+    private MongoUserProfileRepository mongoUserProfileRepository;
+*/
+
     @GetMapping("/")
     public String welcomeHandler(Model model) {
+
+        /*
+        UserProfile up = new UserProfile();
+        mongoUserProfileRepository.save(up);
+        System.out.println();
+        // fetch all customers
+        for (UserProfile up2 : this.mongoUserProfileRepository.findAll()) {
+            System.out.println(up2);
+        }
+        */
+
         initSearchFormAndPrincipal(model, false);
         List<Avis> avis = avisRepository.getLastAvis();
         model.addAttribute("avis", avis);

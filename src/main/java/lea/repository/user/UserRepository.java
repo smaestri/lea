@@ -17,6 +17,4 @@ public interface UserRepository {
 
     Utilisateur saveUser(Utilisateur userDetail);
 
-    UserProfile getProfileUser();
-
 }

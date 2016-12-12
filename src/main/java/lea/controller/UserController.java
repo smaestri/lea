@@ -4,6 +4,7 @@ import lea.dto.AmiBean;
 import lea.modele.*;
 import lea.repository.emprunt.EmpruntRepository;
 import lea.repository.pendingfriend.PendingFriendRepository;
+import lea.repository.userprofile.UserProfileRepository;
 import lea.service.CustomUserDetailsService;
 import lea.service.MailService;
 import lea.validator.UserValidator;
@@ -43,6 +44,9 @@ public class UserController extends CommonController {
 
     @Autowired
     private PendingFriendRepository pendingFriendRepository;
+
+    @Autowired
+    private UserProfileRepository userProfileRepository;
 
     @Autowired
     //@Qualifier("mockMail")
@@ -171,7 +175,7 @@ public class UserController extends CommonController {
             return "user/create-edit-user";
         }
 
-        UserProfile profileUser = userRepository.getProfileUser();
+        UserProfile profileUser = userProfileRepository.getProfileUser();
         user.getUserProfiles().add(profileUser);
         user.setEnabled(true);
         userRepository.saveUser(user);

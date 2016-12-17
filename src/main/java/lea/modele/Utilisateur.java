@@ -2,22 +2,29 @@ package lea.modele;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.Size;
+import java.awt.peer.ChoicePeer;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class Utilisateur extends BaseDocumentImpl {
 
     // FK
-    private Set<String> listLivresId;
-    private Set<String> listEmpruntsId;
-    private Set<String> listPretsId;
-    private Set<String> listUserProfilesId = new HashSet<String>();
-    private Set<String> listFriendsId = new HashSet<String>();
-    private Set<String> listPendingFriendsId = new HashSet<String>();
+    private List<String> listEmpruntsId;
+    private List<String> listPretsId;
+    private List<String> listUserProfilesId = new ArrayList<String>();
+    private List<String> listFriendsId = new ArrayList<String>();
+    private List<String> listPendingFriends= new ArrayList<String>();
 
+    @Transient
+    private List<Utilisateur> userFriends = new ArrayList<Utilisateur>();
+
+    List<Livre> livres = new ArrayList<Livre>();
 
     @Size(min = 2, max = 14, message = "Le mot de passe doit comprendre entre 2 et 14 caractères")
     private String password;
@@ -34,9 +41,6 @@ public class Utilisateur extends BaseDocumentImpl {
     private String email;
 
     private Boolean enabled;
-
-
-
 
     private boolean isEdit = false;
 
@@ -88,52 +92,61 @@ public class Utilisateur extends BaseDocumentImpl {
         this.enabled = enabled;
     }
 
-    public Set<String> getListLivresId() {
-        return listLivresId;
+    public List<Livre> getLivres() {
+        return livres;
     }
 
-    public void setListLivresId(Set<String> listLivresId) {
-        this.listLivresId = listLivresId;
+    public void setLivres(List<Livre> livres) {
+        this.livres = livres;
     }
 
-    public Set<String> getListEmpruntsId() {
+    public List<String> getListEmpruntsId() {
         return listEmpruntsId;
     }
 
-    public void setListEmpruntsId(Set<String> listEmpruntsId) {
+    public void setListEmpruntsId(List<String> listEmpruntsId) {
         this.listEmpruntsId = listEmpruntsId;
     }
 
-    public Set<String> getListPretsId() {
+    public List<String> getListPretsId() {
         return listPretsId;
     }
 
-    public void setListPretsId(Set<String> listPretsId) {
+    public void setListPretsId(List<String> listPretsId) {
         this.listPretsId = listPretsId;
     }
 
-    public Set<String> getListUserProfilesId() {
+    public List<String> getListUserProfilesId() {
         return listUserProfilesId;
     }
 
-    public void setListUserProfilesId(Set<String> listUserProfilesId) {
+    public void setListUserProfilesId(List<String> listUserProfilesId) {
         this.listUserProfilesId = listUserProfilesId;
     }
 
-    public Set<String> getListFriendsId() {
+    public List<String> getListFriendsId() {
         return listFriendsId;
     }
 
-    public void setListFriendsId(Set<String> listFriendsId) {
+    public void setListFriendsId(List<String> listFriendsId) {
         this.listFriendsId = listFriendsId;
     }
 
-    public Set<String> getListPendingFriendsId() {
-        return listPendingFriendsId;
+    public List<String> getListPendingFriends() {
+        return listPendingFriends;
     }
 
-    public void setListPendingFriendsId(Set<String> listPendingFriendsId) {
-        this.listPendingFriendsId = listPendingFriendsId;
+    public void setListPendingFriends(List<String> listPendingFriends) {
+        this.listPendingFriends = listPendingFriends;
+    }
+
+    public Livre getLivre(String id){
+        for(Livre livre : this.livres){
+             if(livre.getId().equals(id)){
+                 return livre;
+             }
+        }
+        return null;
     }
 
     @Override
@@ -170,19 +183,25 @@ public class Utilisateur extends BaseDocumentImpl {
     @Override
     public String toString() {
         return "Utilisateur{" +
-                "listLivresId=" + listLivresId +
-                ", listEmpruntsId=" + listEmpruntsId +
-                ", listPretsId=" + listPretsId +
-                ", listUserProfilesId=" + listUserProfilesId +
-                ", listFriendsId=" + listFriendsId +
-                ", listPendingFriendsId=" + listPendingFriendsId +
-                ", password='" + password + '\'' +
-                ", confirmPassword='" + confirmPassword + '\'' +
+                "id=" + this.getId() +
+                "livres=" + livres +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
-                ", enabled=" + enabled +
-                ", isEdit=" + isEdit +
                 '}';
+    }
+
+    public void updateLivre(String id, Livre livreUpdated) {
+
+        for(Livre livre : this.livres){
+            if(livre.getId().equals(id)){
+                livre.setTitreBook(livreUpdated.getTitreBook());
+                livre.setAuteur(livreUpdated.getAuteur());
+            }
+        }
+    }
+
+    public List<Utilisateur> getUserFriends() {
+        return userFriends;
     }
 }

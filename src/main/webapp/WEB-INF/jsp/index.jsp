@@ -23,7 +23,7 @@
                 <h2>A la recherche d'un nouveau livre?</h2><br/>
                 <ul>
                     <c:forEach var="category" items="${categories}">
-                        <li><a href="searchBook?categorie=${category.id}"><c:out value="${category.libelleCat}" /></a></li>
+                        <li><a href="searchBook?categorie=${category.id}"><c:out value="${category.name}" /></a></li>
                     </c:forEach>
                 </ul>
             </div>

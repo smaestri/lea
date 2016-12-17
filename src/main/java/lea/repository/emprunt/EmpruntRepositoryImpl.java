@@ -15,10 +15,10 @@ import java.util.Set;
 public class EmpruntRepositoryImpl implements EmpruntRepository {
 
     @Autowired
-    private MongoEmpruntRepository mongoEmpruntRepository = null;
+    private MongoEmpruntRepository mongoEmpruntRepository;
 
     @Autowired
-    private MongoTemplate mongoTemplate = null;
+    private MongoTemplate mongoTemplate;
 
     @Override
     public List<Emprunt> findEmprunts(String idUser, boolean actif) {
@@ -28,7 +28,7 @@ public class EmpruntRepositoryImpl implements EmpruntRepository {
     }
 
     @Override
-    public Set<String> getCommentaires(String empruntId) {
+    public List<String> getCommentaires(String empruntId) {
         Emprunt one = mongoEmpruntRepository.findOne(empruntId);
         return one.getListeCommentaireid();
     }
@@ -57,5 +57,12 @@ public class EmpruntRepositoryImpl implements EmpruntRepository {
         Emprunt emp = mongoEmpruntRepository.save(emprunt);
         return emp;
 
+    }
+
+    @Override
+    public List<Emprunt> findAllEmprunts(List<String> listEmpruntId) {
+        Criteria criteria = Criteria.where("id").in(listEmpruntId);
+        Query query = new Query(criteria);
+        return mongoTemplate.find(query, Emprunt.class);
     }
 }

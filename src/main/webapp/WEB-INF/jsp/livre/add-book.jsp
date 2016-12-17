@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <t:default>
 	<h2 class="title_bloc">Ajouter un livre</h2>
-
+TOTO : {$livre.id}
     <div class="row">
        <div class="col-md-3" id="injectImage"></div>
 	    <form:form action="livres/new" modelAttribute="livre" method="POST">
@@ -12,6 +12,7 @@
                 Vous pouvez facilement trouver l'ISBN (10 caract&egrave;res) de votre livre) en allant sur la page du livre sur le site Amazon.com.<br/>
                 Les champs avec * sont obligatoires.
             </div>
+            <form:hidden path="id" />
             <div class="form-group">
                 <label for="isbn" class="col-sm-2 form-control-label">ISBN</label>
                 <div class="col-sm-10" style="margin-bottom: 10px;">
@@ -43,16 +44,14 @@
                 </div>
             </div>
             <div class="form-group" style="margin-bottom: 10px;">
-                <label for="categorie.id" class="col-sm-2 form-control-label">Cat&eacute;gorie*</label>
+                <label for="categorieId" class="col-sm-2 form-control-label">Cat&eacute;gorie*</label>
                 <div class="col-sm-10" style="margin-bottom: 10px;">
-                    <form:select path="categorie.id" cssClass="form-control">
+                    <form:select path="categorieId" cssClass="form-control">
                         <form:option value="">&nbsp;</form:option>
-                        <form:options items="${categories}" itemValue="id" itemLabel="libelleCat"/>
+                        <form:options items="${categories}" itemValue="id" itemLabel="name"/>
                     </form:select>
                  </div>
             </div>
-
-            <form:hidden path="id"/>
             <form:hidden path="image"/>
             <div class="row text-center">
                 <button type="submit" class="btn btn-primary" >Sauvegarder</button>

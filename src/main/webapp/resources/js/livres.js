@@ -146,7 +146,7 @@ $(function() {
 						$('.modal-body #descLivre').html(
 								msg['description']);
 						$('.modal-body #catLivre').html(
-								msg['categorie']['libelleCat']);
+								msg['categorie']['name']);
 						$(".modal-body #imageLivre").attr(
 								"src", msg['image']);
 						$(".modal-body #proprietaireLivre")

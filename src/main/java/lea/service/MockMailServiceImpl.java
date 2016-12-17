@@ -15,7 +15,8 @@ import java.util.Properties;
 @Component("mockMail")
 public class MockMailServiceImpl implements MailService {
 
-    public void sendEmail(String contenu, String destinataire, String subject) throws UnsupportedEncodingException, MessagingException {
+    public void sendEmail(String contenu, String object, String receiver, String sender) throws UnsupportedEncodingException, MessagingException {
+
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
@@ -33,7 +34,7 @@ public class MockMailServiceImpl implements MailService {
         msg.setFrom(new InternetAddress("livresentreamis5@gmail.com", "Livres entre Amis"));
         msg.addRecipient(Message.RecipientType.TO,
                 new InternetAddress("sylvainmaestri@gmail.com", ""));
-        msg.setSubject(subject);
+        msg.setSubject(object);
         msg.setText(contenu);
         Transport.send(msg);
 

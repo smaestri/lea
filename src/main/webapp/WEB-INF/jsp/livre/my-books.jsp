@@ -15,10 +15,10 @@
                 </div>
                 <div class="bloc_button">
                     <a class="editBook" href="<c:url value="/livres/edit/${livre.id}" /> ">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-emprunt" data-livre="${livre.id}" data-proprietaire="${livre.user.id}">Modifier</button>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-emprunt" data-livre="${livre.id}" data-proprietaire="${userId}">Modifier</button>
                     </a>
                     <a class="deleteBook" data-livre="${livre.id}" href="#"  >
-                        <button type="button" style="margin-top:5px;" class="btn btn-primary" data-toggle="modal" data-target="#modal-emprunt" data-livre="${livre.id}" data-proprietaire="${livre.user.id}">Supprimer</button>
+                        <button type="button" style="margin-top:5px;" class="btn btn-primary" data-toggle="modal" data-target="#modal-emprunt" data-livre="${livre.id}" data-proprietaire="${userId}">Supprimer</button>
                     </a><br/>
                 </div>
             </div>

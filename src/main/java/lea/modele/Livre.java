@@ -1,17 +1,21 @@
 package lea.modele;
 
 import lea.commun.StatutEmprunt;
-import org.springframework.data.annotation.Id;
+import org.bson.types.ObjectId;
 
+import java.util.List;
 import java.util.Set;
 
 public class Livre extends BaseDocumentImpl {
 
+    public Livre(){
+        this.setId(ObjectId.get().toHexString());
+    }
 
     // FK
-    private String userId;
+    //private String utilisateurId;
     private String categorieId;
-    private Set<String> listAvisId;
+    private List<Avis> avis;
 
     private String titreBook;
 
@@ -86,15 +90,6 @@ public class Livre extends BaseDocumentImpl {
     }
 
 
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     public String getCategorieId() {
         return categorieId;
     }
@@ -103,20 +98,12 @@ public class Livre extends BaseDocumentImpl {
         this.categorieId = categorieId;
     }
 
-    public Set<String> getListAvisId() {
-        return listAvisId;
-    }
-
-    public void setListAvisId(Set<String> listAvisId) {
-        this.listAvisId = listAvisId;
-    }
 
     @Override
     public String toString() {
         return "Livre{" +
-                "userId='" + userId + '\'' +
+                ", id='" + this.getId() + '\'' +
                 ", categorieId='" + categorieId + '\'' +
-                ", listAvisId=" + listAvisId +
                 ", titreBook='" + titreBook + '\'' +
                 ", description='" + description + '\'' +
                 ", auteur='" + auteur + '\'' +

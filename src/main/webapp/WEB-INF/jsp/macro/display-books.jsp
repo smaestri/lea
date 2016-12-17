@@ -2,7 +2,6 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 
-
 <div class="row">
     <c:choose>
     <c:when test="${fn:length(livres) gt 0}">
@@ -18,7 +17,7 @@
                  </div>
                  <div class="bloc_button">
                    <c:if test="${livre.statut eq 'FREE'}">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-emprunt" data-livre="${livre.id}" data-proprietaire="${livre.user.id}">Emprunter</button>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-emprunt" data-livre="${livre.id}" data-proprietaire="${userId}">Emprunter</button>
                    </c:if>
                    <c:if test="${livre.statut ne 'FREE'}">
                       <span>Livre non <br/> empruntable </span>

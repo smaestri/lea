@@ -2,6 +2,7 @@ package lea.modele;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 public class Emprunt extends BaseDocumentImpl implements Serializable {
@@ -10,7 +11,7 @@ public class Emprunt extends BaseDocumentImpl implements Serializable {
     private String emprunteurId;
     private String preteurId;
     private String livreId;
-    private Set<String> listeCommentaireid;
+    private List<String> listeCommentaireid;
 
     private Date debutEmprunt;
     private Date finEmprunt;
@@ -36,11 +37,11 @@ public class Emprunt extends BaseDocumentImpl implements Serializable {
         this.livreId = livreId;
     }
 
-    public Set<String> getListeCommentaireid() {
+    public List<String> getListeCommentaireid() {
         return listeCommentaireid;
     }
 
-    public void setListeCommentaireid(Set<String> listeCommentaireid) {
+    public void setListeCommentaireid(List<String> listeCommentaireid) {
         this.listeCommentaireid = listeCommentaireid;
     }
 

@@ -1,11 +1,11 @@
 package lea.controller;
 
-import lea.dto.AmiBean;
-import lea.dto.UtilisateurBean;
-import lea.modele.*;
+import lea.modele.Emprunt;
+import lea.modele.Livre;
+import lea.modele.UserProfile;
+import lea.modele.Utilisateur;
 import lea.repository.emprunt.EmpruntRepository;
 import lea.repository.livre.LivreRepository;
-import lea.repository.pendingfriend.PendingFriendRepository;
 import lea.repository.userprofile.UserProfileRepository;
 import lea.service.CustomUserDetailsService;
 import lea.service.MailService;
@@ -17,7 +17,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,17 +24,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.servlet.ServletException;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Controller
 public class UserController extends CommonController {
@@ -47,17 +42,14 @@ public class UserController extends CommonController {
     private UserValidator userValidator;
 
     @Autowired
-    private PendingFriendRepository pendingFriendRepository;
-
-    @Autowired
     private UserProfileRepository userProfileRepository;
 
     @Autowired
     private LivreRepository livreRepository;
 
     @Autowired
-    //@Qualifier("mockMail")
-    @Qualifier("realMail")
+    @Qualifier("mockMail")
+    //@Qualifier("realMail")
     private MailService mailService;
 
     //Detail d'un utilisateur ; ses livres et ceux de ses amis
@@ -66,31 +58,28 @@ public class UserController extends CommonController {
         Utilisateur userConnected = initSearchFormAndPrincipal(model, false);
         Utilisateur friend = userRepository.findOne(userDetail);
 
-        UtilisateurBean userReturn = new UtilisateurBean();
+        List<Livre> listeLivre = friend.getLivres();
 
-        if (!friend.getListLivresId().isEmpty()) {
-            List<Livre> listeLivre = livreRepository.findAll(friend.getListLivresId());
-
+        // set image
+        if (!listeLivre.isEmpty()) {
             for (Livre livre : listeLivre) {
                 LivreController.setBookImage(livre);
             }
-            userReturn.setLivres(listeLivre);
         }
 
-        for (String userFriendId : friend.getListFriendsId()) {
-            if (userFriendId != userConnected.getId()) {
-                Utilisateur user = userRepository.findOne(userFriendId);
-                List<Livre> listeLivre = livreRepository.findAll(user.getListLivresId());
-                for (Livre livre : listeLivre) {
+        //Check book of friends of friend
+        List<Utilisateur> subFriends = userRepository.findFriends(friend.getListFriendsId());
+        for (Utilisateur subFriend: subFriends) {
+            if (!subFriend.getId().equals(userConnected.getId())) {
+                List<Livre> listeLivre2 = subFriend.getLivres();
+                for (Livre livre : listeLivre2) {
                     LivreController.setBookImage(livre);
                 }
-                userReturn.getUserFriends().add(user);
+                friend.getUserFriends().add(subFriend);
             }
         }
 
-        userReturn.setFirstName(friend.getFirstName());
-        userReturn.setLastName(friend.getLastName());
-        model.addAttribute("user", userReturn);
+        model.addAttribute("user", friend);
         return "user/user-detail";
     }
 
@@ -186,7 +175,7 @@ public class UserController extends CommonController {
         }
 
         UserProfile profileUser = userProfileRepository.getProfileUser();
-        Set<String> set = new HashSet<String>();
+        List<String> set = new ArrayList<String>();
         set.add(profileUser.getId());
         user.setListUserProfilesId(set);
         user.setEnabled(true);
@@ -196,14 +185,11 @@ public class UserController extends CommonController {
         authenticateManually(user);
 
         // si ce nouvel utilisateur est solicité en tant qu'ami alors rediriger sur la page adequate
-        String mail = user.getEmail();
-        List<PendingFriend> requestedFriends = pendingFriendRepository.findRequestedFriends(mail);
-        //TODO
-
-        if (requestedFriends.isEmpty()) {
-            return "redirect:/";
+        if(userRepository.findRequestedFriends(user.getEmail()).size() > 0){
+            return "redirect:/myRequestedFriends";
         }
-        return "redirect:/myRequestedFriends";
+        return "redirect:/";
+
     }
 
     private void authenticateManually(Utilisateur user) {
@@ -212,87 +198,9 @@ public class UserController extends CommonController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
-    // My friends: GET
-    @RequestMapping(value = "/myFriends", method = RequestMethod.GET)
-    public String myFriends(Model model) {
-        Utilisateur user = initSearchFormAndPrincipal(model, false);
-        model.addAttribute("user", userRepository.findOne(user.getId()));
-        model.addAttribute("pendingFriends", pendingFriendRepository.findPendingFriends(user.getId()));
-        return "user/my-friends";
-    }
 
-    // My Pendingfriends: GET
-    @RequestMapping(value = "/myRequestedFriends", method = RequestMethod.GET)
-    public String mypendingFriends(Model model) {
-        Utilisateur user = initSearchFormAndPrincipal(model, false);
-        List<PendingFriend> requestedFriends = pendingFriendRepository.findRequestedFriends(user.getEmail());
-        //TODO
-        if (requestedFriends.isEmpty()) {
-            return "redirect:/";
-        }
 
-        model.addAttribute("requestedFriends", requestedFriends);
-        return "user/my-requested-friends";
-    }
-
-    // Creer un ami : GET
-    @RequestMapping(value = "/ami/new", method = RequestMethod.GET)
-    public ModelAndView displayFormAmi(Model model) {
-        model.addAttribute("ami", new AmiBean());
-        initSearchFormAndPrincipal(model, false);
-        return new ModelAndView("user/add-friend");
-    }
-
-    // Creer un ami : POST
-    @RequestMapping(value = "/ami/new", method = RequestMethod.POST)
-    public String addUser(@ModelAttribute("ami") AmiBean amiBean, Model model, BindingResult result) throws UnsupportedEncodingException, MessagingException {
-
-        Utilisateur userConnected = initSearchFormAndPrincipal(model, false);
-
-        Utilisateur userDetail = userRepository.findOne(userConnected.getId());
-        if (userConnected == null) {
-            return "redirect:/";
-        }
-        String emailEmetteur = userConnected.getEmail();
-
-        String emailFriend = amiBean.getEmail1();
-        if (StringUtils.hasText(emailFriend) && checkEmail(emailFriend) && !emailFriend.equals(emailEmetteur)) {
-            addPendingFriendAndSendMail(emailFriend, userDetail, emailEmetteur);
-        } else {
-            result.rejectValue("email1", "error_email");
-            model.addAttribute("ami", amiBean);
-            return "user/add-friend";
-        }
-        return "redirect:/myFriends";
-    }
-
-    @RequestMapping(value = "/accepterAmi", method = RequestMethod.POST)
-    public String accepterAmi(@ModelAttribute("friend_id") String idFriend, Model model) {
-        Utilisateur userConnected = initSearchFormAndPrincipal(model, false);
-        Utilisateur userDetail = userRepository.findOne(userConnected.getId());
-        Utilisateur userFriend = userRepository.findOne(idFriend);
-
-        userDetail.getListFriendsId().add(idFriend);
-        userRepository.saveUser(userDetail);
-
-        userFriend.getListFriendsId().add(userConnected.getId());
-        userRepository.saveUser(userFriend);
-        //Get pending friend of friend and desactivate
-
-        Set<String> pendingFriendId = userFriend.getListPendingFriendsId();
-        List<PendingFriend> pendingFriend = pendingFriendRepository.findAll(pendingFriendId);
-        String emailUserConnected = userDetail.getEmail();
-
-        for (PendingFriend pf : pendingFriend) {
-            if (pf.getEmail().equals(emailUserConnected)) {
-                pf.setActif(false);
-                pendingFriendRepository.save(pf);
-            }
-        }
-        return "redirect:/myFriends";
-    }
-
-    private boolean checkEmail(String email) {
+    public static boolean checkEmail(String email) {
         boolean result = true;
         try {
             InternetAddress emailAddr = new InternetAddress(email);
@@ -303,16 +211,5 @@ public class UserController extends CommonController {
         return result;
     }
 
-    private void addPendingFriendAndSendMail(String email, Utilisateur user, String emailEmetteur) throws UnsupportedEncodingException, MessagingException {
-        PendingFriend emailUser = new PendingFriend(email);
-        emailUser.setUserId(user.getId());
-        emailUser.setActif(true);
-        pendingFriendRepository.save(emailUser);
-        sendMailAmi(emailEmetteur, email);
-    }
-
-    private void sendMailAmi(String emetteur, String mailDestinataire) throws UnsupportedEncodingException, MessagingException {
-        mailService.sendEmail(emetteur + " souhaite vous ajouter en tant qu'ami afin d'échanger des livres. Connectez-vous ou inscrivez vous sur livresentreamis.com afin de rentrer dans la communatuté!", mailDestinataire, "Livres entre Amis - Nouvelle demande d'ami");
-    }
 
 }

@@ -5,8 +5,8 @@
      <div class="col-md-2"></div>
       <div class="col-md-8">
         <c:choose>
-        <c:when test="${fn:length(user.userFriends) gt 0}">
-            <c:forEach items="${user.userFriends}" var="ami">
+        <c:when test="${fn:length(userFriends) gt 0}">
+            <c:forEach items="${userFriends}" var="ami">
                 <b><c:out value="${ami.fullName}" /></b> : <a href="users/${ami.id}">Voir ses livres et ceux de ses amis</a> <br/>
             </c:forEach>
         </c:when>
@@ -18,7 +18,7 @@
         <c:when test="${fn:length(pendingFriends) gt 0}">
             <h3>Mes amis inactifs (attente de leur confirmation)</h3>
             <c:forEach items="${pendingFriends}" var="emailUser">
-                <c:out value="${emailUser.email}" /><br />
+                <c:out value="${emailUser}" /><br />
             </c:forEach>
         </c:when>
         </c:choose>

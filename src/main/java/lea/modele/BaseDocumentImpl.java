@@ -4,8 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.*;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-
+@Document
 public class BaseDocumentImpl  {
 
     /**

@@ -61,13 +61,13 @@
                 </div>
                 <div class="form-group">
                     <select name="categorie" class="form-control">
-                        <option value="">-- Sélectionner --</option>
+                        <option value="">-- Sï¿½lectionner --</option>
                         <c:forEach items="${categories}" var="cat">
-                            <c:if test="${cat.id eq command.categorie.id}" >
-                                 <option value="${cat.id}" selected>${cat.libelleCat}</option>
+                            <c:if test="${cat.id eq command.categorieId}" >
+                                 <option value="${cat.id}" selected>${cat.name}</option>
                             </c:if>
-                            <c:if test="${cat.id ne command.categorie.id}" >
-                                <option value="${cat.id}">${cat.libelleCat}</option>
+                            <c:if test="${cat.id ne command.categorieId}" >
+                                <option value="${cat.id}">${cat.name}</option>
                             </c:if>
                         </c:forEach>
                     </select>
@@ -92,7 +92,7 @@
      <div id="footer" class="row">
         <ul class="nav nav-pills">
             <li><a href="mentions">Mentions l&eacute;gales</a></li>
-            <li><a href="comment">Comment ça marche?</a></li>
+            <li><a href="comment">Comment ï¿½a marche?</a></li>
         </ul>
     </div>
   </body>

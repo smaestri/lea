@@ -2,20 +2,20 @@ package lea.modele;
 
 public class Categorie extends BaseDocumentImpl{
 
-    private String libelleCat;
+    private String name;
 
-    public String getLibelleCat() {
-        return libelleCat;
+    public String getName() {
+        return name;
     }
 
-    public void setLibelleCat(String libelleCat) {
-        this.libelleCat = libelleCat;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
     public String toString() {
         return "Categorie{" +
-                "libelleCat='" + libelleCat + '\'' +
+                "name='" + name + '\'' +
                 '}';
     }
 }

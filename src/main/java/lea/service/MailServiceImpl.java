@@ -14,8 +14,7 @@ import java.util.Properties;
 @Component("realMail")
 public class MailServiceImpl implements MailService {
 
-    public void sendEmail(String contenu, String destinataire, String subject) throws UnsupportedEncodingException, MessagingException {
-
+    public void sendEmail(String content, String object, String receiver, String sender) throws UnsupportedEncodingException, MessagingException {
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
@@ -32,9 +31,9 @@ public class MailServiceImpl implements MailService {
         MimeMessage msg = new MimeMessage(session);
         msg.setFrom(new InternetAddress("livresentreamis5@gmail.com", "Livres entre Amis"));
         msg.addRecipient(Message.RecipientType.TO,
-                new InternetAddress(destinataire, ""));
-        msg.setSubject(subject, "UTF-8");
-        msg.setText(contenu, "UTF-8");
+                new InternetAddress(receiver, ""));
+        msg.setSubject(object, "UTF-8");
+        msg.setText(content, "UTF-8");
         msg.setHeader("Content-Type", "text/plain; charset=UTF-8");
 
         Transport.send(msg);

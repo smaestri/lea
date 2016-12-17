@@ -8,9 +8,9 @@ import java.util.Set;
 
 public interface EmpruntRepository {
 
-    List<Emprunt> findEmprunts(String idEmprunt, boolean b);
+    List<Emprunt> findEmprunts(String idUser, boolean b);
 
-    Set<String> getCommentaires(String empruntId);
+    List<String> getCommentaires(String empruntId);
 
     List<Emprunt> findPrets(String id, boolean b);
 
@@ -19,4 +19,6 @@ public interface EmpruntRepository {
     Emprunt findOne(String empruntId);
 
     Emprunt updateEmprunt(Emprunt emprunt);
+
+    List<Emprunt> findAllEmprunts(List<String> listPretsId);
 }

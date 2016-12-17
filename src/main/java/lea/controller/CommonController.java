@@ -2,11 +2,9 @@ package lea.controller;
 
 import lea.modele.Emprunt;
 import lea.modele.Livre;
-import lea.modele.PendingFriend;
 import lea.modele.Utilisateur;
 import lea.repository.categorie.CategorieRepository;
 import lea.repository.emprunt.EmpruntRepository;
-import lea.repository.pendingfriend.PendingFriendRepository;
 import lea.repository.user.UserRepository;
 import lea.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +29,6 @@ public class CommonController {
     @Autowired
     EmpruntRepository empruntRepository;
 
-
-    @Autowired
-    PendingFriendRepository pendingFriendRepository;
-
     protected Utilisateur getPrincipal() {
         Utilisateur user = null;
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -49,55 +43,44 @@ public class CommonController {
         return user;
     }
 
-
     protected Utilisateur initSearchFormAndPrincipal(Model model, boolean shouldInitInputSearch) {
-        Utilisateur user = getPrincipal();
-        if (user != null && user.getEmail() != null) {
+        Utilisateur userSpring = getPrincipal();
+
+        if (userSpring != null && userSpring.getEmail() != null) {
+
+            String userId = userSpring.getId();
+            // nedd reload user
+            Utilisateur user = this.userRepository.findOne(userId);
             model.addAttribute("userConnected", user);
             if (!shouldInitInputSearch) {
                 model.addAttribute("command", new Livre());
             }
-
-            Utilisateur userDetail = userRepository.findOne(user.getId());
-            model.addAttribute("hasFriend", !userDetail.getListFriendsId().isEmpty());
-            model.addAttribute("hasFriend", !userDetail.getListFriendsId().isEmpty());
+            model.addAttribute("hasFriend", !user.getListFriendsId().isEmpty());
             model.addAttribute("categories", categorieRepository.findAll());
 
-            // TODO find a bettar way to retrieve users
-            List<PendingFriend> requestedFriends = pendingFriendRepository.findRequestedFriends(user.getEmail());
-            List<Utilisateur> users = new ArrayList<Utilisateur>();
-            for (PendingFriend pf : requestedFriends) {
-                Utilisateur one = userRepository.findOne(pf.getUserId());
-                users.add(one);
-            }
-
-            model.addAttribute("requestedFriends",users);
+            // Show the requested friends
+            List<Utilisateur> requestedFriends = this.userRepository.findRequestedFriends(user.getEmail());
+            model.addAttribute("requestedFriends", requestedFriends);
 
             //filtrer nombre d'emprunt actif
-            Set<String> listPretsId = userDetail.getListPretsId();
-            Set<String> listEmpruntsId = userDetail.getListEmpruntsId();
-
+            List<String> listPretsId = user.getListPretsId();
+            List<String> listEmpruntsId = user.getListEmpruntsId();
             int nbpret = 0;
             int nbemprunt = 0;
 
-            for (String pretId : listPretsId) {
-                Emprunt emp = empruntRepository.findOne(pretId);
-
-                if (emp.isActif()) {
-                    nbpret++;
-                }
+            if (listPretsId != null && listPretsId.size() > 0) {
+                List<Emprunt> prets = empruntRepository.findAllEmprunts(listPretsId);
+                nbpret = prets.size();
             }
-            for (String empId : listEmpruntsId) {
-                Emprunt emp = empruntRepository.findOne(empId);
-                if (emp.isActif()) {
-                    nbemprunt++;
-                }
+            if (listPretsId != null && listPretsId.size() > 0) {
+                List<Emprunt> emprunts = empruntRepository.findAllEmprunts(listEmpruntsId);
+                nbemprunt = emprunts.size();
             }
             model.addAttribute("nbPrets", nbpret);
             model.addAttribute("nbEmprunts", nbemprunt);
-            return userDetail;
+            return user;
         }
 
-        return user;
+        return null;
     }
 }

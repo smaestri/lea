@@ -1,7 +1,6 @@
 package lea.repository.livre;
 
 import lea.modele.Livre;
-import lea.modele.PendingFriend;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -26,16 +25,11 @@ class LivreRepositoryImpl implements LivreRepository {
     }
 
     @Override
-    public Livre saveLivre(Livre livre) {
-        return mongoLivreRepository.save(livre);
-
-    }
-
-    @Override
     public Livre findOne(String bookId) {
         return mongoLivreRepository.findOne(bookId);
     }
 
+    /*
     @Override
     public void supprimerLivre(String bookId) {
         Criteria criteria = Criteria.where("id").in(bookId);
@@ -43,6 +37,7 @@ class LivreRepositoryImpl implements LivreRepository {
         mongoTemplate.remove(query, Livre.class);
 
     }
+    */
 
     @Override
     public List<Livre> findAll(Set<String> listLivresId) {

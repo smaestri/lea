@@ -32,7 +32,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         return authorities;
     }
 
-    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
 
         List<Utilisateur> allUsers = userRepository.findByEmail(login);

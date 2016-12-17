@@ -4,8 +4,6 @@ import java.util.Date;
 
 public class Avis extends BaseDocumentImpl {
 
-    private Livre livre;
-
     // FOREIGN KEY
     private String userId;
 
@@ -14,14 +12,6 @@ public class Avis extends BaseDocumentImpl {
     private int note;
 
     private Date dateavis;
-
-    public Livre getLivre() {
-        return livre;
-    }
-
-    public void setLivre(Livre livre) {
-        this.livre = livre;
-    }
 
     public String getLibelle() {
         return libelle;
@@ -39,7 +29,6 @@ public class Avis extends BaseDocumentImpl {
         this.note = note;
     }
 
-
     public String getUserId() {
         return userId;
     }
@@ -51,7 +40,6 @@ public class Avis extends BaseDocumentImpl {
     @Override
     public String toString() {
         return "Avis{" +
-                ", livre=" + livre +
                 ", userId=" + userId +
                 ", libelle='" + libelle + '\'' +
                 ", note=" + note +

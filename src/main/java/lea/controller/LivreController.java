@@ -1,5 +1,6 @@
 package lea.controller;
 
+import lea.commun.StatutEmprunt;
 import lea.modele.Categorie;
 import lea.modele.Livre;
 import lea.modele.Utilisateur;
@@ -62,8 +63,8 @@ public class LivreController extends CommonController {
         for (String friendId : principal.getListFriendsId()) {
             Utilisateur friend = userRepository.findOne(friendId);
             Utilisateur userDetail = userRepository.findOne(friend.getId());
-            for (String livreId : userDetail.getListLivresId()) {
-                Livre livre = this.livreRepository.findOne(livreId);
+            for (Livre livre : userDetail.getLivres()) {
+                // Livre livre = this.livreRepository.findOne(livreId);
                 addBookinlist(result, livre, categorieId, titre);
             }
             for (String friend2levelId : userDetail.getListFriendsId()) {
@@ -71,9 +72,9 @@ public class LivreController extends CommonController {
                 Utilisateur userDetail2level = userRepository.findOne(friend2levelId);
                 //L'ami d'ami ne doit pas etre l'utilisateur connecté
                 if (!userDetail2level.getEmail().equals(principal.getEmail())) {
-                    for (String livreId : userDetail2level.getListLivresId()) {
+                    for (Livre livre : userDetail2level.getLivres()) {
 
-                        Livre livre = this.livreRepository.findOne(livreId);
+                        //Livre livre = this.livreRepository.findOne(livreId);
                         //Si le livre n'a pas deja été ajoute (ami nbiveau 1 peut avoir le livre)
                         if (!isBookInside(result, livre.getId())) {
                             addBookinlist(result, livre, categorieId, titre);
@@ -136,9 +137,9 @@ public class LivreController extends CommonController {
 
     @RequestMapping(value = "/livres/{livre}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public Livre detailLivreHandler(@PathVariable("livre") String livre) {
-        // initSearchFormAndPrincipal(model, false);
-        Livre livreDetail = livreRepository.findOne(livre);
+    public Livre detailLivreHandler(Model model, @PathVariable("livre") String idLivre) {
+        Utilisateur utilisateur = initSearchFormAndPrincipal(model, false);
+        Livre livreDetail = utilisateur.getLivre(idLivre);
         try {
             setBookImage(livreDetail);
         } catch (IOException e) {
@@ -162,8 +163,8 @@ public class LivreController extends CommonController {
     // Editer un livre : GET
     @RequestMapping(value = "/livres/edit/{livre}", method = RequestMethod.GET)
     public String editLivre(@PathVariable("livre") String livreId, Model model) {
-        initSearchFormAndPrincipal(model, false);
-        model.addAttribute("livre", livreRepository.findOne(livreId));
+        Utilisateur utilisateur = initSearchFormAndPrincipal(model, false);
+        model.addAttribute("livre", utilisateur.getLivre(livreId));
         return "livre/add-book";
     }
 
@@ -182,6 +183,8 @@ public class LivreController extends CommonController {
 
         Utilisateur user = initSearchFormAndPrincipal(model, false);
 
+        livre.setStatut(StatutEmprunt.FREE);
+
         if (livre == null || livre.getTitreBook() == null || livre.getTitreBook().isEmpty()) {
             result.rejectValue("titreBook", "titreBook.notvalid", "Veuillez indiquer un titre");
             return "livre/add-book";
@@ -197,8 +200,7 @@ public class LivreController extends CommonController {
             return "livre/add-book";
         }
 
-        livre.setUserId(user.getId());
-        livreRepository.saveLivre(livre);
+        userRepository.saveLivre(user, livre);
         return "redirect:/myBooks";
     }
 
@@ -206,17 +208,18 @@ public class LivreController extends CommonController {
     // My books
     @RequestMapping(value = "/myBooks", method = RequestMethod.GET)
     public String myBooks(Model model) throws IOException {
-        Utilisateur user = initSearchFormAndPrincipal(model, false);
+        Utilisateur userDetail = initSearchFormAndPrincipal(model, false);
 
+        List<Livre> livres = userDetail.getLivres();
         //Convert to list to get ordrer
-        List<String> listeRetour = new ArrayList<String>(user.getListLivresId());
-
-        for (String livreId : listeRetour) {
-            Livre livre = livreRepository.findOne(livreId);
-            this.setBookImage(livre);
+        if (livres != null && userDetail.getLivres().size() > 0) {
+            // List<Livre> livres = livreRepository.findAll(user.getListLivresId());
+            for (Livre livre : userDetail.getLivres()) {
+                this.setBookImage(livre);
+            }
+            model.addAttribute("mesLivres", livres);
+            model.addAttribute("userId", userDetail.getId());
         }
-
-        model.addAttribute("mesLivres", listeRetour);
 
         return "livre/my-books";
     }
@@ -225,13 +228,7 @@ public class LivreController extends CommonController {
     @RequestMapping(value = "/deleteBook", method = RequestMethod.POST)
     public String deleteLivre(@ModelAttribute("book_id") String bookId) throws Exception {
         Utilisateur user = getPrincipal();
-        Livre livre = livreRepository.findOne(bookId);
-        Utilisateur proprietaire = this.userRepository.findOne(livre.getUserId());
-
-        if (!proprietaire.getEmail().equals(user.getEmail())) {
-            throw new Exception("Probleme de securite");
-        }
-        livreRepository.supprimerLivre(bookId);
+        userRepository.supprimerLivre(bookId, user.getId());
         return "redirect:/myBooks";
     }
 
@@ -239,7 +236,7 @@ public class LivreController extends CommonController {
     @RequestMapping(value = "/livres/{bookId}/edit", method = {RequestMethod.PUT, RequestMethod.POST})
     public String proceddEditLivre(@ModelAttribute("livre") Livre livre, SessionStatus status) {
         Utilisateur user = getPrincipal();
-        livreRepository.saveLivre(livre);
+        userRepository.saveLivre(user, livre);
         status.setComplete();
         return "redirect:/account";
     }

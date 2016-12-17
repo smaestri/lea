@@ -1,7 +1,9 @@
 package lea.modele;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lea.commun.StatutEmprunt;
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Transient;
 
 import java.util.List;
 import java.util.Set;
@@ -31,6 +33,24 @@ public class Livre extends BaseDocumentImpl {
 
     private StatutEmprunt statut;
 
+    @Transient
+    private Categorie categorie;
+
+    @Transient
+    @JsonIgnore
+    private String userId;
+
+    @Transient
+    @JsonIgnore
+    private String userName;
+
+    public List<Avis> getAvis() {
+        return avis;
+    }
+
+    public void setAvis(List<Avis> avis) {
+        this.avis = avis;
+    }
 
     public String getAuteur() {
         return auteur;
@@ -98,6 +118,29 @@ public class Livre extends BaseDocumentImpl {
         this.categorieId = categorieId;
     }
 
+    public Categorie getCategorie() {
+        return categorie;
+    }
+
+    public void setCategorie(Categorie categorie) {
+        this.categorie = categorie;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
     @Override
     public String toString() {
@@ -113,4 +156,5 @@ public class Livre extends BaseDocumentImpl {
                 ", statut=" + statut +
                 '}';
     }
+
 }

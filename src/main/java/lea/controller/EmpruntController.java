@@ -49,8 +49,11 @@ public class EmpruntController extends CommonController {
         Utilisateur principal = initSearchFormAndPrincipal(model, false);
         List<Emprunt> emprunts = empruntRepository.findEmprunts(principal.getId(), true);
         for (Emprunt emp : emprunts) {
-            Livre one = this.livreRepository.findOne(emp.getLivreId());
-            LivreController.setBookImage(one);
+            emp.setPreteur(userRepository.findOne(emp.getPreteurId()));
+            emp.setEmprunteur(userRepository.findOne(emp.getEmprunteurId()));
+            Livre book = userRepository.findBook(emp.getLivreId());
+            emp.setLivre(book);
+            LivreController.setBookImage(book);
         }
 
         model.addAttribute("empruntsCourants", emprunts);
@@ -60,8 +63,13 @@ public class EmpruntController extends CommonController {
     @RequestMapping(value = "/echanges", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public List<Commentaire> getEchanges(Model model, @RequestParam(value = "empruntId", required = false) String empruntId) throws ServletException, IOException {
-        List<String> commentsid = empruntRepository.getCommentaires(empruntId);
-        return commentaireRepository.findAll(commentsid);
+        List<Commentaire> comments = empruntRepository.getCommentaires(empruntId);
+        //set user author
+        for(Commentaire com : comments){
+            com.setUser(this.userRepository.findOne(com.getAuteur()));
+        }
+
+        return comments;
     }
 
     @RequestMapping(value = "/prets", method = RequestMethod.GET)
@@ -70,8 +78,11 @@ public class EmpruntController extends CommonController {
         List<Emprunt> prets = empruntRepository.findPrets(principal.getId(), true);
         setIntermediaire(principal, prets, false);
         for (Emprunt emp : prets) {
-            Livre livre = livreRepository.findOne(emp.getLivreId());
-            LivreController.setBookImage(livre);
+            emp.setPreteur(userRepository.findOne(emp.getPreteurId()));
+            emp.setEmprunteur(userRepository.findOne(emp.getEmprunteurId()));
+            Livre book = userRepository.findBook(emp.getLivreId());
+            emp.setLivre(book);
+            LivreController.setBookImage(book);
         }
         model.addAttribute("pretsCourants", prets);
         return "emprunt/list-pret";
@@ -100,28 +111,25 @@ public class EmpruntController extends CommonController {
         return "Veuillez confirmer que vous souhaitez effectuer une demande d'emprunt pour ce livre à votre ami " + proprietaire.getFullName();
     }
 
-
     @RequestMapping(value = "/emprunter", method = RequestMethod.POST)
     public String processNewEmpruntForm(EmpruntBean empruntBean) throws ParseException { //@RequestBody EmpruntBean empruntBean
         Utilisateur principal = getPrincipal();
         Utilisateur proprietaire = userRepository.findOne(empruntBean.getIdProprietaire());
-        Utilisateur emprunteur = userRepository.findOne(principal.getId());
         Emprunt emprunt = new Emprunt();
         emprunt.setActif(true);
         emprunt.setDateDemande(new Date());
-        emprunt.setEmprunteurId(emprunteur.getId());
+        emprunt.setEmprunteurId(principal.getId());
         emprunt.setPreteurId(proprietaire.getId());
-
         emprunt.setLivreId(empruntBean.getIdLivre());
-        this.empruntRepository.addEmprunt(emprunt);
         if (!StringUtils.isEmpty(empruntBean.getTxtRencontre())) {
             Commentaire comm = new Commentaire();
             comm.setMessage(empruntBean.getTxtRencontre());
-            comm.setDateMessage(new Date());
-            comm.setEmpruntId(emprunt.getId());
-            comm.setUserId(emprunteur.getId());
-            this.commentaireRepository.save(comm);
+            comm.setAuteur(principal.getId());
+            emprunt.getCommentaires().add(comm);
         }
+        this.empruntRepository.saveEmprunt(emprunt);
+        this.userRepository.updateBookStatus(proprietaire, emprunt.getLivreId(), StatutEmprunt.REQUESTED);
+
         Utilisateur intermediaire;
         String txtIntermediaire = "";
         try {
@@ -134,10 +142,10 @@ public class EmpruntController extends CommonController {
             return null;
         }
         try {
-            Livre livre = livreRepository.getLivreDetail(Integer.valueOf(empruntBean.getIdLivre()));
-            String content = "Livres entre Amis - nouvelle demande d'emprunt de la part de " + emprunteur.getFullName() + txtIntermediaire + " pour le livre '" + livre.getTitreBook() + "'. Connectez-vous au site pour consulter et accepter cet emprunt!";
+            Livre livre = proprietaire.getLivre(empruntBean.getIdLivre());
+            String content = "Livres entre Amis - nouvelle demande d'emprunt de la part de " + principal.getFullName() + txtIntermediaire + " pour le livre '" + livre.getTitreBook() + "'. Connectez-vous au site pour consulter et accepter cet emprunt!";
             String object = "Nouvelle demande d'emprunt";
-            mailService.sendEmail(content, object, proprietaire.getEmail(), emprunteur.getEmail());
+            mailService.sendEmail(content, object, proprietaire.getEmail(), principal.getEmail());
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (MessagingException e) {
@@ -178,16 +186,13 @@ public class EmpruntController extends CommonController {
         if (!principal.getId().equals(emprunt.getPreteurId())) {
             throw new Exception("Probleme de securite");
         }
-
-        Livre livre = livreRepository.findOne(emprunt.getLivreId());
-        livre.setStatut(StatutEmprunt.CURRENT);
-        userRepository.saveLivre(principal, livre);
+        this.userRepository.updateBookStatus(principal, emprunt.getLivreId(), StatutEmprunt.CURRENT);
         emprunt.setActif(true);
-        empruntRepository.updateEmprunt(emprunt);
+        empruntRepository.saveEmprunt(emprunt);
         String emprunteurId = emprunt.getEmprunteurId();
         Utilisateur emprunteur = userRepository.findOne(emprunteurId);
         Utilisateur preteur = userRepository.findOne(emprunt.getPreteurId());
-        String content = preteur.getFullName() + " a accepté votre demande d'emprunt pour le livre " + livre.getTitreBook() + ". Connectez-vous au site pour retourner le livre une fois que vous l'avez lu!";
+        String content = preteur.getFullName() + " a accepté votre demande d'emprunt pour le livre " + preteur.getLivre(emprunt.getId()).getTitreBook() + ". Connectez-vous au site pour retourner le livre une fois que vous l'avez lu!";
         String object = "Le prêteur a accepté votre demande d'emprunt!";
         mailService.sendEmail(content, object, principal.getEmail(), emprunteur.getEmail());
         return "redirect:/prets";
@@ -200,18 +205,14 @@ public class EmpruntController extends CommonController {
         if (!principal.getId().equals(emprunt.getPreteurId())) {
             throw new Exception("Probleme de securite");
         }
-        String livreId = emprunt.getLivreId();
-        Livre livre = livreRepository.findOne(livreId);
-        livre.setStatut(StatutEmprunt.FREE);
-        userRepository.saveLivre(principal, livre);
+        this.userRepository.updateBookStatus(principal, emprunt.getLivreId(), StatutEmprunt.FREE);
         emprunt.setActif(false);
         emprunt.setMotifRefus(refus);
-        empruntRepository.updateEmprunt(emprunt);
+        empruntRepository.saveEmprunt(emprunt);
         Utilisateur emprunteur = userRepository.findOne(emprunt.getEmprunteurId());
         String content = principal.getFullName() + " a refusé votre demande d'emprunt avec le motif :" + refus + ". Le livre est à nouveau empruntable.";
         String object =  "Refus de la demande d'emprunt";
         mailService.sendEmail(content, object, emprunteur.getEmail(), principal.getEmail());
-        //return "emprunt/list-pret";
         return "redirect:/prets";
     }
 
@@ -222,15 +223,11 @@ public class EmpruntController extends CommonController {
         if (!principal.getId().equals(emprunt.getEmprunteurId())) {
             throw new Exception("Probleme de securite");
         }
-        String livreId = emprunt.getLivreId();
-        Livre livre = livreRepository.findOne(livreId);
-        livre.setStatut(StatutEmprunt.SENT);
-        userRepository.saveLivre(principal, livre);
-
-        emprunt.setActif(true);
-        empruntRepository.updateEmprunt(emprunt);
-        Utilisateur emprunteur = userRepository.findOne(emprunt.getEmprunteurId());
         Utilisateur preteur = userRepository.findOne(emprunt.getPreteurId());
+        this.userRepository.updateBookStatus(preteur, emprunt.getLivreId(), StatutEmprunt.SENT);
+        emprunt.setActif(true);
+        empruntRepository.saveEmprunt(emprunt);
+        Utilisateur emprunteur = userRepository.findOne(emprunt.getEmprunteurId());
         String object =  "L'emprunteur vous a renvoyé le livre";
         String content = emprunteur.getFullName() + " vous a renvoyé le livre. Vous pouvez donc clore l'emprunt en vous connectant au site!";
         mailService.sendEmail(content, object, preteur.getEmail(), emprunteur.getEmail());
@@ -244,12 +241,9 @@ public class EmpruntController extends CommonController {
         if (!principal.getId().equals(emprunt.getPreteurId())) {
             throw new Exception("Probleme de securite");
         }
-        String livreId = emprunt.getLivreId();
-        Livre livre = livreRepository.findOne(livreId);
-        livre.setStatut(StatutEmprunt.FREE);
-        userRepository.saveLivre(principal, livre);
+        this.userRepository.updateBookStatus(principal, emprunt.getLivreId(), StatutEmprunt.FREE);
         emprunt.setActif(false);
-        empruntRepository.updateEmprunt(emprunt);
+        empruntRepository.saveEmprunt(emprunt);
         Utilisateur emprunteur = userRepository.findOne(emprunt.getEmprunteurId());
         String content = "Le preteur a clot l'emprunt. Vous pouvez consulter celui-ci dans votre compte, à la rubrique 'Vos emprunts historiés'.";
         String object = "Le preteur a clos l'emprunt.";
@@ -260,12 +254,13 @@ public class EmpruntController extends CommonController {
     @RequestMapping(value = "/addComment/{empruntId}", method = RequestMethod.POST)
     public String addCommentaire(@PathVariable("empruntId") String empruntId, @RequestBody String message) throws ServletException, IOException {
         Utilisateur principal = getPrincipal();
+        Emprunt emprunt = this.empruntRepository.findOne(empruntId);
         Commentaire comm = new Commentaire();
-        comm.setUserId(principal.getId());
-        comm.setEmpruntId(empruntId);
         comm.setDateMessage(new Date());
         comm.setMessage(message);
-        commentaireRepository.save(comm);
+        comm.setAuteur(principal.getId());
+        emprunt.getCommentaires().add(comm);
+        empruntRepository.saveEmprunt(emprunt);
         return "redirect:/prets";
     }
 

@@ -7,8 +7,6 @@ import java.util.Set;
 
 public interface LivreRepository {
 
-    Livre getLivreDetail(Integer integer);
-
     Livre findOne(String bookId);
 
     List<Livre> findAll(Set<String> listLivresId);

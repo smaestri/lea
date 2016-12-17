@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ImportResource;
 
 @SpringBootApplication
 @ImportResource({
-        "security.xml"
+        "security.xml", "messages.xml"
 })
 public class Application extends SpringBootServletInitializer {
         public static void main(String[] args) throws Exception {

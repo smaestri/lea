@@ -1,17 +1,17 @@
 package lea.modele;
 
+import org.springframework.data.annotation.Transient;
+
 import java.util.Date;
 
 public class Commentaire extends BaseDocumentImpl implements Comparable<Commentaire> {
 
-
-    //FORIGN KEY
-    private String empruntId;
-    private String userId;
-
+    private String auteur; //ID user
     private String message;
     private Date dateMessage;
 
+    @Transient
+    private Utilisateur user;
 
     public String getMessage() {
         return message;
@@ -19,14 +19,6 @@ public class Commentaire extends BaseDocumentImpl implements Comparable<Commenta
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public String getEmpruntId() {
-        return empruntId;
-    }
-
-    public void setEmpruntId(String empruntId) {
-        this.empruntId = empruntId;
     }
 
     public Date getDateMessage() {
@@ -37,12 +29,20 @@ public class Commentaire extends BaseDocumentImpl implements Comparable<Commenta
         this.dateMessage = dateMessage;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getAuteur() {
+        return auteur;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setAuteur(String auteur) {
+        this.auteur = auteur;
+    }
+
+    public Utilisateur getUser() {
+        return user;
+    }
+
+    public void setUser(Utilisateur user) {
+        this.user = user;
     }
 
     @Override
@@ -56,10 +56,8 @@ public class Commentaire extends BaseDocumentImpl implements Comparable<Commenta
     @Override
     public String toString() {
         return "Commentaire{" +
-                "empruntId='" + empruntId + '\'' +
                 ", message='" + message + '\'' +
                 ", dateMessage=" + dateMessage +
-                ", userId='" + userId + '\'' +
                 '}';
     }
 }

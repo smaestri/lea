@@ -60,30 +60,26 @@ public class LivreController extends CommonController {
                              @RequestParam("categorie") String categorieId) throws ServletException, IOException {
         Utilisateur principal = initSearchFormAndPrincipal(model, true);
         List<Livre> result = new ArrayList<Livre>();
-        for (String friendId : principal.getListFriendsId()) {
-            Utilisateur friend = userRepository.findOne(friendId);
-            Utilisateur userDetail = userRepository.findOne(friend.getId());
-            for (Livre livre : userDetail.getLivres()) {
-                // Livre livre = this.livreRepository.findOne(livreId);
+        List<Utilisateur> friends = userRepository.findFriends(principal.getListFriendsId());
+        for (Utilisateur friend : friends) {
+            for (Livre livre : friend.getLivres()) {
+                livre.setUserId(friend.getId());
                 addBookinlist(result, livre, categorieId, titre);
             }
-            for (String friend2levelId : userDetail.getListFriendsId()) {
-
-                Utilisateur userDetail2level = userRepository.findOne(friend2levelId);
+            List<Utilisateur> subFriends = userRepository.findFriends(friend.getListFriendsId());
+            for (Utilisateur subFriend :subFriends) {
                 //L'ami d'ami ne doit pas etre l'utilisateur connecté
-                if (!userDetail2level.getEmail().equals(principal.getEmail())) {
-                    for (Livre livre : userDetail2level.getLivres()) {
-
-                        //Livre livre = this.livreRepository.findOne(livreId);
-                        //Si le livre n'a pas deja été ajoute (ami nbiveau 1 peut avoir le livre)
+                if (!subFriend.getEmail().equals(principal.getEmail())) {
+                    for (Livre livre : subFriend.getLivres()) {
+                        //Si le livre n'a pas deja été ajoute (ami niveau 1 peut avoir le livre)
                         if (!isBookInside(result, livre.getId())) {
+                            livre.setUserId(subFriend.getId());
                             addBookinlist(result, livre, categorieId, titre);
                         }
                     }
                 }
             }
         }
-
 
         // setter barre de recherche
         Livre livreRetour = new Livre();
@@ -95,6 +91,7 @@ public class LivreController extends CommonController {
             livreRetour.setCategorieId(cat.getId());
         }
 
+        model.addAttribute("userId", livreRetour);
         model.addAttribute("command", livreRetour);
         model.addAttribute("livres", result);
 
@@ -102,9 +99,7 @@ public class LivreController extends CommonController {
     }
 
     private void addBookinlist(List<Livre> result, Livre livre, String categorieId, String titre) throws IOException {
-
         boolean addLivre = true;
-
         if (categorieId != null && StringUtils.hasText(categorieId)) {
             if (livre.getCategorieId().equals(categorieId)) {
                 addLivre = false;
@@ -125,7 +120,6 @@ public class LivreController extends CommonController {
     }
 
     private boolean isBookInside(List<Livre> liste, String id) {
-
         for (Livre livre : liste) {
             if (livre.getId().equals(id)) {
                 return true;
@@ -137,9 +131,10 @@ public class LivreController extends CommonController {
 
     @RequestMapping(value = "/livres/{livre}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public Livre detailLivreHandler(Model model, @PathVariable("livre") String idLivre) {
-        Utilisateur utilisateur = initSearchFormAndPrincipal(model, false);
-        Livre livreDetail = utilisateur.getLivre(idLivre);
+    public Livre detailLivreHandler(@PathVariable("livre") String idLivre) {
+        Livre livreDetail = userRepository.findBook(idLivre);
+        Categorie cat = this.categorieRepository.findOne(livreDetail.getCategorieId());
+        livreDetail.setCategorie(cat);
         try {
             setBookImage(livreDetail);
         } catch (IOException e) {

@@ -1,16 +1,11 @@
 package lea.modele;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.Size;
-import java.awt.peer.ChoicePeer;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class Utilisateur extends BaseDocumentImpl {
 

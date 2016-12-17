@@ -63,6 +63,7 @@ public class UserController extends CommonController {
         // set image
         if (!listeLivre.isEmpty()) {
             for (Livre livre : listeLivre) {
+                livre.setUserId(friend.getId());
                 LivreController.setBookImage(livre);
             }
         }
@@ -73,6 +74,7 @@ public class UserController extends CommonController {
             if (!subFriend.getId().equals(userConnected.getId())) {
                 List<Livre> listeLivre2 = subFriend.getLivres();
                 for (Livre livre : listeLivre2) {
+                    livre.setUserId(subFriend.getId());
                     LivreController.setBookImage(livre);
                 }
                 friend.getUserFriends().add(subFriend);
@@ -95,21 +97,30 @@ public class UserController extends CommonController {
         List<Emprunt> prets = empruntRepository.findPrets(userConnected.getId(), false);
         List<Emprunt> emprunts = empruntRepository.findEmprunts(userConnected.getId(), false);
 
-
         for (Emprunt pret : prets) {
-            Livre livre = livreRepository.findOne(pret.getLivreId());
+            Livre livre = userRepository.findBook(pret.getLivreId());
             LivreController.setBookImage(livre);
+            setEmpruntOjects(pret);
+        }
+
+        for (Emprunt emp : emprunts) {
+            Livre livre = userRepository.findBook(emp.getLivreId());
+            LivreController.setBookImage(livre);
+            setEmpruntOjects(emp);
         }
         model.addAttribute("pretsHistories", prets);
-        for (Emprunt emp : emprunts) {
-            Livre livre = livreRepository.findOne(emp.getLivreId());
-            LivreController.setBookImage(livre);
-        }
         model.addAttribute("empruntsHistories", emprunts);
-        model.addAttribute("livre", new Livre());
+        //for my profile
         model.addAttribute("utilisateur", userRepository.findOne(userConnected.getId()));
 
         return "user/account";
+    }
+
+    private void setEmpruntOjects(Emprunt emp){
+        emp.setPreteur(userRepository.findOne(emp.getPreteurId()));
+        emp.setEmprunteur(userRepository.findOne(emp.getEmprunteurId()));
+        Livre book = userRepository.findBook(emp.getLivreId());
+        emp.setLivre(book);
     }
 
     // Creer un user : GET

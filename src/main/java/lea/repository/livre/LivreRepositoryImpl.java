@@ -20,11 +20,6 @@ class LivreRepositoryImpl implements LivreRepository {
     private MongoTemplate mongoTemplate = null;
 
     @Override
-    public Livre getLivreDetail(Integer integer) {
-        return null;
-    }
-
-    @Override
     public Livre findOne(String bookId) {
         return mongoLivreRepository.findOne(bookId);
     }

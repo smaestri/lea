@@ -24,7 +24,6 @@
                 <!-- Emprunt refusé-->
                 <c:if test="${not empty emprunt.motifRefus}"> Cet emprunt a &eacutet&eacute refus&eacute. Motif : <c:out value="${emprunt.motifRefus}" /><br/></c:if>
                 <br/>
-            </div>
         </div>
         <div class="col-md-4">
             <div style="margin-bottom: 10px; margin-top: 20px">

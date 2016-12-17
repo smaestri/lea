@@ -1,5 +1,6 @@
 package lea.repository.user;
 
+import lea.commun.StatutEmprunt;
 import lea.modele.Livre;
 import lea.modele.UserProfile;
 import lea.modele.Utilisateur;
@@ -30,4 +31,8 @@ public interface UserRepository {
     List<Utilisateur>  findRequestedFriends(String email);
 
     void deletePendingFriend(Utilisateur userDetail, String pendingEmail);
+
+    Livre findBook(String id);
+
+    void updateBookStatus(Utilisateur proprietaire, String livreId, StatutEmprunt status);
 }

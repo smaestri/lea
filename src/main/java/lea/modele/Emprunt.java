@@ -1,6 +1,9 @@
 package lea.modele;
 
+import org.springframework.data.annotation.Transient;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -11,7 +14,6 @@ public class Emprunt extends BaseDocumentImpl implements Serializable {
     private String emprunteurId;
     private String preteurId;
     private String livreId;
-    private List<String> listeCommentaireid;
 
     private Date debutEmprunt;
     private Date finEmprunt;
@@ -20,6 +22,15 @@ public class Emprunt extends BaseDocumentImpl implements Serializable {
 
     private String motifRefus;
     private String intermediaire;
+
+    private List<Commentaire> commentaires = new ArrayList<Commentaire>();
+
+    @Transient
+    private Utilisateur preteur;
+    @Transient
+    private Utilisateur emprunteur;
+    @Transient
+    private Livre livre;
 
     public String getIntermediaire() {
         return intermediaire;
@@ -35,14 +46,6 @@ public class Emprunt extends BaseDocumentImpl implements Serializable {
 
     public void setLivreId(String livreId) {
         this.livreId = livreId;
-    }
-
-    public List<String> getListeCommentaireid() {
-        return listeCommentaireid;
-    }
-
-    public void setListeCommentaireid(List<String> listeCommentaireid) {
-        this.listeCommentaireid = listeCommentaireid;
     }
 
     public String getEmprunteurId() {
@@ -102,13 +105,20 @@ public class Emprunt extends BaseDocumentImpl implements Serializable {
         this.dateDemande = dateDemande;
     }
 
+    public List<Commentaire> getCommentaires() {
+        return commentaires;
+    }
+
+    public void setCommentaires(List<Commentaire> commentaires) {
+        this.commentaires = commentaires;
+    }
+
     @Override
     public String toString() {
         return "Emprunt{" +
                 "emprunteurId='" + emprunteurId + '\'' +
                 ", preteurId='" + preteurId + '\'' +
                 ", livreId='" + livreId + '\'' +
-                ", listeCommentaireid=" + listeCommentaireid +
                 ", debutEmprunt=" + debutEmprunt +
                 ", finEmprunt=" + finEmprunt +
                 ", actif=" + actif +
@@ -116,5 +126,29 @@ public class Emprunt extends BaseDocumentImpl implements Serializable {
                 ", motifRefus='" + motifRefus + '\'' +
                 ", intermediaire='" + intermediaire + '\'' +
                 '}';
+    }
+
+    public void setPreteur(Utilisateur preteur) {
+        this.preteur = preteur;
+    }
+
+    public Utilisateur getPreteur() {
+        return preteur;
+    }
+
+    public Utilisateur getEmprunteur() {
+        return emprunteur;
+    }
+
+    public Livre getLivre() {
+        return livre;
+    }
+
+    public void setEmprunteur(Utilisateur emprunteur) {
+        this.emprunteur = emprunteur;
+    }
+
+    public void setLivre(Livre livre) {
+        this.livre = livre;
     }
 }

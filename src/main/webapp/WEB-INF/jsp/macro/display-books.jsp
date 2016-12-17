@@ -17,7 +17,7 @@
                  </div>
                  <div class="bloc_button">
                    <c:if test="${livre.statut eq 'FREE'}">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-emprunt" data-livre="${livre.id}" data-proprietaire="${userId}">Emprunter</button>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-emprunt" data-livre="${livre.id}" data-proprietaire="${livre.userId}">Emprunter</button>
                    </c:if>
                    <c:if test="${livre.statut ne 'FREE'}">
                       <span>Livre non <br/> empruntable </span>

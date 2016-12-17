@@ -28,9 +28,9 @@ public class EmpruntRepositoryImpl implements EmpruntRepository {
     }
 
     @Override
-    public List<String> getCommentaires(String empruntId) {
+    public List<Commentaire> getCommentaires(String empruntId) {
         Emprunt one = mongoEmpruntRepository.findOne(empruntId);
-        return one.getListeCommentaireid();
+        return one.getCommentaires();
     }
 
     @Override
@@ -41,22 +41,14 @@ public class EmpruntRepositoryImpl implements EmpruntRepository {
     }
 
     @Override
-    public Emprunt addEmprunt(Emprunt emprunt) {
+    public Emprunt saveEmprunt(Emprunt emprunt) {
         Emprunt newEmprunt = mongoEmpruntRepository.save(emprunt);
         return newEmprunt;
-
     }
 
     @Override
     public Emprunt findOne(String empruntId) {
         return mongoEmpruntRepository.findOne(empruntId);
-    }
-
-    @Override
-    public Emprunt updateEmprunt(Emprunt emprunt) {
-        Emprunt emp = mongoEmpruntRepository.save(emprunt);
-        return emp;
-
     }
 
     @Override

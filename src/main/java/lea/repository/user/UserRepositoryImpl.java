@@ -1,5 +1,6 @@
 package lea.repository.user;
 
+import lea.commun.StatutEmprunt;
 import lea.modele.Livre;
 import lea.modele.UserProfile;
 import lea.modele.Utilisateur;
@@ -90,6 +91,25 @@ public class UserRepositoryImpl implements UserRepository {
         Update update = new Update();
         update.pull("listPendingFriends",  pendingEmail);
         mongoTemplate.updateFirst(q, update, Utilisateur.class);
+    }
+
+    @Override
+    public Livre findBook(String bookId) {
+        Query q = new Query();
+        q.addCriteria(Criteria.where("livres.id").is(new ObjectId(bookId)));
+        Utilisateur user = mongoTemplate.findOne(q, Utilisateur.class);
+        Livre livre = user.getLivre(bookId);
+        livre.setUserId(user.getId());
+        return livre;
+    }
+
+    @Override
+    public void updateBookStatus(Utilisateur proprietaire, String livreId, StatutEmprunt statut) {
+        Query q = new Query();
+        q.addCriteria(Criteria.where("id").is(new ObjectId(proprietaire.getId())).and("livres.id").is(new ObjectId(livreId)));
+        Update update = new Update();
+        update.set("livres.$.statut", statut);
+        mongoTemplate.updateFirst(q, update,Utilisateur.class);
     }
 
     @Override

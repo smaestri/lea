@@ -1,40 +1,35 @@
 package lea.controller;
 
-import lea.dto.AvisBean;
 import lea.modele.Avis;
+import lea.modele.BaseDocumentImpl;
 import lea.modele.Livre;
 import lea.modele.Utilisateur;
-import lea.repository.avis.AvisRepository;
-import lea.repository.livre.LivreRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Date;
 
 @RestController
 public class AvisController extends CommonController {
 
-    @Autowired
-    LivreRepository livreRepository;
-
-    @Autowired
-    private AvisRepository avisRepository;
-
-    // Liste emprunts de l'utilisateur connecté
     @RequestMapping(value = "/addAvis/{bookId}", method = RequestMethod.POST)
     @ResponseBody
-    public String addAvis(@PathVariable("bookId") String livreId, @RequestBody AvisBean avisBean) throws Exception {
-        Livre livreDetail = livreRepository.findOne(livreId);
+    public Livre addAvis(@PathVariable("bookId") String livreId, @RequestBody Avis avis) throws Exception {
         Utilisateur principal = getPrincipal();
-        Avis avis = new Avis();
-        avis.setDateavis(new Date());
-        avis.setLibelle(avisBean.getLibelle());
-        avis.setNote(avisBean.getNote());
-        avis.setUserId(principal.getId());
-        //avis.setLivre(livreDetail);
-        avisRepository.save(avis);
+        avis.setAuteur(principal.getId());
+        Livre livre = userRepository.findBook(livreId);
+        Utilisateur proprietaire = userRepository.findOne(livre.getUserId());
+        userRepository.saveAvis(proprietaire, livre, avis);
+        return livre;
+    }
 
-        return "";
+    @RequestMapping(value = "/deleteAvis/{avisId}", method = RequestMethod.POST)
+    @ResponseBody
+    public Livre deleteAvis(@PathVariable("avisId") String avisId) throws Exception {
+//        Utilisateur principal = getPrincipal();
+//        Avis avis = userRepository.findAvis(avisId);
+//        Livre livre = userRepository.findBook(avis.getBookId());
+//        livre.getAvis().remove(avis);
+//        userRepository.deleteAvis(principal, livre, avis);
+//        return livre;
+        return null;
     }
 
 }

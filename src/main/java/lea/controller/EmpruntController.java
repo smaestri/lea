@@ -6,9 +6,7 @@ import lea.modele.Commentaire;
 import lea.modele.Emprunt;
 import lea.modele.Livre;
 import lea.modele.Utilisateur;
-import lea.repository.commentaire.CommentaireRepository;
 import lea.repository.emprunt.EmpruntRepository;
-import lea.repository.livre.LivreRepository;
 import lea.repository.user.UserRepository;
 import lea.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +27,6 @@ import java.util.List;
 @Controller
 public class EmpruntController extends CommonController {
 
-
-    @Autowired
-    private LivreRepository livreRepository;
-    @Autowired
-    private CommentaireRepository commentaireRepository;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -42,7 +35,6 @@ public class EmpruntController extends CommonController {
     @Qualifier("mockMail")
     //@Qualifier("realMail")
     private MailService mailService;
-
 
     @RequestMapping(value = "/emprunts", method = RequestMethod.GET)
     public String livresHandler(Model model) throws ServletException, IOException {
@@ -87,7 +79,6 @@ public class EmpruntController extends CommonController {
         model.addAttribute("pretsCourants", prets);
         return "emprunt/list-pret";
     }
-
 
     private void setIntermediaire(Utilisateur principal, List<Emprunt> prets, boolean isEmprunt) {
         for (Emprunt emprunt : prets) {
@@ -178,7 +169,6 @@ public class EmpruntController extends CommonController {
         return null;
     }
 
-
     @RequestMapping(value = "/accepterEmprunt/{empruntId}", method = RequestMethod.POST)
     public String accepterEmprunt(@PathVariable("empruntId") String empruntId) throws Exception {
         Utilisateur principal = getPrincipal();
@@ -192,7 +182,7 @@ public class EmpruntController extends CommonController {
         String emprunteurId = emprunt.getEmprunteurId();
         Utilisateur emprunteur = userRepository.findOne(emprunteurId);
         Utilisateur preteur = userRepository.findOne(emprunt.getPreteurId());
-        String content = preteur.getFullName() + " a accepté votre demande d'emprunt pour le livre " + preteur.getLivre(emprunt.getId()).getTitreBook() + ". Connectez-vous au site pour retourner le livre une fois que vous l'avez lu!";
+        String content = preteur.getFullName() + " a accepté votre demande d'emprunt pour le livre " + preteur.getLivre(emprunt.getLivreId()).getTitreBook() + ". Connectez-vous au site pour retourner le livre une fois que vous l'avez lu!";
         String object = "Le prêteur a accepté votre demande d'emprunt!";
         mailService.sendEmail(content, object, principal.getEmail(), emprunteur.getEmail());
         return "redirect:/prets";
@@ -227,9 +217,10 @@ public class EmpruntController extends CommonController {
         this.userRepository.updateBookStatus(preteur, emprunt.getLivreId(), StatutEmprunt.SENT);
         emprunt.setActif(true);
         empruntRepository.saveEmprunt(emprunt);
+        Livre livre = userRepository.findBook(emprunt.getLivreId());
         Utilisateur emprunteur = userRepository.findOne(emprunt.getEmprunteurId());
         String object =  "L'emprunteur vous a renvoyé le livre";
-        String content = emprunteur.getFullName() + " vous a renvoyé le livre. Vous pouvez donc clore l'emprunt en vous connectant au site!";
+        String content = emprunteur.getFullName() + " vous a renvoyé le livre " + livre.getTitreBook() +". Vous pouvez donc clore l'emprunt en vous connectant au site!";
         mailService.sendEmail(content, object, preteur.getEmail(), emprunteur.getEmail());
         return "redirect:/prets";
     }

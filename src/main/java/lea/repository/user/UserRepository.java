@@ -1,9 +1,7 @@
 package lea.repository.user;
 
 import lea.commun.StatutEmprunt;
-import lea.modele.Livre;
-import lea.modele.UserProfile;
-import lea.modele.Utilisateur;
+import lea.modele.*;
 
 import java.util.List;
 import java.util.Set;
@@ -34,5 +32,11 @@ public interface UserRepository {
 
     Livre findBook(String id);
 
+    Avis findAvis(String avisId);
+
     void updateBookStatus(Utilisateur proprietaire, String livreId, StatutEmprunt status);
+
+    void saveAvis(Utilisateur principal, Livre livre, Avis newAvis);
+
+    void deleteAvis(Utilisateur principal, Livre livre, BaseDocumentImpl avis);
 }

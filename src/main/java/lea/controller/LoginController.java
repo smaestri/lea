@@ -2,14 +2,11 @@ package lea.controller;
 
 import lea.modele.Avis;
 import lea.modele.Livre;
-import lea.repository.avis.AvisRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -20,14 +17,10 @@ import java.util.List;
 @Controller
 public class LoginController extends CommonController {
 
-    @Autowired
-    AvisRepository avisRepository;
-
-    @GetMapping("/")
+    @RequestMapping(value = "/")
     public String welcomeHandler(Model model) {
-
         initSearchFormAndPrincipal(model, false);
-        List<Avis> avis = avisRepository.getLastAvis();
+        List<Avis> avis = null; //avisRepository.getLastAvis();
         model.addAttribute("avis", avis);
         return "index";
     }

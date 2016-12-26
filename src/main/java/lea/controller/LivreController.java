@@ -4,7 +4,6 @@ import lea.commun.StatutEmprunt;
 import lea.modele.Categorie;
 import lea.modele.Livre;
 import lea.modele.Utilisateur;
-import lea.repository.livre.LivreRepository;
 import lea.repository.user.UserRepository;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -28,11 +27,7 @@ import java.util.List;
 public class LivreController extends CommonController {
 
     @Autowired
-    LivreRepository livreRepository;
-
-    @Autowired
     UserRepository userRepository;
-
 
     public static void setBookImage(Livre livre) throws IOException {
         CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -91,7 +86,6 @@ public class LivreController extends CommonController {
             livreRetour.setCategorieId(cat.getId());
         }
 
-        model.addAttribute("userId", livreRetour);
         model.addAttribute("command", livreRetour);
         model.addAttribute("livres", result);
 

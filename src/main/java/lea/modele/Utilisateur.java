@@ -199,4 +199,15 @@ public class Utilisateur extends BaseDocumentImpl {
     public List<Utilisateur> getUserFriends() {
         return userFriends;
     }
+
+    public Avis getAvis(String avisId) {
+        for(Livre livre : this.livres) {
+            for (Avis avis : livre.getAvis()) {
+                if (avis.getId().equals(avisId)) {
+                    return avis;
+                }
+            }
+        }
+        return null;
+    }
 }

@@ -5,7 +5,6 @@ import lea.modele.Livre;
 import lea.modele.UserProfile;
 import lea.modele.Utilisateur;
 import lea.repository.emprunt.EmpruntRepository;
-import lea.repository.livre.LivreRepository;
 import lea.repository.userprofile.UserProfileRepository;
 import lea.service.CustomUserDetailsService;
 import lea.service.MailService;
@@ -43,9 +42,6 @@ public class UserController extends CommonController {
 
     @Autowired
     private UserProfileRepository userProfileRepository;
-
-    @Autowired
-    private LivreRepository livreRepository;
 
     @Autowired
     @Qualifier("mockMail")

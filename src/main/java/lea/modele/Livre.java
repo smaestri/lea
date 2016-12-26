@@ -5,6 +5,7 @@ import lea.commun.StatutEmprunt;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Transient;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -15,9 +16,8 @@ public class Livre extends BaseDocumentImpl {
     }
 
     // FK
-    //private String utilisateurId;
     private String categorieId;
-    private List<Avis> avis;
+    private List<Avis> avis = new ArrayList<Avis>();
 
     private String titreBook;
 

@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Controller
+@RestController
 public class LivreController extends CommonController {
 
     @Autowired
@@ -108,7 +108,7 @@ public class LivreController extends CommonController {
         }
 
         if (addLivre) {
-            setBookImage(livre);
+            //setBookImage(livre);
             result.add(livre);
         }
     }
@@ -124,15 +124,20 @@ public class LivreController extends CommonController {
     }
 
     @RequestMapping(value = "/livres/{livre}", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
     public Livre detailLivreHandler(@PathVariable("livre") String idLivre) {
         Livre livreDetail = userRepository.findBook(idLivre);
-        Categorie cat = this.categorieRepository.findOne(livreDetail.getCategorieId());
-        livreDetail.setCategorie(cat);
-        try {
-            setBookImage(livreDetail);
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        if(livreDetail.getCategorieId() != null){
+            Categorie cat = this.categorieRepository.findOne(livreDetail.getCategorieId());
+            livreDetail.setCategorie(cat);
+            /*
+            try {
+                setBookImage(livreDetail);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            */
+
         }
 
         return livreDetail;
@@ -148,69 +153,50 @@ public class LivreController extends CommonController {
 	}
 	*/
 
-
-    // Editer un livre : GET
-    @RequestMapping(value = "/livres/edit/{livre}", method = RequestMethod.GET)
-    public String editLivre(@PathVariable("livre") String livreId, Model model) {
-        Utilisateur utilisateur = initSearchFormAndPrincipal(model, false);
-        model.addAttribute("livre", utilisateur.getLivre(livreId));
-        return "livre/add-book";
-    }
-
-    // Creer un livre : GET
-    @RequestMapping(value = "/livres/new", method = RequestMethod.GET)
-    public String addLivre(Model model) {
-        initSearchFormAndPrincipal(model, false);
-        model.addAttribute("livre", new Livre());
-        return "livre/add-book";
-    }
-
-
     // Creer un livre : POST
     @RequestMapping(value = "/livres/new", method = RequestMethod.POST)
-    public String addLivre(@ModelAttribute("livre") Livre livre, BindingResult result, Model model) {
-
-        Utilisateur user = initSearchFormAndPrincipal(model, false);
-
+    public Livre addLivre(@RequestBody Livre livre) {
+        Utilisateur user = initSearchFormAndPrincipal(null, false);
         livre.setStatut(StatutEmprunt.FREE);
-
-        if (livre == null || livre.getTitreBook() == null || livre.getTitreBook().isEmpty()) {
-            result.rejectValue("titreBook", "titreBook.notvalid", "Veuillez indiquer un titre");
-            return "livre/add-book";
-        }
-
-        if (livre.getAuteur() == null || livre.getAuteur().isEmpty()) {
-            result.rejectValue("auteur", "auteur.notvalid", "Veuillez indiquer un auteur");
-            return "livre/add-book";
-        }
-
-        if (livre.getCategorieId() == null) {
-            result.rejectValue("categorie", "categorie.notvalid", "Veuillez indiquer une catégorie");
-            return "livre/add-book";
-        }
-
         userRepository.saveLivre(user, livre);
-        return "redirect:/myBooks";
+        return livre;
     }
 
+    // Editer un livre : PUT
+    @RequestMapping(value = "/livres/{livre}", method = RequestMethod.PUT)
+    public Livre addLivre(@PathVariable("livre") String livreId, @RequestBody Livre newLivre) {
+        Utilisateur user = initSearchFormAndPrincipal(null, false);
+        Livre livre = user.getLivre(livreId);
+        updateBook(livre, newLivre);
+        userRepository.saveLivre(user, livre);
+        return livre;
+    }
+
+    /**
+     * FIXME better way to manage it?
+     */
+    private void updateBook(Livre exitingBook, Livre newLivre) {
+        exitingBook.setAuteur(newLivre.getAuteur());
+        exitingBook.setDescription(newLivre.getDescription());
+        exitingBook.setCategorieId(newLivre.getCategorieId());
+        exitingBook.setTitreBook(newLivre.getTitreBook());
+        exitingBook.setIsbn(newLivre.getIsbn());
+
+    }
 
     // My books
     @RequestMapping(value = "/myBooks", method = RequestMethod.GET)
-    public String myBooks(Model model) throws IOException {
+    public List<Livre> myBooks(Model model) throws IOException {
         Utilisateur userDetail = initSearchFormAndPrincipal(model, false);
-
         List<Livre> livres = userDetail.getLivres();
-        //Convert to list to get ordrer
-        if (livres != null && userDetail.getLivres().size() > 0) {
-            // List<Livre> livres = livreRepository.findAll(user.getListLivresId());
-            for (Livre livre : userDetail.getLivres()) {
+        /*
+        if (livres != null && livres.size() > 0) {
+            for (Livre livre : livres) {
                 this.setBookImage(livre);
             }
-            model.addAttribute("mesLivres", livres);
-            model.addAttribute("userId", userDetail.getId());
         }
-
-        return "livre/my-books";
+        */
+        return livres;
     }
 
     // Supprimer livre : POST
@@ -219,20 +205,6 @@ public class LivreController extends CommonController {
         Utilisateur user = getPrincipal();
         userRepository.supprimerLivre(bookId, user.getId());
         return "redirect:/myBooks";
-    }
-
-    // Editer livre : POST
-    @RequestMapping(value = "/livres/{bookId}/edit", method = {RequestMethod.PUT, RequestMethod.POST})
-    public String proceddEditLivre(@ModelAttribute("livre") Livre livre, SessionStatus status) {
-        Utilisateur user = getPrincipal();
-        userRepository.saveLivre(user, livre);
-        status.setComplete();
-        return "redirect:/account";
-    }
-
-    @ModelAttribute("categories")
-    public Collection<Categorie> populateCategories() {
-        return (Collection<Categorie>) this.categorieRepository.findAll();
     }
 
 }

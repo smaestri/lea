@@ -1,5 +1,7 @@
 package lea.controller;
 
+import com.google.gson.Gson;
+import lea.modele.Categorie;
 import lea.modele.Emprunt;
 import lea.modele.Livre;
 import lea.modele.Utilisateur;
@@ -51,16 +53,31 @@ public class CommonController {
             String userId = userSpring.getId();
             // nedd reload user
             Utilisateur user = this.userRepository.findOne(userId);
-            model.addAttribute("userConnected", user);
-            if (!shouldInitInputSearch) {
-                model.addAttribute("command", new Livre());
+            if (model != null){
+                model.addAttribute("userConnected", user);
             }
-            model.addAttribute("hasFriend", !user.getListFriendsId().isEmpty());
-            model.addAttribute("categories", categorieRepository.findAll());
+
+
+            if (model != null){
+                if (!shouldInitInputSearch) {
+                    model.addAttribute("command", new Livre());
+                }
+                model.addAttribute("hasFriend", !user.getListFriendsId().isEmpty());
+
+                //need convert to json
+                List<Categorie> all = categorieRepository.findAll();
+                Gson gson = new Gson();
+                String json = gson.toJson(all);
+
+                model.addAttribute("categories", json);
+            }
+
 
             // Show the requested friends
             List<Utilisateur> requestedFriends = this.userRepository.findRequestedFriends(user.getEmail());
-            model.addAttribute("requestedFriends", requestedFriends);
+            if (model != null) {
+                model.addAttribute("requestedFriends", requestedFriends);
+            }
 
             //filtrer nombre d'emprunt actif
             List<String> listPretsId = user.getListPretsId();
@@ -76,8 +93,10 @@ public class CommonController {
                 List<Emprunt> emprunts = empruntRepository.findAllEmprunts(listEmpruntsId);
                 nbemprunt = emprunts.size();
             }
-            model.addAttribute("nbPrets", nbpret);
-            model.addAttribute("nbEmprunts", nbemprunt);
+            if (model != null) {
+                model.addAttribute("nbPrets", nbpret);
+                model.addAttribute("nbEmprunts", nbemprunt);
+            }
             return user;
         }
 

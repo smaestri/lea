@@ -45,7 +45,7 @@ public class EmpruntController extends CommonController {
             emp.setEmprunteur(userRepository.findOne(emp.getEmprunteurId()));
             Livre book = userRepository.findBook(emp.getLivreId());
             emp.setLivre(book);
-            LivreController.setBookImage(book);
+            //LivreController.setBookImage(book);
         }
 
         model.addAttribute("empruntsCourants", emprunts);
@@ -74,7 +74,7 @@ public class EmpruntController extends CommonController {
             emp.setEmprunteur(userRepository.findOne(emp.getEmprunteurId()));
             Livre book = userRepository.findBook(emp.getLivreId());
             emp.setLivre(book);
-            LivreController.setBookImage(book);
+           // LivreController.setBookImage(book);
         }
         model.addAttribute("pretsCourants", prets);
         return "emprunt/list-pret";

@@ -3,13 +3,16 @@
 <head lang="en">
     <meta charset="UTF-8"/>
     <title>ReactJS + Spring Data REST</title>
-    <link rel="stylesheet" href="/default.css" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <link rel="stylesheet" href="assets/css/default.css" />
 </head>
 <body>
 
-<div id="react"></div>
-toto uttu
-<script src="built/bundle.js"></script>
+Test <span th:text="${userConnected.lastName}"></span>
+<input type="hidden" id="categories" th:value="${categories}" />
 
+<div id="app"></div>
+<script src="built/bundle.js"></script>
 </body>
 </html>

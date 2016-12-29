@@ -39,4 +39,5 @@ public interface UserRepository {
     void saveAvis(Utilisateur principal, Livre livre, Avis newAvis);
 
     void deleteAvis(Utilisateur principal, Livre livre, BaseDocumentImpl avis);
+    public Utilisateur findproprietaire(String bookId);
 }

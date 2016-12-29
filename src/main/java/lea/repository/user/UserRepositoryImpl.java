@@ -98,9 +98,22 @@ public class UserRepositoryImpl implements UserRepository {
         Query q = new Query();
         q.addCriteria(Criteria.where("livres.id").is(new ObjectId(bookId)));
         Utilisateur user = mongoTemplate.findOne(q, Utilisateur.class);
-        Livre livre = user.getLivre(bookId);
-        livre.setUserId(user.getId());
-        return livre;
+
+        if(user != null){
+            Livre livre = user.getLivre(bookId);
+            livre.setUserId(user.getId());
+            return livre;
+        }
+
+        return null;
+    }
+
+    @Override
+    public Utilisateur findproprietaire(String bookId) {
+        Query q = new Query();
+        q.addCriteria(Criteria.where("livres.id").is(new ObjectId(bookId)));
+        Utilisateur user = mongoTemplate.findOne(q, Utilisateur.class);
+        return user;
     }
 
     @Override

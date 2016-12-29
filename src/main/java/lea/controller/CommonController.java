@@ -54,7 +54,8 @@ public class CommonController {
             // nedd reload user
             Utilisateur user = this.userRepository.findOne(userId);
             if (model != null){
-                model.addAttribute("userConnected", user);
+                model.addAttribute("userId", user.getId());
+                model.addAttribute("userName", user.getFullName());
             }
 
 

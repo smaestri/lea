@@ -16,9 +16,10 @@ class EditBook extends React.Component{
     }
 
     componentDidMount(){
-        console.log('get book detail')
+
         //if id passed load exising book
         if(this.props.params && this.props.params.bookId ){
+            console.log('get book detail')
             helpers.getBookDetail(this.props.params.bookId).then((book) => {
                 //TODO : dispatch REDUX ACTION type LOAD
                 this.setState({book: book });

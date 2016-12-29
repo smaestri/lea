@@ -11,7 +11,6 @@ import lea.repository.user.UserRepository;
 import lea.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +23,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
-@Controller
+@RestController
 public class EmpruntController extends CommonController {
 
     @Autowired
@@ -37,8 +36,8 @@ public class EmpruntController extends CommonController {
     private MailService mailService;
 
     @RequestMapping(value = "/emprunts", method = RequestMethod.GET)
-    public String livresHandler(Model model) throws ServletException, IOException {
-        Utilisateur principal = initSearchFormAndPrincipal(model, false);
+    public List<Emprunt> livresHandler() throws ServletException, IOException {
+        Utilisateur principal = initSearchFormAndPrincipal(null, false);
         List<Emprunt> emprunts = empruntRepository.findEmprunts(principal.getId(), true);
         for (Emprunt emp : emprunts) {
             emp.setPreteur(userRepository.findOne(emp.getPreteurId()));
@@ -48,8 +47,8 @@ public class EmpruntController extends CommonController {
             //LivreController.setBookImage(book);
         }
 
-        model.addAttribute("empruntsCourants", emprunts);
-        return ("emprunt/list-emprunt");
+       // model.addAttribute("empruntsCourants", emprunts);
+        return emprunts;
     }
 
     @RequestMapping(value = "/echanges", method = RequestMethod.GET, produces = "application/json")
@@ -65,8 +64,8 @@ public class EmpruntController extends CommonController {
     }
 
     @RequestMapping(value = "/prets", method = RequestMethod.GET)
-    public String livresHandlerPrets(Model model) throws ServletException, IOException {
-        Utilisateur principal = initSearchFormAndPrincipal(model, false);
+    public  List<Emprunt> livresHandlerPrets() throws ServletException, IOException {
+        Utilisateur principal = initSearchFormAndPrincipal(null, false);
         List<Emprunt> prets = empruntRepository.findPrets(principal.getId(), true);
         setIntermediaire(principal, prets, false);
         for (Emprunt emp : prets) {
@@ -76,8 +75,8 @@ public class EmpruntController extends CommonController {
             emp.setLivre(book);
            // LivreController.setBookImage(book);
         }
-        model.addAttribute("pretsCourants", prets);
-        return "emprunt/list-pret";
+       // model.addAttribute("pretsCourants", prets);
+        return prets;
     }
 
     private void setIntermediaire(Utilisateur principal, List<Emprunt> prets, boolean isEmprunt) {
@@ -93,6 +92,7 @@ public class EmpruntController extends CommonController {
         }
     }
 
+    /*
     @RequestMapping(value = "/emprunter/{livreId}", method = RequestMethod.GET)
     @ResponseBody
     public String askEmprunt(@RequestParam(value = "proprietaire", required = false) String proprietaireId) {
@@ -101,11 +101,12 @@ public class EmpruntController extends CommonController {
         Utilisateur proprietaire = userRepository.findOne(proprietaireId);
         return "Veuillez confirmer que vous souhaitez effectuer une demande d'emprunt pour ce livre à votre ami " + proprietaire.getFullName();
     }
+    */
 
     @RequestMapping(value = "/emprunter", method = RequestMethod.POST)
-    public String processNewEmpruntForm(EmpruntBean empruntBean) throws ParseException { //@RequestBody EmpruntBean empruntBean
+    public String processNewEmpruntForm(@RequestBody EmpruntBean empruntBean) throws ParseException {
         Utilisateur principal = getPrincipal();
-        Utilisateur proprietaire = userRepository.findOne(empruntBean.getIdProprietaire());
+        Utilisateur proprietaire = userRepository.findproprietaire(empruntBean.getIdLivre());
         Emprunt emprunt = new Emprunt();
         emprunt.setActif(true);
         emprunt.setDateDemande(new Date());

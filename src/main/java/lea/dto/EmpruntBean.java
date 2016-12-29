@@ -6,7 +6,8 @@ package lea.dto;
 public class EmpruntBean {
 
     private String idLivre;
-    private String idProprietaire;
+
+    //private String idProprietaire;
     private String txtRencontre;
     private String mode;
 
@@ -25,14 +26,6 @@ public class EmpruntBean {
 
     public void setTxtRencontre(String txtRencontre) {
         this.txtRencontre = txtRencontre;
-    }
-
-    public String getIdProprietaire() {
-        return idProprietaire;
-    }
-
-    public void setIdProprietaire(String idProprietaire) {
-        this.idProprietaire = idProprietaire;
     }
 
     public String getMode() {

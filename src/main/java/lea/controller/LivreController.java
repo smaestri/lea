@@ -50,10 +50,9 @@ public class LivreController extends CommonController {
 
     // Recherche generale
     @RequestMapping(value = "/searchBook", method = RequestMethod.GET)
-    public String searchBook(Model model,
-                             @RequestParam(value = "titreBook", required = false) String titre,
-                             @RequestParam("categorie") String categorieId) throws ServletException, IOException {
-        Utilisateur principal = initSearchFormAndPrincipal(model, true);
+    public List<Livre> searchBook(@RequestParam(value = "titreBook", required = false) String titre,
+                             @RequestParam(value = "categorie", required = false) String categorieId) throws ServletException, IOException {
+        Utilisateur principal = initSearchFormAndPrincipal(null, true);
         List<Livre> result = new ArrayList<Livre>();
         List<Utilisateur> friends = userRepository.findFriends(principal.getListFriendsId());
         for (Utilisateur friend : friends) {
@@ -86,10 +85,10 @@ public class LivreController extends CommonController {
             livreRetour.setCategorieId(cat.getId());
         }
 
-        model.addAttribute("command", livreRetour);
-        model.addAttribute("livres", result);
+       // model.addAttribute("command", livreRetour);
+       // model.addAttribute("livres", result);
 
-        return "livre/search-result";
+        return result;
     }
 
     private void addBookinlist(List<Livre> result, Livre livre, String categorieId, String titre) throws IOException {
@@ -107,7 +106,7 @@ public class LivreController extends CommonController {
             }
         }
 
-        if (addLivre) {
+        if (addLivre && livre.getStatut() == StatutEmprunt.FREE) {
             //setBookImage(livre);
             result.add(livre);
         }
@@ -199,12 +198,12 @@ public class LivreController extends CommonController {
         return livres;
     }
 
-    // Supprimer livre : POST
-    @RequestMapping(value = "/deleteBook", method = RequestMethod.POST)
-    public String deleteLivre(@ModelAttribute("book_id") String bookId) throws Exception {
+    // Supprimer livre : DELETE
+    @RequestMapping(value = "/livres/{livre}", method = RequestMethod.DELETE)
+    public String deleteLivre(@PathVariable("livre") String livreId) throws Exception {
         Utilisateur user = getPrincipal();
-        userRepository.supprimerLivre(bookId, user.getId());
-        return "redirect:/myBooks";
+        userRepository.supprimerLivre(livreId, user.getId());
+        return "1";
     }
 
 }

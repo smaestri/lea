@@ -1,11 +1,12 @@
 import React from 'react';
+import { Link } from 'react-router'
 
 class SearchBar extends React.Component{
 
     render(){
         return(
             <div>
-               Search bar
+                <Link to="/list-book">Voir les livres empruntables</Link>
             </div>
         )
     }

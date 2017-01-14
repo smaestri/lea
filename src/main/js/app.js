@@ -9,6 +9,8 @@ import MyLoans from "./components/MyLoans";
 import MyLendings from "./components/MyLendings";
 import ListBooks from "./components/ListBooks";
 import EditBook from "./components/EditBook";
+import LoanDetail from "./components/LoanDetail";
+import BookDetail from "./components/BookDetail";
 
 //const store = createStore(todoReducer)
 
@@ -20,6 +22,8 @@ const render =() => {
                 <Route path="/edit-book" component={EditBook }/>
                 <Route path="/edit-book/:bookId" component={EditBook }/>
                 <Route path="/my-loans" component={MyLoans}/>
+                <Route path="/loan-detail/:loanId/:isLending" component={LoanDetail}/>
+                <Route path="/book-detail/:bookId" component={BookDetail}/>
                 <Route path="/list-book" component={ListBooks}/>
                 <Route path="/my-lendings" component={MyLendings}/>
             </Route>

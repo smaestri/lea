@@ -200,6 +200,8 @@ public class Utilisateur extends BaseDocumentImpl {
         return userFriends;
     }
 
+
+    //TODO  get direct child with adequate mongoDb query
     public Avis getAvis(String avisId) {
         for(Livre livre : this.livres) {
             for (Avis avis : livre.getAvis()) {

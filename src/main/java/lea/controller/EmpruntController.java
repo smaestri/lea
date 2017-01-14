@@ -11,7 +11,6 @@ import lea.repository.user.UserRepository;
 import lea.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,28 +38,8 @@ public class EmpruntController extends CommonController {
     public List<Emprunt> livresHandler() throws ServletException, IOException {
         Utilisateur principal = initSearchFormAndPrincipal(null, false);
         List<Emprunt> emprunts = empruntRepository.findEmprunts(principal.getId(), true);
-        for (Emprunt emp : emprunts) {
-            emp.setPreteur(userRepository.findOne(emp.getPreteurId()));
-            emp.setEmprunteur(userRepository.findOne(emp.getEmprunteurId()));
-            Livre book = userRepository.findBook(emp.getLivreId());
-            emp.setLivre(book);
-            //LivreController.setBookImage(book);
-        }
-
-       // model.addAttribute("empruntsCourants", emprunts);
+        setEmpruntobjects(emprunts);
         return emprunts;
-    }
-
-    @RequestMapping(value = "/echanges", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public List<Commentaire> getEchanges(Model model, @RequestParam(value = "empruntId", required = false) String empruntId) throws ServletException, IOException {
-        List<Commentaire> comments = empruntRepository.getCommentaires(empruntId);
-        //set user author
-        for(Commentaire com : comments){
-            com.setUser(this.userRepository.findOne(com.getAuteur()));
-        }
-
-        return comments;
     }
 
     @RequestMapping(value = "/prets", method = RequestMethod.GET)
@@ -68,14 +47,7 @@ public class EmpruntController extends CommonController {
         Utilisateur principal = initSearchFormAndPrincipal(null, false);
         List<Emprunt> prets = empruntRepository.findPrets(principal.getId(), true);
         setIntermediaire(principal, prets, false);
-        for (Emprunt emp : prets) {
-            emp.setPreteur(userRepository.findOne(emp.getPreteurId()));
-            emp.setEmprunteur(userRepository.findOne(emp.getEmprunteurId()));
-            Livre book = userRepository.findBook(emp.getLivreId());
-            emp.setLivre(book);
-           // LivreController.setBookImage(book);
-        }
-       // model.addAttribute("pretsCourants", prets);
+        setEmpruntobjects(prets);
         return prets;
     }
 
@@ -89,6 +61,25 @@ public class EmpruntController extends CommonController {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+
+    private void setEmpruntobjects(List<Emprunt> listeEmp) {
+        for (Emprunt emp : listeEmp) {
+            emp.setPreteur(userRepository.findOne(emp.getPreteurId()));
+            emp.setEmprunteur(userRepository.findOne(emp.getEmprunteurId()));
+            Livre book = userRepository.findBook(emp.getLivreId());
+            setCommentuser(emp);
+            emp.setLivre(book);
+        }
+    }
+
+
+    private void setCommentuser(Emprunt emp){
+        for(Commentaire comm : emp.getCommentaires()){
+            Utilisateur auteurComm = userRepository.findOne(comm.getAuteur());
+            comm.setUser(auteurComm);
         }
     }
 
@@ -186,7 +177,7 @@ public class EmpruntController extends CommonController {
         String content = preteur.getFullName() + " a accepté votre demande d'emprunt pour le livre " + preteur.getLivre(emprunt.getLivreId()).getTitreBook() + ". Connectez-vous au site pour retourner le livre une fois que vous l'avez lu!";
         String object = "Le prêteur a accepté votre demande d'emprunt!";
         mailService.sendEmail(content, object, principal.getEmail(), emprunteur.getEmail());
-        return "redirect:/prets";
+        return "OK";
     }
 
     @RequestMapping(value = "/refuserEmprunt/{empruntId}", method = RequestMethod.POST)
@@ -204,7 +195,7 @@ public class EmpruntController extends CommonController {
         String content = principal.getFullName() + " a refusé votre demande d'emprunt avec le motif :" + refus + ". Le livre est à nouveau empruntable.";
         String object =  "Refus de la demande d'emprunt";
         mailService.sendEmail(content, object, emprunteur.getEmail(), principal.getEmail());
-        return "redirect:/prets";
+        return "OK";
     }
 
     @RequestMapping(value = "/envoyerEmprunt/{empruntId}", method = RequestMethod.POST)
@@ -223,7 +214,7 @@ public class EmpruntController extends CommonController {
         String object =  "L'emprunteur vous a renvoyé le livre";
         String content = emprunteur.getFullName() + " vous a renvoyé le livre " + livre.getTitreBook() +". Vous pouvez donc clore l'emprunt en vous connectant au site!";
         mailService.sendEmail(content, object, preteur.getEmail(), emprunteur.getEmail());
-        return "redirect:/prets";
+        return "OK";
     }
 
     @RequestMapping(value = "/cloreEmprunt/{empruntId}", method = RequestMethod.POST)
@@ -240,20 +231,6 @@ public class EmpruntController extends CommonController {
         String content = "Le preteur a clot l'emprunt. Vous pouvez consulter celui-ci dans votre compte, à la rubrique 'Vos emprunts historiés'.";
         String object = "Le preteur a clos l'emprunt.";
         mailService.sendEmail(content, object, emprunteur.getEmail(), principal.getEmail());
-        return "redirect:/prets";
+        return "OK";
     }
-
-    @RequestMapping(value = "/addComment/{empruntId}", method = RequestMethod.POST)
-    public String addCommentaire(@PathVariable("empruntId") String empruntId, @RequestBody String message) throws ServletException, IOException {
-        Utilisateur principal = getPrincipal();
-        Emprunt emprunt = this.empruntRepository.findOne(empruntId);
-        Commentaire comm = new Commentaire();
-        comm.setDateMessage(new Date());
-        comm.setMessage(message);
-        comm.setAuteur(principal.getId());
-        emprunt.getCommentaires().add(comm);
-        empruntRepository.saveEmprunt(emprunt);
-        return "redirect:/prets";
-    }
-
 }

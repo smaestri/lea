@@ -1,5 +1,11 @@
 import axios from 'axios';
 
+// cache for loans, lendings, books
+let _loans = [];
+let _lendings = [];
+let _books = [];
+
+
 function getCsrf() {
     var metas = document.getElementsByTagName('meta');
     for (var i = 0; i < metas.length; i++) {
@@ -11,6 +17,37 @@ function getCsrf() {
 }
 
 var helpers = {
+
+
+    /*
+    // make helpers acting like a store
+    notifyChange: function () {
+        _changeListeners.forEach(function (listener) {
+            listener()
+        })
+    },
+
+    addChangeListener: function (listener) {
+        _changeListeners.push(listener)
+    },
+    */
+
+    getLoan: function (id) {
+        if (_loans && _loans.length > 0){
+            return _loans.filter((loan) => loan.id == id)[0]
+        }
+
+        if (_lendings && _lendings.length > 0){
+            return _lendings.filter((loan) => loan.id == id)[0]
+        }
+    },
+
+    getBook: function (id) {
+        if (_books && _books.length > 0){
+            return _books.filter((book) => book.id == id)[0]
+        }
+
+    },
 
     getMyBooks: function () {
         console.log('API get MY books')
@@ -28,6 +65,7 @@ var helpers = {
         console.log('API get ALL books')
         return axios.get('/searchBook')
             .then(function (response) {
+                _books = response.data;
                 console.log(response);
                 return response.data;
             })
@@ -36,10 +74,12 @@ var helpers = {
             });
     },
 
-    getLoans: function () {
+    getLoans:  () => {
         console.log('API get LOANS')
         return axios.get('/emprunts')
-            .then(function (response) {
+            .then((response) =>  {
+                _loans = response.data;
+                _lendings= undefined;
                 console.log(response);
                 return response.data;
             })
@@ -51,6 +91,20 @@ var helpers = {
     getLendings: function () {
         console.log('API get LENDINGS')
         return axios.get('/prets')
+            .then(function (response) {
+                _lendings = response.data;
+                _loans = undefined;
+                console.log(response);
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    },
+
+    getComments: function () {
+        console.log('API get comments')
+        return axios.get('/comments')
             .then(function (response) {
                 console.log(response);
                 return response.data;
@@ -144,6 +198,20 @@ var helpers = {
             });
     },
 
+    deleteComment: function(idComm){
+        console.log('DELETE COMM')
+        return axios.delete('/comments/' + idComm, {
+            headers: {'X-CSRF-Token': getCsrf()},
+        })
+            .then(function (response) {
+                console.log(response);
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    },
+
     saveBook: function (bookObj, idBook) {
 
         if (idBook) {
@@ -186,7 +254,87 @@ var helpers = {
                 console.log(error);
             });
 
-    }
+    },
+
+    saveComment: function (commObj, idComm, idLoan) {
+        if (idComm) {
+            console.log('UPDATE COMMENT')
+            return axios.put('/comments/' + idComm, {
+                message: commObj.message
+            }, {
+                headers: {'X-CSRF-Token': getCsrf()},
+            })
+                .then(function (response) {
+                    console.log(response);
+                    return response.data;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+
+        console.log('CREATE COMM')
+        return axios.post('/addComment/' + idLoan, {
+            message: commObj.message,
+        }, {
+            headers: {'X-CSRF-Token': getCsrf()},
+        })
+            .then(function (response) {
+                console.log(response);
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    },
+
+
+    saveAvis: function (avisObj, idAvis, idBook) {
+        if (idAvis) {
+            console.log('UPDATE AVIS')
+            return axios.put('/addAvis/' + idAvis, {
+                message: avisObj.message
+            }, {
+                headers: {'X-CSRF-Token': getCsrf()},
+            })
+                .then(function (response) {
+                    console.log(response);
+                    return response.data;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+
+        console.log('CREATE COMM')
+        return axios.post('/addAvis/' + idBook, {
+            message: commObj.message,
+        }, {
+            headers: {'X-CSRF-Token': getCsrf()},
+        })
+            .then(function (response) {
+                console.log(response);
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    },
+
+    deleteAvis: function(idAvis){
+        console.log('DELETE COMM')
+        return axios.delete('/avis/' + idAvis, {
+            headers: {'X-CSRF-Token': getCsrf()},
+        })
+            .then(function (response) {
+                console.log(response);
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    },
+
 
 };
 

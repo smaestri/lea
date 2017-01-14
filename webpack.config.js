@@ -1,3 +1,11 @@
+/*
+var HtmlWebpackPlugin = require('html-webpack-plugin')
+var HTMLWebpackPluginConfig = new HtmlWebpackPlugin({
+  template: __dirname + '/src/main/webapp/thymeleaf/index.html',
+  filename: 'index.html',
+  inject: 'body'
+});
+*/
 var path = require('path');
 
 const PATHS = {
@@ -6,12 +14,14 @@ const PATHS = {
 };
 
 module.exports = {
+
   entry: './src/main/js/app.js',
   output: {
     path: PATHS.build,
     filename: 'bundle.js'
   },
- /*
+
+  /*
   devServer: {
     inline: true,
     port: 3333
@@ -24,7 +34,6 @@ module.exports = {
     loaders:[
       {
         test: /\.js$/,
-        // include: path.resolve(__dirname, "/src"),
         exclude: /node_modules/,
         loader: 'babel',
         query: {
@@ -34,4 +43,5 @@ module.exports = {
     ]
 
   }
+  //plugins: [HTMLWebpackPluginConfig]
 }

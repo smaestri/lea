@@ -1,34 +1,32 @@
 package lea.controller;
 
-import lea.modele.Avis;
-import lea.modele.BaseDocumentImpl;
-import lea.modele.Livre;
-import lea.modele.Utilisateur;
+import lea.modele.*;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 @RestController
 public class AvisController extends CommonController {
 
-    @RequestMapping(value = "/addAvis/{bookId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/avis/{bookId}", method = RequestMethod.POST)
     @ResponseBody
-    public Livre addAvis(@PathVariable("bookId") String livreId, @RequestBody Avis avis) throws Exception {
-        Utilisateur principal = getPrincipal();
-        avis.setAuteur(principal.getId());
-        Livre livre = userRepository.findBook(livreId);
-        Utilisateur proprietaire = userRepository.findOne(livre.getUserId());
-        userRepository.saveAvis(proprietaire, livre, avis);
-        return livre;
+    public String addAvis(@PathVariable("bookId") String livreId, @RequestBody Avis avis) throws Exception {
+        Utilisateur proprietaire = userRepository.findproprietaire(livreId);
+        userRepository.saveAvis(proprietaire, livreId, avis);
+        return "OK";
     }
 
-    @RequestMapping(value = "/deleteAvis/{avisId}", method = RequestMethod.POST)
+    // Editer un avis : PUT
+    @RequestMapping(value = "/addAvis/{avisId}", method = RequestMethod.PUT)
+    public String editAvis(@RequestBody Avis avis) {
+        userRepository.updateAvis(avis);
+        return "OK";
+    }
+
+    @RequestMapping(value = "/avis/{avisId}", method = RequestMethod.DELETE)
     @ResponseBody
     public Livre deleteAvis(@PathVariable("avisId") String avisId) throws Exception {
-//        Utilisateur principal = getPrincipal();
-//        Avis avis = userRepository.findAvis(avisId);
-//        Livre livre = userRepository.findBook(avis.getBookId());
-//        livre.getAvis().remove(avis);
-//        userRepository.deleteAvis(principal, livre, avis);
-//        return livre;
+        userRepository.deleteAvis(avisId);
         return null;
     }
 

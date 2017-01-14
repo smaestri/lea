@@ -10,6 +10,8 @@ public interface EmpruntRepository {
 
     List<Emprunt> findEmprunts(String idUser, boolean b);
 
+    Emprunt findEmpruntFromCommentid(String idComment);
+
     List<Commentaire> getCommentaires(String empruntId);
 
     List<Emprunt> findPrets(String id, boolean b);
@@ -19,4 +21,10 @@ public interface EmpruntRepository {
     Emprunt findOne(String empruntId);
 
     List<Emprunt> findAllEmprunts(List<String> listPretsId);
+
+    Commentaire findComment(String commentId);
+
+    void saveComment(Commentaire comment);
+
+    void deleteComment(String commentId, String empruntId);
 }

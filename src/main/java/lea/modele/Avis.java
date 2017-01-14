@@ -1,10 +1,15 @@
 package lea.modele;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Transient;
 
 import java.util.Date;
 
 public class Avis extends BaseDocumentImpl {
+
+    public Avis(){
+        this.setId(ObjectId.get().toHexString());
+    }
 
     // FOREIGN KEY
     private String auteur;

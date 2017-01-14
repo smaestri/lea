@@ -7,14 +7,6 @@ class MyLoans extends React.Component{
     constructor(props) {
         super(props);
         this.state = {loans:[]};
-        this.sendLoan = this.sendLoan.bind(this);
-
-    }
-
-    sendLoan(idLoan){
-        helpers.sendLoan(idLoan).then(() => {
-            this.componentDidMount();
-        });
     }
 
     componentDidMount(){
@@ -31,7 +23,7 @@ class MyLoans extends React.Component{
     render(){
         console.log("render MyLoans")
         const loans = this.state.loans.map( loan => {
-            return <Loan key={loan.id} id={loan.id} loan={loan}  sendLoan={this.sendLoan}/>
+            return <Loan key={loan.id} id={loan.id} loan={loan} isLending={false}/>
         });
 
         return(

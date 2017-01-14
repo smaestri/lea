@@ -151,4 +151,14 @@ public class Emprunt extends BaseDocumentImpl implements Serializable {
     public void setLivre(Livre livre) {
         this.livre = livre;
     }
+
+    //TODO  get direct child with adequate mongoDb query
+    public Commentaire getCommentaire(String commId) {
+        for(Commentaire comm : this.commentaires) {
+            if(comm.getId().equals(commId)){
+                return comm;
+            }
+        }
+        return null;
+    }
 }

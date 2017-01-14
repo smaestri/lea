@@ -1,5 +1,6 @@
 package lea.modele;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Transient;
 
 import java.util.Date;
@@ -9,6 +10,10 @@ public class Commentaire extends BaseDocumentImpl implements Comparable<Commenta
     private String auteur; //ID user
     private String message;
     private Date dateMessage;
+
+    public Commentaire(){
+        this.setId(ObjectId.get().toHexString());
+    }
 
     @Transient
     private Utilisateur user;

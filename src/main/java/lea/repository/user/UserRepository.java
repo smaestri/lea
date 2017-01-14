@@ -36,8 +36,8 @@ public interface UserRepository {
 
     void updateBookStatus(Utilisateur proprietaire, String livreId, StatutEmprunt status);
 
-    void saveAvis(Utilisateur principal, Livre livre, Avis newAvis);
-
-    void deleteAvis(Utilisateur principal, Livre livre, BaseDocumentImpl avis);
+    public void updateAvis(Avis avis);
+    public void deleteAvis(String idAvis);
+    void saveAvis(Utilisateur user,String idLivre, Avis newAvis);
     public Utilisateur findproprietaire(String bookId);
 }

@@ -1,10 +1,7 @@
 package lea.repository.user;
 
 import lea.commun.StatutEmprunt;
-import lea.modele.Avis;
-import lea.modele.BaseDocumentImpl;
-import lea.modele.Livre;
-import lea.modele.Utilisateur;
+import lea.modele.*;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -135,28 +132,31 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void saveAvis(Utilisateur user, Livre livreAvis, Avis newAvis) {
-        Avis avisExist = getAvisFromBook(livreAvis, newAvis);
-        if (avisExist == null) {
-            livreAvis.getAvis().add(newAvis);
-            mongoTemplate.save(user);
-        } else {
-            Query q = new Query();
-            q.addCriteria(Criteria.where("id").is(new ObjectId(user.getId())).and("livres.id").is(new ObjectId(livreAvis.getId())).and("avis.id").is(newAvis.getId()));
-            Update update = new Update();
-            update.set("avis.$.libelle", newAvis.getLibelle());
-            update.set("avis.$.note", newAvis.getNote());
-            update.set("avis.$.dateavis", new Date());
-            mongoTemplate.updateFirst(q, update, Utilisateur.class);
-        }
+    public void updateAvis(Avis avis) {
+        Query q = new Query();
+        q.addCriteria(Criteria.where("livres.avis.id").is(new ObjectId(avis.getId())));
+        Update update = new Update();
+        update.set("livres.0.avis.0.note", avis.getNote());
+        update.set("livres.0.avis.0.libelle", avis.getLibelle());
+        //update.set("livres.0.avis.0.auteur", avis.getAuteur());
+
+        mongoTemplate.updateFirst(q, update, Utilisateur.class);
     }
 
     @Override
-    public void deleteAvis(Utilisateur principal, Livre livre, BaseDocumentImpl avis) {
+    public void saveAvis(Utilisateur user,String idLivre, Avis newAvis) {
         Query q = new Query();
-        q.addCriteria(Criteria.where("id").is(new ObjectId(principal.getId())).and("livres.id").is(new ObjectId(livre.getId())).and("livres.avis.id").is(new ObjectId(avis.getId())));
+        q.addCriteria(Criteria.where("livres.id").is(new ObjectId(idLivre)));
+        user.getLivre(idLivre).getAvis().add(newAvis);
+        mongoTemplate.save(user);
+    }
+
+    @Override
+    public void deleteAvis(String idAvis) {
+        Query q = new Query();
+        q.addCriteria(Criteria.where("livres.avis.id").is(new ObjectId(idAvis)));
         Update update = new Update();
-        update.pull("avis", Query.query(Criteria.where("id").is(new ObjectId(avis.getId()))));
+        update.pull("livres.0.avis", Query.query(Criteria.where("id").is(new ObjectId(idAvis))));
         mongoTemplate.updateFirst(q, update, Utilisateur.class);
     }
 

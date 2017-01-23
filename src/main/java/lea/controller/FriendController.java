@@ -9,20 +9,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * Created by sylvain on 17/12/16.
  */
-@Controller
+@RestController
 public class FriendController extends CommonController {
 
     @Autowired
@@ -32,38 +32,32 @@ public class FriendController extends CommonController {
 
     // My friends: GET
     @RequestMapping(value = "/myFriends", method = RequestMethod.GET)
-    public String myFriends(Model model) {
-        Utilisateur user = initSearchFormAndPrincipal(model, false);
-        model.addAttribute("userFriends", userRepository.findFriends(user.getListFriendsId()));
-        model.addAttribute("pendingFriends", user.getListPendingFriends());
-        return "user/my-friends";
+    public List<Utilisateur>  myFriends() {
+        Map<String, List<Utilisateur>> map = new HashMap<String, List<Utilisateur>>();
+        Utilisateur user = getPrincipal();
+        return userRepository.findFriends(user.getListFriendsId());
     }
 
-    // My Pendingfriends: GET
+    // My pending friends: GET the emails added but not responded
+    @RequestMapping(value = "/myPendingFriends", method = RequestMethod.GET)
+    public List<String> myPendingFriends() {
+        Utilisateur user =getPrincipal();
+        return user.getListPendingFriends();
+    }
+
+    // My requested friends: GET : show the users whoses have added the current connected one
     @RequestMapping(value = "/myRequestedFriends", method = RequestMethod.GET)
-    public String mypendingFriends(Model model) {
-        Utilisateur user = initSearchFormAndPrincipal(model, false);
+    public List<Utilisateur> myRequestedFriends() {
+        Utilisateur user = getPrincipal();
         List<Utilisateur> requestedFriends = userRepository.findRequestedFriends(user.getEmail());
-        if (requestedFriends.isEmpty()) {
-            return "redirect:/";
-        }
-        model.addAttribute("requestedFriends", requestedFriends);
-        return "user/my-requested-friends";
-    }
-
-    // Creer un ami : GET
-    @RequestMapping(value = "/ami/new", method = RequestMethod.GET)
-    public ModelAndView displayFormAmi(Model model) {
-        model.addAttribute("ami", new AmiBean());
-        initSearchFormAndPrincipal(model, false);
-        return new ModelAndView("user/add-friend");
+        return requestedFriends;
     }
 
     // Creer un ami : POST
     @RequestMapping(value = "/ami/new", method = RequestMethod.POST)
-    public String addUser(@ModelAttribute("ami") AmiBean amiBean, Model model, BindingResult result) throws UnsupportedEncodingException, MessagingException {
+    public String addUser(@RequestBody AmiBean amiBean) throws UnsupportedEncodingException, MessagingException {
 
-        Utilisateur user = initSearchFormAndPrincipal(model, false);
+        Utilisateur user = getPrincipal();
         if (user == null) {
             return "redirect:/";
         }
@@ -74,24 +68,22 @@ public class FriendController extends CommonController {
             userRepository.addPendingFriend(user, emailFriend);
             String objet = "Livres entre Amis - Nouvelle demande d'ami";
             String contenu = emailEmetteur + " souhaite vous ajouter en tant qu'ami afin d'échanger des livres. Connectez-vous ou inscrivez vous sur livresentreamis.com afin de rentrer dans la communatuté!";
-            this.mailService.sendEmail(objet, contenu, emailFriend, emailEmetteur);
+            this.mailService.sendEmail(contenu, objet, emailFriend, emailEmetteur);
         } else {
-            result.rejectValue("email1", "error_email");
-            model.addAttribute("ami", amiBean);
-            return "user/add-friend";
+            return "KO email incorrect";
         }
-        return "redirect:/myFriends";
+        return "OK";
     }
 
-    @RequestMapping(value = "/accepterAmi", method = RequestMethod.POST)
-    public String accepterAmi(@ModelAttribute("friend_id") String idFriend, Model model) {
-        Utilisateur userConnected = initSearchFormAndPrincipal(model, false);
+    @RequestMapping(value = "/accepterAmi/{friendId}", method = RequestMethod.POST)
+    public String accepterAmi(@PathVariable("friendId") String idFriend) {
+        Utilisateur userConnected = getPrincipal();
         Utilisateur userFriend = userRepository.findOne(idFriend);
 
         addRealFriendAndDeletePending(userConnected, userFriend);
         addRealFriendAndDeletePending(userFriend, userConnected);
 
-        return "redirect:/myFriends";
+        return "OK";
     }
 
     private void addRealFriendAndDeletePending(Utilisateur user, Utilisateur friend) {

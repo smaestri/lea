@@ -71,8 +71,7 @@ class LoanDetail extends React.Component {
 
     saveEditComment(commObj, idComm){
         helpers.saveComment(commObj, idComm, this.props.params.loanId).then((comm) => {
-            console.log('redirect to laon details');
-            console.log(comm)
+            console.log('reload laon details');
             this.componentDidMount(true);
         });
     }
@@ -143,7 +142,14 @@ class LoanDetail extends React.Component {
                 displayButtons=true;
             }
 
-            return <Comment key={comment.id} id={comment.id} message={comment.message} dateMessage={comment.dateMessage} auteur={comment.user.fullName} displayButtons={displayButtons} deleteComment={this.deleteComment} saveEditComment={this.saveEditComment}/>
+            return <Comment key={comment.id}
+                            id={comment.id}
+                            message={comment.message}
+                            dateMessage={comment.dateMessage}
+                            auteur={comment.user.fullName}
+                            displayButtons={displayButtons}
+                            deleteComment={this.deleteComment}
+                            saveEditComment={this.saveEditComment}/>
         });
 
         //Si actif= false ne rien afficher
@@ -157,11 +163,10 @@ class LoanDetail extends React.Component {
         }
 
         //Get rating for this book and this user
-        let rating =0 ;
-        loan.livre.avis.forEach ( (avis) => {
-            console.log("todo");
-            if(avis.auteur == loan.emprunteur.id){
-                rating = avis.note;
+        let avis ={} ;
+        loan.livre.avis.forEach ( (avisBook) => {
+            if(avisBook.auteur == loan.emprunteur.id){
+                avis = avisBook;
                 //TODO perf
             }
         });
@@ -181,7 +186,7 @@ class LoanDetail extends React.Component {
                 - {displayLoanSentTextByProp && <span>L'emprunteur vous a renvoyé le livre. Si vous l'avez bien reçu, vous pouvez clore cet emprunt, qui apparaitra dans votre historique.</span>}
                 - {displayCloseButton && <button onClick={this.closeLoan}>Clore</button>}
                 { (displaySendButton || displayLoanSentText) && <div>Noter ce livre</div>}
-                { (displaySendButton || displayLoanSentText) && <AddAvis bookId={loan.livre.id} initialRate={rating} />}
+                { (displaySendButton || displayLoanSentText) && <AddAvis bookId={loan.livre.id} avis={avis} />}
                 <div>Commentaires entre vous et l'emprunteur / preteur</div>
                 <div>
                     <ul>{comments}</ul>

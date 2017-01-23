@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-//import todoReducer from './reducers/todo'
-//import { createStore } from 'redux'
 import { Router, Route, hashHistory } from 'react-router'
 import Home from "./components/Home";
 import MyBooks from "./components/MyBooks";
 import MyLoans from "./components/MyLoans";
+import MyFriends from "./components/MyFriends";
+import MyRequestedFriends from "./components/MyRequestedFriends";
 import MyLendings from "./components/MyLendings";
 import ListBooks from "./components/ListBooks";
 import EditBook from "./components/EditBook";
@@ -26,6 +26,8 @@ const render =() => {
                 <Route path="/book-detail/:bookId" component={BookDetail}/>
                 <Route path="/list-book" component={ListBooks}/>
                 <Route path="/my-lendings" component={MyLendings}/>
+                <Route path="/my-friends" component={MyFriends}/>
+                <Route path="/my-requested-friends" component={MyRequestedFriends}/>
             </Route>
         </Router>,
         document.getElementById('app'));

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+    <body>
+        <h2>Inscription</h2>
+        <form th:action="@{/users/new}" th:object="${utilisateur}" method="POST">
+            <ul th:if="${#fields.hasErrors('*')}">
+                <li th:each="err : ${#fields.errors('*')}" th:text="${err}">Input is incorrect</li>
+            </ul>
+
+            <label>Email</label>
+            <input th:field="*{email}" placeholder="Votre e-mail" /><br/>
+
+            <label>Nom</label>
+            <input th:field="*{lastName}" placeholder="Votre nom" /><br/>
+
+            <label>Pr&eacute;nom</label>
+            <input th:field="*{firstName}" placeholder="Votre prénom" /><br/>
+
+            <label>Password</label>
+            <input th:field="*{password}" type="password" placeholder="Password" /><br/>
+
+            <label>Confirmer Password</label>
+            <input th:field="*{confirmPassword}" type="password" placeholder="Password" /><br/>
+
+            <button type="submit">Valider</button>
+            <a href="/"><button type="button" class="btn btn-default">Retour</button></a><br/>
+        </form>
+    </body>
+</html>

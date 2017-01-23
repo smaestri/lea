@@ -6,11 +6,14 @@ class AddAvis extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {editMode: false, rating: props.rating};
+        this.state = {editMode: props.avis.length > 0 ? true:false, avis: props.avis};
         this.handleRating = this.handleRating.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
+        this.saveAvis = this.saveAvis.bind(this);
+        this.saveEditAvis = this.saveEditAvis.bind(this);
+        this.deleteAvis = this.deleteAvis.bind(this);
         this.toggleEditmode = this.toggleEditmode.bind(this);
+        this.undoEdit = this.undoEdit.bind(this);
     }
 
     toggleEditmode(){
@@ -20,39 +23,32 @@ class AddAvis extends React.Component {
     }
 
     handleRating(event){
-        console.log('handleRating')
-        console.log(event)
-        const rating = this.state.rating;
-        rating["note"] = event;
-        this.setState({rating: rating });
+        const newAvis = this.state.avis;
+        newAvis["note"] = event;
+        this.setState({avis: newAvis });
     }
 
     handleChange(event){
-        console.log('handleChange')
-        const rating = this.state.rating;
-        rating[event.target.name] = event.target.value;
-        this.setState({rating: rating });
+        const newAvis = this.state.avis;
+        newAvis["libelle"] = event.target.value;
+        this.setState({avis: newAvis });
     }
 
-
     saveAvis(){
-        console.log('saveAvis')
-        helpers.saveAvis(this.state.rating, null, this.props.bookId).then( (avis) => {
-            console.log('avis inserted')
+        helpers.saveAvis(this.state.avis, null, this.props.bookId).then( () => {
+            this.setState({editMode: false});
         });
     }
 
     saveEditAvis(){
-        console.log('saveAvis')
-        helpers.saveAvis(this.state.rating, null, this.props.bookId).then( (avis) => {
-           console.log('avis inserted')
+        helpers.saveAvis(this.state.avis, this.state.avis.id, this.props.bookId).then( () => {
+            this.setState({editMode: false});
         });
     }
 
     deleteAvis(){
-        console.log('handleSubmit')
-        helpers.saveAvis(this.state.rating, null, this.props.bookId).then( (avis) => {
-            console.log('avis inserted')
+        helpers.deleteAvis(this.state.avis.id).then( () => {
+            this.setState({avis: {}, editMode: true});
         });
     }
 
@@ -71,17 +67,21 @@ class AddAvis extends React.Component {
             console.log(avis);
         })
 */
+
+        const showTextArea = (!this.state.editMode && ( !this.state.avis || !this.state.avis.id) )||
+            (this.state.editMode)
+
         return (
          <div>
-             <Rating readonly={} initialRate={this.props.rating} onClick={this.handleRating} />
-             {this.state.rating && this.state.rating.id && !this.state.editMode && <button onClick={this.toggleEditmode}>Edit</button>}
-             {this.state.rating && this.state.rating.id && !this.state.editMode && <button onClick={this.deleteAvis}>Delete</button>}
-             {this.state.rating && this.state.rating.id && this.state.editMode && <button onClick={this.undoEdit}>Annuler</button>}
-             {this.state.rating && this.state.rating.id && this.state.editMode && <button onClick={this.saveEditAvis}>Sauvegarder</button>}
+             <Rating readonly={!showTextArea} initialRate={this.props.avis.note} onClick={this.handleRating} />
+             {this.state.avis && this.state.avis.id && !this.state.editMode && <span>{this.props.avis.libelle}</span>}
+             { showTextArea && <textarea name="libelle" onChange={this.handleChange}>{this.props.avis.libelle}</textarea>}
 
-             {!(this.state.rating && this.state.rating.id) && <textarea name="libelle" onChange={this.handleChange}>{this.state.rating.libelle}</textarea>}
-             {this.state.rating && this.state.rating.id && <span>{this.state.rating.libelle}</span>}
-             {!(this.state.rating && this.state.rating.id) && <button onClick={this.saveAvis}>Submit</button>}
+             {this.state.avis && this.state.avis.id && !this.state.editMode && <button onClick={this.toggleEditmode}>Edit</button>}
+             {this.state.avis && this.state.avis.id && !this.state.editMode && <button onClick={this.deleteAvis}>Delete</button>}
+             {this.state.avis && this.state.avis.id && this.state.editMode && <button onClick={this.undoEdit}>Annuler</button>}
+             {this.state.avis && this.state.avis.id && this.state.editMode && <button onClick={this.saveEditAvis}>Sauvegarder</button>}
+             {(!this.state.avis || !this.state.avis.id) && <button onClick={this.saveAvis}>Submit</button>}
          </div>
         )
     }

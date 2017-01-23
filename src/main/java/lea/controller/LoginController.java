@@ -1,7 +1,7 @@
 package lea.controller;
 
-import lea.modele.Avis;
-import lea.modele.Livre;
+import com.google.gson.Gson;
+import lea.modele.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -19,28 +19,25 @@ public class LoginController extends CommonController {
 
     @RequestMapping(value = "/")
     public String welcomeHandler(Model model) {
-        initSearchFormAndPrincipal(model, false);
+        initGlobalvariables(model, false);
         List<Avis> avis = null; //avisRepository.getLastAvis();
         model.addAttribute("avis", avis);
         return "index";
     }
 
     @RequestMapping("/mentions")
-    public String mentionslegales(Model model) {
-        initSearchFormAndPrincipal(model, false);
+    public String mentionslegales() {
         return "mentions";
     }
 
     @RequestMapping("/comment")
-    public String commentCaMarche(Model model) {
-        this.initSearchFormAndPrincipal(model, false);
+    public String commentCaMarche() {
         return "commentcamarche";
     }
 
     // Formulaire de connexion
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(Model model) {
-        initSearchFormAndPrincipal(model, false);
         model.addAttribute("livre", new Livre());
         return "login";
     }
@@ -48,7 +45,6 @@ public class LoginController extends CommonController {
     // Echec authentificaiton
     @RequestMapping(value = "/loginfailed", method = RequestMethod.GET)
     public String loginerror(Model model) {
-        initSearchFormAndPrincipal(model, false);
         return "redirect:/login?error";
     }
 
@@ -60,6 +56,40 @@ public class LoginController extends CommonController {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
         return "redirect:/login?logout";
+    }
+
+    private Utilisateur initGlobalvariables(Model model, boolean shouldInitInputSearch) {
+        Utilisateur userSpring = getPrincipal();
+        if (userSpring != null && userSpring.getEmail() != null) {
+            String userId = userSpring.getId();
+            Utilisateur user = this.userRepository.findOne(userId);
+            model.addAttribute("userId", user.getId());
+            model.addAttribute("userName", user.getFullName());
+            if (!shouldInitInputSearch) {
+                model.addAttribute("command", new Livre());
+            }
+            model.addAttribute("hasFriend", !user.getListFriendsId().isEmpty());
+
+            // categories
+            List<Categorie> all = categorieRepository.findAll();
+            Gson gson = new Gson();
+            String json = gson.toJson(all);
+            model.addAttribute("categories", json);
+
+            //  requested friends
+            List<Utilisateur> requestedFriends = this.userRepository.findRequestedFriends(user.getEmail());
+            if (model != null) {
+                model.addAttribute("requestedFriends", requestedFriends);
+            }
+
+            // Nb emprunt prets
+            List<Emprunt> emprunts = empruntRepository.findEmprunts(userSpring.getId(), true);
+            List<Emprunt> prets = empruntRepository.findPrets(userSpring.getId(), true);
+                model.addAttribute("nbPrets", prets.size());
+                model.addAttribute("nbEmprunts", emprunts.size());
+            return user;
+        }
+        return null;
     }
 
 }

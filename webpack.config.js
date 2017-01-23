@@ -21,6 +21,9 @@ module.exports = {
     filename: 'bundle.js'
   },
 
+  // Some probleme with webpack-dev-server.
+
+
   /*
   devServer: {
     inline: true,

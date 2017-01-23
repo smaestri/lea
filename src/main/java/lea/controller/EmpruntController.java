@@ -36,7 +36,7 @@ public class EmpruntController extends CommonController {
 
     @RequestMapping(value = "/emprunts", method = RequestMethod.GET)
     public List<Emprunt> livresHandler() throws ServletException, IOException {
-        Utilisateur principal = initSearchFormAndPrincipal(null, false);
+        Utilisateur principal = getPrincipal();
         List<Emprunt> emprunts = empruntRepository.findEmprunts(principal.getId(), true);
         setEmpruntobjects(emprunts);
         return emprunts;
@@ -44,7 +44,7 @@ public class EmpruntController extends CommonController {
 
     @RequestMapping(value = "/prets", method = RequestMethod.GET)
     public  List<Emprunt> livresHandlerPrets() throws ServletException, IOException {
-        Utilisateur principal = initSearchFormAndPrincipal(null, false);
+        Utilisateur principal = getPrincipal();
         List<Emprunt> prets = empruntRepository.findPrets(principal.getId(), true);
         setIntermediaire(principal, prets, false);
         setEmpruntobjects(prets);

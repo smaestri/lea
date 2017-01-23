@@ -132,12 +132,12 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void updateAvis(Avis avis) {
+    public void updateAvis(String avisId, Avis avis) {
         Query q = new Query();
-        q.addCriteria(Criteria.where("livres.avis.id").is(new ObjectId(avis.getId())));
+        q.addCriteria(Criteria.where("livres.avis.id").is(new ObjectId(avisId)));
         Update update = new Update();
-        update.set("livres.0.avis.0.note", avis.getNote());
-        update.set("livres.0.avis.0.libelle", avis.getLibelle());
+        update.set("livres.$.avis.0.note", avis.getNote());
+        update.set("livres.$.avis.0.libelle", avis.getLibelle());
         //update.set("livres.0.avis.0.auteur", avis.getAuteur());
 
         mongoTemplate.updateFirst(q, update, Utilisateur.class);
@@ -156,7 +156,7 @@ public class UserRepositoryImpl implements UserRepository {
         Query q = new Query();
         q.addCriteria(Criteria.where("livres.avis.id").is(new ObjectId(idAvis)));
         Update update = new Update();
-        update.pull("livres.0.avis", Query.query(Criteria.where("id").is(new ObjectId(idAvis))));
+        update.pull("livres.$.avis", Query.query(Criteria.where("id").is(new ObjectId(idAvis))));
         mongoTemplate.updateFirst(q, update, Utilisateur.class);
     }
 

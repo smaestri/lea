@@ -52,7 +52,7 @@ public class LivreController extends CommonController {
     @RequestMapping(value = "/searchBook", method = RequestMethod.GET)
     public List<Livre> searchBook(@RequestParam(value = "titreBook", required = false) String titre,
                              @RequestParam(value = "categorie", required = false) String categorieId) throws ServletException, IOException {
-        Utilisateur principal = initSearchFormAndPrincipal(null, true);
+        Utilisateur principal = getPrincipal();
         List<Livre> result = new ArrayList<Livre>();
         List<Utilisateur> friends = userRepository.findFriends(principal.getListFriendsId());
         for (Utilisateur friend : friends) {
@@ -155,7 +155,7 @@ public class LivreController extends CommonController {
     // Creer un livre : POST
     @RequestMapping(value = "/livres/new", method = RequestMethod.POST)
     public Livre addLivre(@RequestBody Livre livre) {
-        Utilisateur user = initSearchFormAndPrincipal(null, false);
+        Utilisateur user = getPrincipal();
         livre.setStatut(StatutEmprunt.FREE);
         userRepository.saveLivre(user, livre);
         return livre;
@@ -164,7 +164,7 @@ public class LivreController extends CommonController {
     // Editer un livre : PUT
     @RequestMapping(value = "/livres/{livre}", method = RequestMethod.PUT)
     public Livre addLivre(@PathVariable("livre") String livreId, @RequestBody Livre newLivre) {
-        Utilisateur user = initSearchFormAndPrincipal(null, false);
+        Utilisateur user = getPrincipal();
         Livre livre = user.getLivre(livreId);
         updateBook(livre, newLivre);
         userRepository.saveLivre(user, livre);
@@ -186,7 +186,7 @@ public class LivreController extends CommonController {
     // My books
     @RequestMapping(value = "/myBooks", method = RequestMethod.GET)
     public List<Livre> myBooks(Model model) throws IOException {
-        Utilisateur userDetail = initSearchFormAndPrincipal(model, false);
+        Utilisateur userDetail = getPrincipal();
         List<Livre> livres = userDetail.getLivres();
         /*
         if (livres != null && livres.size() > 0) {

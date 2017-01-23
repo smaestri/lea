@@ -51,7 +51,7 @@ public class UserController extends CommonController {
     //Detail d'un utilisateur ; ses livres et ceux de ses amis
     @RequestMapping(value = "/users/{userId}", method = RequestMethod.GET)
     public String userDetail(@PathVariable("userId") String userDetail, Model model) throws ServletException, IOException {
-        Utilisateur userConnected = initSearchFormAndPrincipal(model, false);
+        Utilisateur userConnected = getPrincipal();
         Utilisateur friend = userRepository.findOne(userDetail);
 
         List<Livre> listeLivre = friend.getLivres();
@@ -85,7 +85,7 @@ public class UserController extends CommonController {
     @RequestMapping(value = "/account", method = RequestMethod.GET)
     public String account(Model model) throws ServletException, IOException {
 
-        Utilisateur userConnected = initSearchFormAndPrincipal(model, false);
+        Utilisateur userConnected = getPrincipal();
         if (userConnected == null) {
             return "redirect:/";
         }
@@ -121,21 +121,18 @@ public class UserController extends CommonController {
 
     // Creer un user : GET
     @RequestMapping(value = "/users/new", method = RequestMethod.GET)
-    public ModelAndView displayFormUser(Model model) {
-        initSearchFormAndPrincipal(model, false);
+    public String displayFormUser(Model model) {
         model.addAttribute("utilisateur", new Utilisateur());
-        return new ModelAndView("user/create-edit-user");
+        return "add-user";
     }
 
     // Editer user : POSt
     @RequestMapping(value = "/users/edit", method = RequestMethod.POST)
     public String editUser(@Valid @ModelAttribute("utilisateur") Utilisateur user, BindingResult result, Model model) {
-
         if (!result.hasErrors()) {
             user.setEdit(true);
             userValidator.validate(user, result);
         }
-        initSearchFormAndPrincipal(model, false);
 
         if (result.hasErrors()) {
             model.addAttribute("utilisateur", user);
@@ -162,23 +159,19 @@ public class UserController extends CommonController {
     @RequestMapping(value = "/users/new", method = RequestMethod.POST)
     public String addUser(@Valid @ModelAttribute("utilisateur") Utilisateur user, BindingResult result, Model model) {
 
-        if (!result.hasErrors()) {
-            user.setEdit(false);
-            //Check email
-            boolean b = this.checkEmail(user.getEmail());
-            if (!b) {
-                result.rejectValue("email", "error_email");
-            } else {
-                // check email existing and password
-                userValidator.validate(user, result);
-            }
+        user.setEdit(false);
+        //Check email
+        boolean b = this.checkEmail(user.getEmail());
+        if (!b) {
+            result.rejectValue("email", "error_email");
+        } else {
+            // check email existing and password
+            userValidator.validate(user, result);
         }
-
-        initSearchFormAndPrincipal(model, false);
 
         if (result.hasErrors()) {
             model.addAttribute("utilisateur", user);
-            return "user/create-edit-user";
+            return "add-user";
         }
 
         UserProfile profileUser = userProfileRepository.getProfileUser();
@@ -191,12 +184,7 @@ public class UserController extends CommonController {
         // Authenticate manually
         authenticateManually(user);
 
-        // si ce nouvel utilisateur est solicité en tant qu'ami alors rediriger sur la page adequate
-        if(userRepository.findRequestedFriends(user.getEmail()).size() > 0){
-            return "redirect:/myRequestedFriends";
-        }
         return "redirect:/";
-
     }
 
     private void authenticateManually(Utilisateur user) {
@@ -204,8 +192,6 @@ public class UserController extends CommonController {
         Authentication authentication = new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
-
-
 
     public static boolean checkEmail(String email) {
         boolean result = true;

@@ -292,8 +292,9 @@ var helpers = {
     saveAvis: function (avisObj, idAvis, idBook) {
         if (idAvis) {
             console.log('UPDATE AVIS')
-            return axios.put('/addAvis/' + idAvis, {
-                message: avisObj.message
+            return axios.put('/avis/' + idAvis, {
+                note: avisObj.note,
+                libelle: avisObj.libelle,
             }, {
                 headers: {'X-CSRF-Token': getCsrf()},
             })
@@ -307,8 +308,9 @@ var helpers = {
         }
 
         console.log('CREATE COMM')
-        return axios.post('/addAvis/' + idBook, {
-            message: commObj.message,
+        return axios.post('/avis/' + idBook, {
+            note: avisObj.note,
+            libelle: avisObj.libelle,
         }, {
             headers: {'X-CSRF-Token': getCsrf()},
         })
@@ -324,6 +326,65 @@ var helpers = {
     deleteAvis: function(idAvis){
         console.log('DELETE COMM')
         return axios.delete('/avis/' + idAvis, {
+            headers: {'X-CSRF-Token': getCsrf()},
+        })
+            .then(function (response) {
+                console.log(response);
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    },
+
+    getMyFriends: function () {
+        console.log('API get MY Friends')
+        return axios.get('/myFriends')
+            .then(function (response) {
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    },
+
+    getMyPendingFriends: function () {
+        console.log('API get myPendingFriends')
+        return axios.get('/myPendingFriends')
+            .then(function (response) {
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    },
+
+    getMyRequestedFriends: function () {
+        console.log('API get getMyRequestedFriends')
+        return axios.get('/myRequestedFriends')
+            .then(function (response) {
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    },
+
+    savePendingFriend: function (email) {
+        return axios.post('/ami/new/' , {email1: email}, {
+            headers: {'X-CSRF-Token': getCsrf()},
+        })
+            .then(function (response) {
+                console.log(response);
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    },
+
+    acceptFriend: function (idFriend) {
+        return axios.post('/accepterAmi/'+ idFriend ,null , {
             headers: {'X-CSRF-Token': getCsrf()},
         })
             .then(function (response) {

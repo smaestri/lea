@@ -35,14 +35,15 @@ class AddAvis extends React.Component {
     }
 
     saveAvis(){
-        helpers.saveAvis(this.state.avis, null, this.props.bookId).then( () => {
-            this.setState({editMode: false});
+        helpers.saveAvis(this.state.avis, null, this.props.bookId).then( (newAvisId) => {
+            this.setState({editMode: false, avis: Object.assign(this.state.avis, {id: newAvisId})  });
+            console.log(this.state.avis)
         });
     }
 
     saveEditAvis(){
         helpers.saveAvis(this.state.avis, this.state.avis.id, this.props.bookId).then( () => {
-            this.setState({editMode: false});
+            this.setState({editMode: false });
         });
     }
 
@@ -68,14 +69,23 @@ class AddAvis extends React.Component {
         })
 */
 
-        const showTextArea = (!this.state.editMode && ( !this.state.avis || !this.state.avis.id) )||
-            (this.state.editMode)
+        let showTextArea = false;
+        // display if state not setted
+        if(!this.state.avis.id){
+            showTextArea = true;
+        }
+        else{
+            if (this.state.editMode){
+                showTextArea = true;
+            }
+        }
+
 
         return (
          <div>
-             <Rating readonly={!showTextArea} initialRate={this.props.avis.note} onClick={this.handleRating} />
-             {this.state.avis && this.state.avis.id && !this.state.editMode && <span>{this.props.avis.libelle}</span>}
-             { showTextArea && <textarea name="libelle" onChange={this.handleChange}>{this.props.avis.libelle}</textarea>}
+             <Rating readonly={!showTextArea} initialRate={this.state.avis.note} onClick={this.handleRating} />
+             {!showTextArea && <span>{this.state.avis.libelle}</span>}
+             { showTextArea && <textarea name="libelle" onChange={this.handleChange}>{this.state.avis.libelle}</textarea>}
 
              {this.state.avis && this.state.avis.id && !this.state.editMode && <button onClick={this.toggleEditmode}>Edit</button>}
              {this.state.avis && this.state.avis.id && !this.state.editMode && <button onClick={this.deleteAvis}>Delete</button>}

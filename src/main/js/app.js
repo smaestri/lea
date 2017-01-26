@@ -11,6 +11,7 @@ import ListBooks from "./components/ListBooks";
 import EditBook from "./components/EditBook";
 import LoanDetail from "./components/LoanDetail";
 import BookDetail from "./components/BookDetail";
+import UserDetail from "./components/UserDetail";
 
 //const store = createStore(todoReducer)
 
@@ -28,6 +29,7 @@ const render =() => {
                 <Route path="/my-lendings" component={MyLendings}/>
                 <Route path="/my-friends" component={MyFriends}/>
                 <Route path="/my-requested-friends" component={MyRequestedFriends}/>
+                <Route path="/user-detail/:userId" component={UserDetail}/>
             </Route>
         </Router>,
         document.getElementById('app'));

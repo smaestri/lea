@@ -13,7 +13,7 @@ public class AvisController extends CommonController {
         Utilisateur auteurAvis = this.getPrincipal();
         avis.setAuteur(auteurAvis.getId());
         userRepository.saveAvis(proprietaire, livreId, avis);
-        return "OK";
+        return avis.getId();
     }
 
     // Editer un avis : PUT

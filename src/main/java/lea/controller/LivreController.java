@@ -1,6 +1,7 @@
 package lea.controller;
 
 import lea.commun.StatutEmprunt;
+import lea.modele.Avis;
 import lea.modele.Categorie;
 import lea.modele.Livre;
 import lea.modele.Utilisateur;
@@ -122,7 +123,7 @@ public class LivreController extends CommonController {
 
     }
 
-    @RequestMapping(value = "/livres/{livre}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/livres/{livre}", method = RequestMethod.GET)
     public Livre detailLivreHandler(@PathVariable("livre") String idLivre) {
         Livre livreDetail = userRepository.findBook(idLivre);
 
@@ -138,7 +139,6 @@ public class LivreController extends CommonController {
             */
 
         }
-
         return livreDetail;
     }
 

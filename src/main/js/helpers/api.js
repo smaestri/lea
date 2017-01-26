@@ -184,6 +184,18 @@ var helpers = {
             });
     },
 
+    getUserDetail: function (userId) {
+        console.log('API get user detail')
+        return axios.get('/users/' + userId)
+            .then(function (response) {
+                console.log(response);
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    },
+
     deleteBook: function(idBook){
         console.log('DELETE BOOK')
         return axios.delete('/livres/' + idBook, {

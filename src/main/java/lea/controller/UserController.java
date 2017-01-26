@@ -2,46 +2,25 @@ package lea.controller;
 
 import lea.modele.Emprunt;
 import lea.modele.Livre;
-import lea.modele.UserProfile;
 import lea.modele.Utilisateur;
 import lea.repository.emprunt.EmpruntRepository;
-import lea.repository.userprofile.UserProfileRepository;
-import lea.service.CustomUserDetailsService;
 import lea.service.MailService;
-import lea.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 import javax.servlet.ServletException;
-import javax.validation.Valid;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-@Controller
+@RestController
 public class UserController extends CommonController {
 
     @Autowired
     private EmpruntRepository empruntRepository;
-
-    @Autowired
-    private UserValidator userValidator;
-
-    @Autowired
-    private UserProfileRepository userProfileRepository;
 
     @Autowired
     @Qualifier("mockMail")
@@ -50,7 +29,7 @@ public class UserController extends CommonController {
 
     //Detail d'un utilisateur ; ses livres et ceux de ses amis
     @RequestMapping(value = "/users/{userId}", method = RequestMethod.GET)
-    public String userDetail(@PathVariable("userId") String userDetail, Model model) throws ServletException, IOException {
+    public Utilisateur userDetail(@PathVariable("userId") String userDetail) throws ServletException, IOException {
         Utilisateur userConnected = getPrincipal();
         Utilisateur friend = userRepository.findOne(userDetail);
 
@@ -60,7 +39,7 @@ public class UserController extends CommonController {
         if (!listeLivre.isEmpty()) {
             for (Livre livre : listeLivre) {
                 livre.setUserId(friend.getId());
-                LivreController.setBookImage(livre);
+                //LivreController.setBookImage(livre);
             }
         }
 
@@ -71,27 +50,33 @@ public class UserController extends CommonController {
                 List<Livre> listeLivre2 = subFriend.getLivres();
                 for (Livre livre : listeLivre2) {
                     livre.setUserId(subFriend.getId());
-                    LivreController.setBookImage(livre);
+                    //LivreController.setBookImage(livre);
                 }
                 friend.getUserFriends().add(subFriend);
             }
         }
+        return friend;
+    }
 
-        model.addAttribute("user", friend);
-        return "user/user-detail";
+    // emprunt histories
+    @RequestMapping(value = "/historizedLoans", method = RequestMethod.GET)
+    public List<Emprunt> empruntsHistories() throws ServletException, IOException {
+        Utilisateur userConnected = getPrincipal();
+        List<Emprunt> emprunts = empruntRepository.findEmprunts(userConnected.getId(), false);
+
+        for (Emprunt emp : emprunts) {
+            Livre livre = userRepository.findBook(emp.getLivreId());
+            LivreController.setBookImage(livre);
+            setEmpruntOjects(emp);
+        }
+        return emprunts;
     }
 
     // My account
-    @RequestMapping(value = "/account", method = RequestMethod.GET)
-    public String account(Model model) throws ServletException, IOException {
-
+    @RequestMapping(value = "/historizedLendings", method = RequestMethod.GET)
+    public List<Emprunt> pretHistories() throws ServletException, IOException {
         Utilisateur userConnected = getPrincipal();
-        if (userConnected == null) {
-            return "redirect:/";
-        }
-
         List<Emprunt> prets = empruntRepository.findPrets(userConnected.getId(), false);
-        List<Emprunt> emprunts = empruntRepository.findEmprunts(userConnected.getId(), false);
 
         for (Emprunt pret : prets) {
             Livre livre = userRepository.findBook(pret.getLivreId());
@@ -99,17 +84,7 @@ public class UserController extends CommonController {
             setEmpruntOjects(pret);
         }
 
-        for (Emprunt emp : emprunts) {
-            Livre livre = userRepository.findBook(emp.getLivreId());
-            LivreController.setBookImage(livre);
-            setEmpruntOjects(emp);
-        }
-        model.addAttribute("pretsHistories", prets);
-        model.addAttribute("empruntsHistories", emprunts);
-        //for my profile
-        model.addAttribute("utilisateur", userRepository.findOne(userConnected.getId()));
-
-        return "user/account";
+        return prets;
     }
 
     private void setEmpruntOjects(Emprunt emp){
@@ -118,91 +93,5 @@ public class UserController extends CommonController {
         Livre book = userRepository.findBook(emp.getLivreId());
         emp.setLivre(book);
     }
-
-    // Creer un user : GET
-    @RequestMapping(value = "/users/new", method = RequestMethod.GET)
-    public String displayFormUser(Model model) {
-        model.addAttribute("utilisateur", new Utilisateur());
-        return "add-user";
-    }
-
-    // Editer user : POSt
-    @RequestMapping(value = "/users/edit", method = RequestMethod.POST)
-    public String editUser(@Valid @ModelAttribute("utilisateur") Utilisateur user, BindingResult result, Model model) {
-        if (!result.hasErrors()) {
-            user.setEdit(true);
-            userValidator.validate(user, result);
-        }
-
-        if (result.hasErrors()) {
-            model.addAttribute("utilisateur", user);
-            return "user/account";
-        } else {
-            Utilisateur userDetail = userRepository.findOne(user.getId());
-            userDetail.setLastName(user.getLastName());
-            userDetail.setFirstName(user.getFirstName());
-            userDetail.setPassword(user.getPassword());
-            userRepository.saveUser(userDetail);
-            authenticateManually(userDetail);
-            return "redirect:/";
-        }
-    }
-
-
-    /**
-     * Créer ou MAJ utilisateur
-     *
-     * @param user
-     * @param model
-     * @return
-     */
-    @RequestMapping(value = "/users/new", method = RequestMethod.POST)
-    public String addUser(@Valid @ModelAttribute("utilisateur") Utilisateur user, BindingResult result, Model model) {
-
-        user.setEdit(false);
-        //Check email
-        boolean b = this.checkEmail(user.getEmail());
-        if (!b) {
-            result.rejectValue("email", "error_email");
-        } else {
-            // check email existing and password
-            userValidator.validate(user, result);
-        }
-
-        if (result.hasErrors()) {
-            model.addAttribute("utilisateur", user);
-            return "add-user";
-        }
-
-        UserProfile profileUser = userProfileRepository.getProfileUser();
-        List<String> set = new ArrayList<String>();
-        set.add(profileUser.getId());
-        user.setListUserProfilesId(set);
-        user.setEnabled(true);
-        userRepository.saveUser(user);
-
-        // Authenticate manually
-        authenticateManually(user);
-
-        return "redirect:/";
-    }
-
-    private void authenticateManually(Utilisateur user) {
-        CustomUserDetailsService.UserPrincipal principal = new CustomUserDetailsService.UserPrincipal(user.getFirstName(), user.getPassword(), CustomUserDetailsService.getGrantedAuthorities(user), user);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
-
-    public static boolean checkEmail(String email) {
-        boolean result = true;
-        try {
-            InternetAddress emailAddr = new InternetAddress(email);
-            emailAddr.validate();
-        } catch (AddressException ex) {
-            result = false;
-        }
-        return result;
-    }
-
 
 }

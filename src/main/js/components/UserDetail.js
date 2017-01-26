@@ -6,9 +6,10 @@ class UserDetail extends React.Component{
 
     constructor(props) {
         super(props);
-        this.state = {user:[]};
+        this.state = {user:{ livres: []}};
     }
 
+    //need to request server to get friend's books
     componentDidMount() {
         helpers.getUserDetail(this.props.params.userId).then((newUser) => {
             this.setState({user: newUser})
@@ -16,7 +17,7 @@ class UserDetail extends React.Component{
     }
 
     render(){
-        const books = this.state.user.map( book => {
+        const books = this.state.user.livres.map( book => {
             return <Book key={book.id} id={book.id} titreBook={book.titreBook} />
         });
 

@@ -188,6 +188,7 @@ var helpers = {
         console.log('API get user detail')
         return axios.get('/users/' + userId)
             .then(function (response) {
+                _books = response.data.livres;
                 console.log(response);
                 return response.data;
             })

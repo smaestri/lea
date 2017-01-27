@@ -48,16 +48,12 @@ class LoanDetail extends React.Component {
 
     saveComment(commObj){
         helpers.saveComment(commObj, null, this.props.params.loanId).then((comm) => {
-            console.log('redirect to laon details');
-            console.log(comm)
             this.componentDidMount(true);
         });
     }
 
     deleteComment(commId){
         helpers.deleteComment(commId).then((comm) => {
-            console.log('redirect to laon details');
-            console.log(comm)
             this.componentDidMount(true);
 
         });
@@ -65,7 +61,6 @@ class LoanDetail extends React.Component {
 
     saveEditComment(commObj, idComm){
         helpers.saveComment(commObj, idComm, this.props.params.loanId).then((comm) => {
-            console.log('reload laon details');
             this.componentDidMount(true);
         });
     }
@@ -75,7 +70,6 @@ class LoanDetail extends React.Component {
     }
 
     render() {
-
         // if no loan return
         const loan = this.state.loan;
         if (!loan || !loan.livre){
@@ -83,6 +77,7 @@ class LoanDetail extends React.Component {
         }
 
         //get comments
+        const userConnected = document.getElementById("userId").value;
         const comments = loan.commentaires.map( comment => {
             let displayButtons = false;
             // display edit and delete buttons for comments
@@ -99,8 +94,6 @@ class LoanDetail extends React.Component {
                             deleteComment={this.deleteComment}
                             saveEditComment={this.saveEditComment}/>
         });
-
-        //Si actif= false ne rien afficher
 
         let title = null;
         let typeEmprunt = "le prêteur";

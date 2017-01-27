@@ -31,6 +31,7 @@ public class LivreController extends CommonController {
     UserRepository userRepository;
 
     public static void setBookImage(Livre livre) throws IOException {
+        /*
         CloseableHttpClient httpclient = HttpClients.createDefault();
         String bookImageUrl = "http://covers.openlibrary.org/b/isbn/" + livre.getIsbn() + "-M.jpg";
         HttpGet httpget = new HttpGet(bookImageUrl);
@@ -38,7 +39,9 @@ public class LivreController extends CommonController {
         try {
             response = httpclient.execute(httpget);
             if (response.getEntity().getContentType() == null || !response.getEntity().getContentType().getValue().equals("image/jpeg")) {
-                livre.setImage("resources/img/book.png");
+            */
+        livre.setImage("assets/img/book.png");
+        /*
             } else {
                 livre.setImage(bookImageUrl);
             }
@@ -47,6 +50,7 @@ public class LivreController extends CommonController {
         } finally {
             response.close();
         }
+        */
     }
 
     // Recherche generale
@@ -155,7 +159,8 @@ public class LivreController extends CommonController {
     // Creer un livre : POST
     @RequestMapping(value = "/livres/new", method = RequestMethod.POST)
     public Livre addLivre(@RequestBody Livre livre) {
-        Utilisateur user = getPrincipal();
+        Utilisateur principal = getPrincipal();
+        Utilisateur user = this.userRepository.findOne(principal.getId());
         livre.setStatut(StatutEmprunt.FREE);
         userRepository.saveLivre(user, livre);
         return livre;
@@ -164,7 +169,8 @@ public class LivreController extends CommonController {
     // Editer un livre : PUT
     @RequestMapping(value = "/livres/{livre}", method = RequestMethod.PUT)
     public Livre addLivre(@PathVariable("livre") String livreId, @RequestBody Livre newLivre) {
-        Utilisateur user = getPrincipal();
+        Utilisateur principal = getPrincipal();
+        Utilisateur user = this.userRepository.findOne(principal.getId());
         Livre livre = user.getLivre(livreId);
         updateBook(livre, newLivre);
         userRepository.saveLivre(user, livre);
@@ -187,14 +193,13 @@ public class LivreController extends CommonController {
     @RequestMapping(value = "/myBooks", method = RequestMethod.GET)
     public List<Livre> myBooks(Model model) throws IOException {
         Utilisateur userDetail = getPrincipal();
-        List<Livre> livres = userDetail.getLivres();
-        /*
+        Utilisateur user = this.userRepository.findOne(userDetail.getId());
+        List<Livre> livres = user.getLivres();
         if (livres != null && livres.size() > 0) {
             for (Livre livre : livres) {
                 this.setBookImage(livre);
             }
         }
-        */
         return livres;
     }
 
@@ -202,6 +207,9 @@ public class LivreController extends CommonController {
     @RequestMapping(value = "/livres/{livre}", method = RequestMethod.DELETE)
     public String deleteLivre(@PathVariable("livre") String livreId) throws Exception {
         Utilisateur user = getPrincipal();
+
+        //TODO VERFIIER QUE LIVRE PAS UTILISE DANS UN EMPRUNT
+
         userRepository.supprimerLivre(livreId, user.getId());
         return "1";
     }

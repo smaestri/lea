@@ -1,73 +1,96 @@
 import React from 'react'
 import helpers from '../helpers/api'
-import { withRouter } from 'react-router';
+import {withRouter} from 'react-router';
+import {FormGroup} from 'react-bootstrap';
+import {Col} from 'react-bootstrap';
+import {FormControl} from 'react-bootstrap';
+import {Button} from 'react-bootstrap';
+import {Form} from 'react-bootstrap';
+import {ControlLabel} from 'react-bootstrap';
 
-class EditBook extends React.Component{
+class EditBook extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state={book: {titreBook: '', auteur: '', description: '', isbn: '', categorieId: ''  }}
-       // this.state={book: 'titi'};
-        console.log('Edit book this.props')
-        console.log(this.props);
+        this.state = {book: {titreBook: '', auteur: '', description: '', isbn: '', categorieId: ''}}
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        // this.handleChangeAuteur = this.handleChangeAuteur.bind(this);
     }
 
-    componentDidMount(){
-
+    componentDidMount() {
         //if id passed load exising book
-        if(this.props.params && this.props.params.bookId ){
+        if (this.props.params && this.props.params.bookId) {
             console.log('get book detail')
             helpers.getBookDetail(this.props.params.bookId).then((book) => {
                 //TODO : dispatch REDUX ACTION type LOAD
-                this.setState({book: book });
+                this.setState({book: book});
             })
         }
 
     }
 
-    render(){
-        console.log('render')
-        // get categories
+    render() {
         let catJson = document.getElementById("categories").value;
-        console.log('cat')
         let cat = JSON.parse(catJson);
-        console.log(cat)
-
-        const catReact = cat.map( category => {
+        const catReact = cat.map(category => {
             return <option value={category.id}>{category.name}</option>
         });
 
-        return(
-            <form onSubmit={this.handleSubmit}>
-                <label>
-                    titre:
-                    <input type="text" name="titreBook" value={this.state.book.titreBook} onChange={this.handleChange} />
-                </label>
-                <label>
-                    auteur:
-                    <input type="text" name="auteur"  value={this.state.book.auteur} onChange={this.handleChange} />
-                </label>
-                <label>
-                    description:
-                    <input type="text" name="description"  value={this.state.book.description} onChange={this.handleChange} />
-                </label>
-                <label>
-                    isbn:
-                    <input type="text" name="isbn" value={this.state.book.isbn} onChange={this.handleChange} />
-                </label>
-                <label>
-                    Catégorie
-                    <select name="categorieId" value={this.state.book.categorieId} onChange={this.handleChange}>
-                        {catReact}
-                    </select>
-                </label>
+        return (
+            <div>
+                <h2>Veuillez indiquer les informations du livre</h2>
+                <Form horizontal onSubmit={this.handleSubmit}>
+                    <FormGroup controlId="formHorizontalEmail">
+                        <Col componentClass={ControlLabel} sm={2}>
+                            titre:
+                        </Col>
+                        <Col sm={10}>
+                            <FormControl type="text" name="titreBook" value={this.state.book.titreBook}
+                                   onChange={this.handleChange}/>
+                        </Col>
+                    </FormGroup>
+                    <FormGroup>
+                        <Col componentClass={ControlLabel} sm={2}>
+                            auteur:
+                        </Col>
+                        <Col sm={10}>
+                            <FormControl type="text" name="auteur" value={this.state.book.auteur}
+                                         onChange={this.handleChange}/>
+                        </Col>
+                    </FormGroup>
+                    <FormGroup>
+                        <Col componentClass={ControlLabel} sm={2}>
+                            description:
+                        </Col>
+                        <Col sm={10}>
+                            <FormControl type="text" name="description" value={this.state.book.description}
+                                         onChange={this.handleChange}/>
+                        </Col>
+                    </FormGroup>
+                    <FormGroup>
+                        <Col componentClass={ControlLabel} sm={2}>
+                            isbn:
+                        </Col>
+                        <Col sm={10}>
+                            <FormControl type="text" name="isbn" value={this.state.book.isbn} onChange={this.handleChange}/>
+                        </Col>
+                    </FormGroup>
+                    <FormGroup>
+                        <Col componentClass={ControlLabel} sm={2}>
+                            Catégorie
+                        </Col>
+                        <Col sm={10}>
+                            <FormControl value={this.state.book.categorieId} onChange={this.handleChange}
+                                         componentClass="select" placeholder="select">
+                                {catReact}
+                            </FormControl>
+                        </Col>
+                    </FormGroup>
 
-                <input type="submit" value="Submit" />
-            </form>
-        )
+                    <Button type="submit" value="Submit">Valider</Button>
+                </Form>
+            </div>
+    )
     }
 
     handleSubmit(event){
@@ -75,9 +98,9 @@ class EditBook extends React.Component{
         console.log(this.state.book);
         event.preventDefault();
         helpers.saveBook(this.state.book, (this.props.params.bookId)?this.props.params.bookId:undefined).then((book) => {
-            console.log('redirect to my books');
-            this.props.router.push('/my-books')
-        });
+        console.log('redirect to my books');
+        this.props.router.push('/my-books')
+    });
 
     }
 
@@ -89,6 +112,6 @@ class EditBook extends React.Component{
         console.log(book)
         this.setState({book: book });
     }
-}
+    }
 
-export default withRouter(EditBook);
+    export default withRouter(EditBook);

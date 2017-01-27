@@ -58,8 +58,16 @@ public class UserController extends CommonController {
         return friend;
     }
 
+    // account
+    @RequestMapping(value = "/account", method = RequestMethod.GET)
+    public Utilisateur account() throws ServletException, IOException {
+        Utilisateur userConnected = getPrincipal();
+        Utilisateur user = userRepository.findOne(userConnected.getId());
+        return user;
+    }
+
     // emprunt histories
-    @RequestMapping(value = "/historizedLoans", method = RequestMethod.GET)
+    @RequestMapping(value = "/historized-loans", method = RequestMethod.GET)
     public List<Emprunt> empruntsHistories() throws ServletException, IOException {
         Utilisateur userConnected = getPrincipal();
         List<Emprunt> emprunts = empruntRepository.findEmprunts(userConnected.getId(), false);
@@ -73,7 +81,7 @@ public class UserController extends CommonController {
     }
 
     // My account
-    @RequestMapping(value = "/historizedLendings", method = RequestMethod.GET)
+    @RequestMapping(value = "/historized-lendings", method = RequestMethod.GET)
     public List<Emprunt> pretHistories() throws ServletException, IOException {
         Utilisateur userConnected = getPrincipal();
         List<Emprunt> prets = empruntRepository.findPrets(userConnected.getId(), false);

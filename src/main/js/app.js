@@ -12,6 +12,9 @@ import EditBook from "./components/EditBook";
 import LoanDetail from "./components/LoanDetail";
 import BookDetail from "./components/BookDetail";
 import UserDetail from "./components/UserDetail";
+import Account from "./components/Account";
+import MyHistorizedLendings from "./components/MyHistorizedLendings";
+import MyHistorizedLoans from "./components/MyHistorizedLoans";
 
 //const store = createStore(todoReducer)
 
@@ -30,6 +33,9 @@ const render =() => {
                 <Route path="/my-friends" component={MyFriends}/>
                 <Route path="/my-requested-friends" component={MyRequestedFriends}/>
                 <Route path="/user-detail/:userId" component={UserDetail}/>
+                <Route path="/account" component={Account}/>
+                <Route path="/historized-lendings" component={MyHistorizedLendings}/>
+                <Route path="/historized-loans" component={MyHistorizedLoans}/>
             </Route>
         </Router>,
         document.getElementById('app'));

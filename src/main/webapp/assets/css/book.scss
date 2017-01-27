@@ -1,0 +1,33 @@
+.books-container{
+  text-align: center;
+  h1{
+    align: left;
+  }
+  .book-container{
+    display: flex;
+    margin-bottom: 15px;
+    .book{
+      width: 100px;
+      margin: 10px;
+      border-style: solid;
+      border-width: 1px;
+      border-color: black;
+      border-radius: 10px;
+      .titreBook{
+        font-size: 22px;
+      }
+    }
+    button{
+      margin:5px;
+    }
+  }
+}
+
+.form-horizontal{
+  text-align: center;
+}
+
+
+
+
+

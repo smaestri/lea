@@ -99,7 +99,7 @@ public class LoginController extends CommonController {
             //  requested friends
             List<Utilisateur> requestedFriends = this.userRepository.findRequestedFriends(user.getEmail());
             if (model != null) {
-                model.addAttribute("requestedFriends", requestedFriends);
+                model.addAttribute("requestedFriends", requestedFriends.size());
             }
 
             // Nb emprunt prets

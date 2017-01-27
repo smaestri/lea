@@ -17,21 +17,6 @@ function getCsrf() {
 }
 
 var helpers = {
-
-
-    /*
-    // make helpers acting like a store
-    notifyChange: function () {
-        _changeListeners.forEach(function (listener) {
-            listener()
-        })
-    },
-
-    addChangeListener: function (listener) {
-        _changeListeners.push(listener)
-    },
-    */
-
     getLoan: function (id) {
         if (_loans && _loans.length > 0){
             return _loans.filter((loan) => loan.id == id)[0]
@@ -50,10 +35,9 @@ var helpers = {
     },
 
     getMyBooks: function () {
-        console.log('API get MY books')
         return axios.get('/myBooks')
             .then(function (response) {
-                console.log(response);
+                _books = response.data;
                 return response.data;
             })
             .catch(function (error) {
@@ -62,11 +46,9 @@ var helpers = {
     },
 
     getAllBooks: function () {
-        console.log('API get ALL books')
         return axios.get('/searchBook')
             .then(function (response) {
                 _books = response.data;
-                console.log(response);
                 return response.data;
             })
             .catch(function (error) {
@@ -88,13 +70,32 @@ var helpers = {
             });
     },
 
+
+    getHistorizedLoans:  () => {
+        return axios.get('/historized-loans')
+            .then((response) =>  {
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    },
+
     getLendings: function () {
-        console.log('API get LENDINGS')
         return axios.get('/prets')
             .then(function (response) {
-                _lendings = response.data;
                 _loans = undefined;
-                console.log(response);
+                _lendings= response.data;
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    },
+
+    getHistorizedLendings: function () {
+        return axios.get('/historized-lendings')
+            .then(function (response) {
                 return response.data;
             })
             .catch(function (error) {

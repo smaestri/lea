@@ -1,0 +1,15 @@
+.content-emprunt{
+  display: flex;
+  justify-content: center;
+  .titreEmprunt{
+    font-size: 20px;
+  }
+  .emprunt-information{
+    width: 300px;
+    margin-right: 25px;
+  }
+  .emprunt-comments{
+    width: 300px;
+  }
+
+}

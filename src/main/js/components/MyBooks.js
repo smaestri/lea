@@ -28,8 +28,13 @@ class MyBooks extends React.Component{
 
     handleDelete(event, idBook) {
         event.preventDefault();
-        helpers.deleteBook(idBook).then(() => {
-            this.componentDidMount();
+        helpers.deleteBook(idBook).then( (data) => {
+            if(data == "0"){
+                // TODO open modal
+            }
+            else{
+                this.componentDidMount();
+            }
         })
     }
 

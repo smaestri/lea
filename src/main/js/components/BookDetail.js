@@ -1,6 +1,7 @@
 import React from 'react'
 import helpers from '../helpers/api'
 import Avis from './Avis.js'
+import '../../webapp/assets/css/book-detail.scss'
 
 class BookDetail extends React.Component {
 
@@ -22,11 +23,16 @@ class BookDetail extends React.Component {
         });
 
         return (
-            <div>
-                <h1>{this.state.book.titreBook}</h1>
-                <span>{this.state.book.description}</span>
-                <h1>Avis</h1>
-                {avis}
+            <div className="book-detail-content">
+                <div className="book-information">
+                    <div><h1>{this.state.book.titreBook}</h1></div>
+                    <span>{this.state.book.description}</span>
+                </div>
+                <div className="book-rating">
+                    <h1>Avis</h1>
+                    {avis}
+                </div>
+
             </div>
         )
     }

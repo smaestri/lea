@@ -1,6 +1,7 @@
 import React from 'react'
 import Rating from 'react-rating'
 import helpers from '../helpers/api'
+import '../../webapp/assets/css/rating.scss'
 
 class Avis extends React.Component {
 
@@ -19,11 +20,14 @@ class Avis extends React.Component {
     }
 
     render() {
-        return (<div>
-            <span>Ajouté le {this.state.avis.creationDate} par {this.state.avis.auteur} </span>
-            <Rating readonly={true} initialRate={this.state.avis.note}/>
-            <span>{this.state.avis.libelle}</span>
-        </div>)
+        return (
+            <div>
+                <div>Ajouté le {this.state.avis.creationDate} par {this.state.avis.auteur} : </div>
+                <div className="rating-container">
+                    <Rating readonly={true} initialRate={this.state.avis.note}/>
+                    <span>{this.state.avis.libelle}</span>
+                </div>
+            </div>)
 
     }
 }

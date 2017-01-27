@@ -27,4 +27,6 @@ public interface EmpruntRepository {
     void saveComment(Commentaire comment);
 
     void deleteComment(String commentId, String empruntId);
+
+    Emprunt findEmpruntFromBook(String bookId);
 }

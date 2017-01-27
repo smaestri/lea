@@ -1,24 +1,31 @@
 import React from 'react'
 import { withRouter } from 'react-router';
 import { Link } from 'react-router';
+import ButtonsEmprunt from './ButtonsEmprunt';
+import '../../webapp/assets/css/loans.scss';
 
 class Loan extends React.Component {
 
-    constructor(props) {
-        super(props);
-    }
-
     render() {
+
+        let envoyerMessage = "Noter ce livre ou envoyer message au prêteur";
+        if(this.props.isLending){
+            envoyerMessage = "Détails et envoyer message à l'emprunteur"
+        }
+
         return (
-            <li>{this.props.isLending && <span>Pret:</span>}
-                {!this.props.isLending && <span>Emprunt:</span>} {this.props.id}
-                - emprunteur : {this.props.loan.emprunteur.fullName}
-                - Preteur : {this.props.loan.preteur.fullName}
-                - Livre : {this.props.loan.livre.titreBook}
-                - Date demande: {this.props.loan.dateDemande}
-                - Statut:  {this.props.loan.livre.statut}
-                {!this.props.isHistory &&  <Link to={'loan-detail/' + this.props.id + '/' + this.props.isLending}>Détails</Link>}
-            </li>
+            <div className="loan">
+                {this.props.isLending && <div>Emprunteur : {this.props.loan.emprunteur.fullName}</div>}
+                {!this.props.isLending && <div>Preteur : {this.props.loan.preteur.fullName}</div>}
+                <div>Livre : {this.props.loan.livre.titreBook}</div>
+                <div>Date demande: {this.props.loan.dateDemande}</div>
+                <div>{!this.props.isHistory &&
+                    <Link to={'loan-detail/' + this.props.id + '/' + this.props.isLending}>{envoyerMessage}</Link>}
+                </div>
+                <div>
+                    <ButtonsEmprunt loan={this.props.loan} reloadEmprunt={this.props.reloadEmprunt}  />
+                </div>
+            </div>
         )
     }
 }

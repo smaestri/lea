@@ -199,12 +199,10 @@ var helpers = {
     },
 
     deleteBook: function(idBook){
-        console.log('DELETE BOOK')
         return axios.delete('/livres/' + idBook, {
             headers: {'X-CSRF-Token': getCsrf()},
         })
             .then(function (response) {
-                console.log(response);
                 return response.data;
             })
             .catch(function (error) {

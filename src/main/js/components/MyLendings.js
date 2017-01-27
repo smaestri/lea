@@ -10,7 +10,6 @@ class MyLendings extends React.Component{
     }
 
     componentDidMount(){
-        console.log('MyLendings did mount')
         helpers.getLendings().then((lendings) => {
             console.log('lendings')
             console.log(lendings)
@@ -28,8 +27,8 @@ class MyLendings extends React.Component{
 
         return(
             <div>
-                <h1>My Lendings</h1>
-                <ul>{lendings}</ul>
+                <h1>Mes prêts</h1>
+                <div className="loan-container">{lendings}</div>
             </div>
         )
     }

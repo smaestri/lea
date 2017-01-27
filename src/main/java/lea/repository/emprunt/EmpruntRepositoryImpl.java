@@ -95,4 +95,14 @@ public class EmpruntRepositoryImpl implements EmpruntRepository {
         mongoTemplate.updateFirst(q, update, Emprunt.class);
 
     }
+
+    public Emprunt findEmpruntFromBook(String bookId) {
+        Criteria criteria = Criteria.where("books.id").in(new ObjectId(bookId));
+        Query query = new Query(criteria);
+        List<Emprunt> emprunts = mongoTemplate.find(query, Emprunt.class);
+        if(emprunts != null && emprunts.size()> 0){
+            return emprunts.get(0);
+        }
+        return null;
+    }
 }

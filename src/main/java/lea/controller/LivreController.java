@@ -1,10 +1,7 @@
 package lea.controller;
 
 import lea.commun.StatutEmprunt;
-import lea.modele.Avis;
-import lea.modele.Categorie;
-import lea.modele.Livre;
-import lea.modele.Utilisateur;
+import lea.modele.*;
 import lea.repository.user.UserRepository;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -209,8 +206,12 @@ public class LivreController extends CommonController {
         Utilisateur user = getPrincipal();
 
         //TODO VERFIIER QUE LIVRE PAS UTILISE DANS UN EMPRUNT
+        Emprunt empruntFromBook = empruntRepository.findEmpruntFromBook(livreId);
+        if(empruntFromBook != null){
+            userRepository.supprimerLivre(livreId, user.getId());
+            return "0";
+        }
 
-        userRepository.supprimerLivre(livreId, user.getId());
         return "1";
     }
 

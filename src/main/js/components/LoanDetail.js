@@ -2,26 +2,23 @@ import React from 'react'
 import helpers from '../helpers/api'
 import Comment from './Comment'
 import AddComment from './AddComment'
+import ButtonsEmprunt from './ButtonsEmprunt'
 import AddAvis from './AddAvis'
 import { withRouter } from 'react-router';
+import '../../webapp/assets/css/emprunt-detail.scss'
 
 class LoanDetail extends React.Component {
 
     constructor(props) {
         super(props);
-        this.acceptLoan = this.acceptLoan.bind(this);
-        this.sendLoan = this.sendLoan.bind(this);
-        this.closeLoan = this.closeLoan.bind(this);
         this.saveComment = this.saveComment.bind(this);
         this.saveEditComment = this.saveEditComment.bind(this);
         this.deleteComment = this.deleteComment.bind(this);
         this.state = {loan:{}};
-
     }
 
     //force refresh
     componentDidMount(forceRefresh){
-        console.log('componentDidMount loan detazil')
         let loan;
 
         // Get loan or lending in cache
@@ -34,16 +31,13 @@ class LoanDetail extends React.Component {
             }
         // if not found in cache, call all get loans or lendings and set curent one
         }else {
-            console.log('force refresh')
             if (this.props.params.isLending == 'true') {
-                console.log('call get lendins')
                 helpers.getLendings().then(() => {
                     let lending = helpers.getLoan(this.props.params.loanId);
                     this.setState({loan: lending})
                 })
             }
             else {
-                console.log('call get loans')
                 helpers.getLoans().then(() => {
                     let loan = helpers.getLoan(this.props.params.loanId);
                     this.setState({loan: loan})
@@ -76,62 +70,16 @@ class LoanDetail extends React.Component {
         });
     }
 
-    acceptLoan(){
-        helpers.acceptLoan(this.props.params.loanId).then(() => {
-            this.componentDidMount(true);
-        });
-    }
-
-    sendLoan(){
-        helpers.sendLoan(this.props.params.loanId).then(() => {
-            this.componentDidMount(true);
-        });
-    }
-
-    closeLoan(){
-        helpers.closeLoan(this.props.params.loanId).then(() => {
-            this.props.router.push('/my-lendings')
-        });
+    refreshEmprunt(){
+        this.componentDidMount(true);
     }
 
     render() {
-        console.log('render');
-        console.log(this.state.loan)
-        let displayAcceptButton, displayCloseButton, displayLoanRequestedText, displayDetailButton, displaySendButton, displayLoanSentText, displayLoanSentTextByProp= false;
-        const loan = this.state.loan;
-        const userConnected = document.getElementById("userId").value;
 
+        // if no loan return
+        const loan = this.state.loan;
         if (!loan || !loan.livre){
             return null;
-        }
-
-        //si statut = REQUESTED et je suis empreteur => afficher "vous avez demandé ce livre le ..."
-        if(loan.livre.statut == 'REQUESTED' && userConnected == loan.emprunteur.id){
-            displayLoanRequestedText = true;
-        }
-
-        //si statut = REQUESTED et je suis preteur => afficher bouton ******ACCEPTER****
-        if(loan.livre.statut == 'REQUESTED' && userConnected == loan.preteur.id){
-            displayAcceptButton = true;
-        }
-
-        // si statut = CURRENT et je suis emprunteur => afficher bouton ****RENVOYER***
-        if(loan.livre.statut == 'CURRENT' && userConnected == loan.emprunteur.id){
-            displaySendButton = true;
-        }
-        //Si statut = SENT et je suis emprunteur => afficher vosu avez renvoyé ce livre à son propiretaire le ....
-        if(loan.livre.statut == 'SENT' && userConnected == loan.emprunteur.id){
-            displayLoanSentText = true;
-        }
-
-        if(loan.livre.statut == 'CURRENT' || loan.livre.statut == 'SENT'){
-            displayDetailButton = true;
-        }
-
-        //Si statut = SENT et je suis preteur => afficher le proprietaire vous a renvoyé ce livr ele .... + CLORE
-        if(loan.livre.statut == 'SENT' && userConnected == loan.preteur.id){
-            displayLoanSentTextByProp = true;
-            displayCloseButton = true;
         }
 
         //get comments
@@ -155,11 +103,15 @@ class LoanDetail extends React.Component {
         //Si actif= false ne rien afficher
 
         let title = null;
+        let typeEmprunt = "le prêteur";
+        let isEmprunteur = true;
         if(this.props.params.isLending == 'true'){
-           title = <span>Pret:</span>
+            isEmprunteur = false;
+            typeEmprunt = "l'emprunteur";
+           title = <span>Pret du livre {loan.livre.titreBook} </span>
         }
         else{
-            title = <span>Emprunt:</span>
+            title = <span>Emprunt du livre {loan.livre.titreBook}</span>
         }
 
         //Get rating for this book and this user
@@ -171,26 +123,28 @@ class LoanDetail extends React.Component {
             }
         });
 
+        let displayRating = false;
+        if(loan.livre.statut == 'CURRENT' || loan.livre.statut == 'SENT'){
+            displayRating = true;
+        }
+
         return (
             <div>
-                <div>{title} {loan.id}</div>
-                - emprunteur : {loan.emprunteur.fullName}
-                - Preteur : {loan.preteur.fullName}
-                - Livre : {loan.livre.titreBook}
-                - Date demande: {loan.dateDemande}
-                - Statut:  {loan.livre.statut}
-                - {displayAcceptButton && <button onClick={this.acceptLoan}>Accepter</button>}
-                - {displaySendButton && <button onClick={this.sendLoan}>Renvoyer</button>}
-                - {displayLoanSentText && <span>Vous avez renvoyé le livre à son proprietaire le TODO </span>}
-                - {displayLoanRequestedText && <span>Vous avez demandé ce livre le {loan.dateDemande}</span>}
-                - {displayLoanSentTextByProp && <span>L'emprunteur vous a renvoyé le livre. Si vous l'avez bien reçu, vous pouvez clore cet emprunt, qui apparaitra dans votre historique.</span>}
-                - {displayCloseButton && <button onClick={this.closeLoan}>Clore</button>}
-                { (displaySendButton || displayLoanSentText) && <div>Noter ce livre</div>}
-                { (displaySendButton || displayLoanSentText) && <AddAvis bookId={loan.livre.id} avis={avis} />}
-                <div>Commentaires entre vous et l'emprunteur / preteur</div>
-                <div>
-                    <ul>{comments}</ul>
-                    <AddComment loanId={loan.id} saveComment={this.saveComment}></AddComment>
+                <h1>{title}</h1>
+                <div className="content-emprunt">
+                    <div className="emprunt-information">
+                        {!isEmprunteur && <div>emprunteur : {loan.emprunteur.fullName}</div>}
+                        {isEmprunteur && <div>Preteur : {loan.preteur.fullName}</div>}
+                        <div>Date demande: {loan.dateDemande}</div>
+                        <ButtonsEmprunt loan={loan} reloadEmprunt={this.refreshEmprunt} />
+                        {displayRating &&  <div>Noter ce livre</div>}
+                        {displayRating &&  <AddAvis bookId={loan.livre.id} avis={avis} />}
+                    </div>
+                    <div className="emprunt-comments">
+                        <div>Commentaires entre vous et {typeEmprunt}</div>
+                        <ul>{comments}</ul>
+                        <AddComment loanId={loan.id} saveComment={this.saveComment}></AddComment>
+                    </div>
                 </div>
             </div>
         )

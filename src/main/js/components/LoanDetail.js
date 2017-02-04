@@ -14,6 +14,7 @@ class LoanDetail extends React.Component {
         this.saveComment = this.saveComment.bind(this);
         this.saveEditComment = this.saveEditComment.bind(this);
         this.deleteComment = this.deleteComment.bind(this);
+        this.refreshEmprunt = this.refreshEmprunt.bind(this);
         this.state = {loan:{}};
     }
 
@@ -117,7 +118,7 @@ class LoanDetail extends React.Component {
         });
 
         let displayRating = false;
-        if(loan.livre.statut == 'CURRENT' || loan.livre.statut == 'SENT'){
+        if (userConnected == loan.emprunteur.id && (loan.livre.statut == 'CURRENT') || (loan.livre.statut == 'SENT') ){
             displayRating = true;
         }
 
@@ -129,7 +130,7 @@ class LoanDetail extends React.Component {
                         {!isEmprunteur && <div>emprunteur : {loan.emprunteur.fullName}</div>}
                         {isEmprunteur && <div>Preteur : {loan.preteur.fullName}</div>}
                         <div>Date demande: {loan.dateDemande}</div>
-                        <ButtonsEmprunt loan={loan} reloadEmprunt={this.refreshEmprunt} />
+                        <ButtonsEmprunt loan={loan} onRefreshCount={this.props.onRefreshCount} reloadEmprunt={this.refreshEmprunt} />
                         {displayRating &&  <div>Noter ce livre</div>}
                         {displayRating &&  <AddAvis bookId={loan.livre.id} avis={avis} />}
                     </div>

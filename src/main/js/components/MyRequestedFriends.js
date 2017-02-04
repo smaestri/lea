@@ -1,5 +1,6 @@
 import React from 'react'
 import helpers from '../helpers/api'
+import { withRouter } from 'react-router'
 
 class MyRequestedFriends extends React.Component {
 
@@ -17,10 +18,12 @@ class MyRequestedFriends extends React.Component {
     }
 
     acceptRequestFriend(id){
-        console.log("acceptRequestFriend")
-        console.log(event.target.attributes)
         helpers.acceptFriend(id).then( () => {
+            //freresh notification
+            this.props.onRefreshNotification();
             this.componentDidMount();
+            //redirect to my friends
+            this.props.router.push('/my-friends')
         })
     }
 
@@ -41,4 +44,4 @@ class MyRequestedFriends extends React.Component {
     }
 }
 
-export default MyRequestedFriends
+export default withRouter(MyRequestedFriends)

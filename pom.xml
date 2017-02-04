@@ -34,8 +34,6 @@
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
-
-
         <!--
        <dependency>
            <groupId>org.springframework.boot</groupId>
@@ -68,9 +66,8 @@
 
         <!-- Mail   -->
         <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>1.4</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
         <!-- HTTP      -->
@@ -86,13 +83,6 @@
             <artifactId>gson</artifactId>
             <version>2.8.0</version>
             <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>de.flapdoodle.embed</groupId>
-            <artifactId>de.flapdoodle.embed.mongo</artifactId>
-            <version>1.48.0</version>
-            <scope>test</scope>
         </dependency>
 
     </dependencies>

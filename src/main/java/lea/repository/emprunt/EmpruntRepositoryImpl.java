@@ -97,7 +97,7 @@ public class EmpruntRepositoryImpl implements EmpruntRepository {
     }
 
     public Emprunt findEmpruntFromBook(String bookId) {
-        Criteria criteria = Criteria.where("books.id").in(new ObjectId(bookId));
+        Criteria criteria = Criteria.where("livreId").in(bookId).and("actif").is(true);
         Query query = new Query(criteria);
         List<Emprunt> emprunts = mongoTemplate.find(query, Emprunt.class);
         if(emprunts != null && emprunts.size()> 0){

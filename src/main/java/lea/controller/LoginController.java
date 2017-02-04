@@ -96,17 +96,6 @@ public class LoginController extends CommonController {
             String json = gson.toJson(all);
             model.addAttribute("categories", json);
 
-            //  requested friends
-            List<Utilisateur> requestedFriends = this.userRepository.findRequestedFriends(user.getEmail());
-            if (model != null) {
-                model.addAttribute("requestedFriends", requestedFriends.size());
-            }
-
-            // Nb emprunt prets
-            List<Emprunt> emprunts = empruntRepository.findEmprunts(userSpring.getId(), true);
-            List<Emprunt> prets = empruntRepository.findPrets(userSpring.getId(), true);
-                model.addAttribute("nbPrets", prets.size());
-                model.addAttribute("nbEmprunts", emprunts.size());
             return user;
         }
         return null;

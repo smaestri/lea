@@ -2,33 +2,24 @@ package lea.controller;
 
 import lea.dto.AmiBean;
 import lea.modele.Utilisateur;
-import lea.service.MailService;
+import lea.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-/**
- * Created by sylvain on 17/12/16.
- */
+
 @RestController
 public class FriendController extends CommonController {
 
     @Autowired
-    @Qualifier("mockMail")
-    //@Qualifier("realMail")
-    private MailService mailService;
+    private NotificationService mailService;
 
     // My friends: GET
     @RequestMapping(value = "/myFriends", method = RequestMethod.GET)
@@ -71,7 +62,11 @@ public class FriendController extends CommonController {
             userRepository.addPendingFriend(user, emailFriend);
             String objet = "Livres entre Amis - Nouvelle demande d'ami";
             String contenu = emailEmetteur + " souhaite vous ajouter en tant qu'ami afin d'échanger des livres. Connectez-vous ou inscrivez vous sur livresentreamis.com afin de rentrer dans la communatuté!";
-            this.mailService.sendEmail(contenu, objet, emailFriend, emailEmetteur);
+            try {
+                this.mailService.sendNotificaition(emailFriend, objet, contenu);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         } else {
             return "KO email incorrect";
         }

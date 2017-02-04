@@ -28,6 +28,7 @@ class MyBook extends React.Component {
                 <div><Link to={'book-detail/' + this.props.book.id }>Voir les avis</Link></div>
                 <Button bsStyle="primary" bsSize="small" onClick={this.modifyBook}>Modifier</Button>
                 <Button bsStyle="primary" bsSize="small" onClick={this.handleClick}>Supprimer</Button>
+
             </div>
         )
     }

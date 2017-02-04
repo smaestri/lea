@@ -8,16 +8,11 @@ var HTMLWebpackPluginConfig = new HtmlWebpackPlugin({
 */
 var path = require('path');
 
-const PATHS = {
-  app: path.join(__dirname, 'app'),
-  build: path.join(__dirname, './src/main/webapp/built/')
-};
-
 module.exports = {
 
   entry: './src/main/js/app.js',
   output: {
-    path: PATHS.build,
+    path: path.join(__dirname, './src/main/webapp/built/'),
     filename: 'bundle.js'
   },
 
@@ -47,8 +42,16 @@ module.exports = {
         test: /\.scss$/,
         loaders: ["style-loader", "css-loader", "sass-loader"]
       }
+      /*,
+      {
+        test: /\.(jpg|png)$/,
+        loader: 'file-loader',
+        options: {
+          name: './src/main/webapp/assets/img/[name].[ext]',
+        },
+      },
+      */
     ]
-
   },
   sassLoader: {
     includePaths: [path.resolve(__dirname, "./src/main/webapp/assets/css/")]

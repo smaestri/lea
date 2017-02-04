@@ -1,16 +1,14 @@
 package lea.controller;
 
+import lea.dto.UserBean;
 import lea.modele.Emprunt;
 import lea.modele.Livre;
 import lea.modele.Utilisateur;
 import lea.repository.emprunt.EmpruntRepository;
-import lea.service.MailService;
+import lea.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -21,11 +19,6 @@ public class UserController extends CommonController {
 
     @Autowired
     private EmpruntRepository empruntRepository;
-
-    @Autowired
-    @Qualifier("mockMail")
-    //@Qualifier("realMail")
-    private MailService mailService;
 
     //Detail d'un utilisateur ; ses livres et ceux de ses amis
     @RequestMapping(value = "/users/{userId}", method = RequestMethod.GET)
@@ -58,15 +51,6 @@ public class UserController extends CommonController {
         return friend;
     }
 
-    // account
-    @RequestMapping(value = "/account", method = RequestMethod.GET)
-    public Utilisateur account() throws ServletException, IOException {
-        Utilisateur userConnected = getPrincipal();
-        Utilisateur user = userRepository.findOne(userConnected.getId());
-        return user;
-    }
-
-    // emprunt histories
     @RequestMapping(value = "/historized-loans", method = RequestMethod.GET)
     public List<Emprunt> empruntsHistories() throws ServletException, IOException {
         Utilisateur userConnected = getPrincipal();
@@ -80,7 +64,6 @@ public class UserController extends CommonController {
         return emprunts;
     }
 
-    // My account
     @RequestMapping(value = "/historized-lendings", method = RequestMethod.GET)
     public List<Emprunt> pretHistories() throws ServletException, IOException {
         Utilisateur userConnected = getPrincipal();
@@ -93,6 +76,26 @@ public class UserController extends CommonController {
         }
 
         return prets;
+    }
+
+    // account
+    @RequestMapping(value = "/account", method = RequestMethod.GET)
+    public Utilisateur account() throws ServletException, IOException {
+        Utilisateur userConnected = getPrincipal();
+        Utilisateur user = userRepository.findOne(userConnected.getId());
+        return user;
+    }
+
+    @RequestMapping(value = "/saveEditUser", method = RequestMethod.POST)
+    public String saveUser(@RequestBody UserBean user) throws ServletException, IOException {
+        Utilisateur userConnected = getPrincipal();
+        Utilisateur userDetail = userRepository.findOne(userConnected.getId());
+        userDetail.setLastName(user.getLastName());
+         userDetail.setFirstName(user.getFirstName());
+         userDetail.setPassword(user.getPassword());
+         userDetail.setConfirmPassword(user.getConfirmPassword());
+        userRepository.saveUser(userDetail);
+        return "1";
     }
 
     private void setEmpruntOjects(Emprunt emp){

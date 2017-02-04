@@ -26,7 +26,7 @@ class MyhistorizedLoans extends React.Component{
         return(
             <div>
                 <h1>My historized Loans</h1>
-                <ul>{loans}</ul>
+                <div className="loan-container">{loans}</div>
             </div>
         )
     }

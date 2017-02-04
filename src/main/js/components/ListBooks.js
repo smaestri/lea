@@ -1,6 +1,7 @@
 import React from 'react'
 import helpers from '../helpers/api'
 import Book from './Book'
+import '../../webapp/assets/css/book.scss'
 
 class ListBooks extends React.Component{
 
@@ -10,29 +11,23 @@ class ListBooks extends React.Component{
     }
 
     componentDidMount(){
-        console.log('ListBooks did mount')
-        const books = helpers.getAllBooks().then((books) => {
-            console.log('books')
-            console.log(books)
+        helpers.getAllBooks().then((books) => {
             this.setState({
                 books: books
             });
         });
-        //FIXME BIND NEEDED?
     }
 
 
     render(){
-
-        console.log("render mybooks")
         const books = this.state.books.map( book => {
-            return <Book key={book.id} id={book.id} titreBook={book.titreBook} />
+            return <Book key={book.id} id={book.id} book={book} />
         });
 
         return(
-            <div>
+            <div className="books-container">
                 <h1>Livres empruntables</h1>
-                <ul>{books}</ul>
+                <div className="book-container">{books}</div>
             </div>
         )
     }

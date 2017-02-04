@@ -1,6 +1,7 @@
 import React from 'react'
 import helpers from '../helpers/api'
 import Book from './Book'
+import '../../webapp/assets/css/book.scss'
 
 class UserDetail extends React.Component{
 
@@ -18,13 +19,13 @@ class UserDetail extends React.Component{
 
     render(){
         const books = this.state.user.livres.map( book => {
-            return <Book key={book.id} id={book.id} titreBook={book.titreBook} />
+            return <Book key={book.id} id={book.id} book={book} />
         });
 
         return(
-            <div>
+            <div className="books-container">
                 <h1>Livres de {this.state.user.fullName}</h1>
-                <ul>{books}</ul>
+                <div className="book-container">{books}</div>
             </div>
         )
     }

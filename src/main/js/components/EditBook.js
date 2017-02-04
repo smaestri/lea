@@ -29,6 +29,26 @@ class EditBook extends React.Component {
 
     }
 
+    handleSubmit(event) {
+        console.log("handleSubmit")
+        console.log(this.state.book);
+        event.preventDefault();
+        helpers.saveBook(this.state.book, (this.props.params.bookId) ? this.props.params.bookId : undefined).then((book) => {
+            console.log('redirect to my books');
+            this.props.router.push('/my-books')
+        });
+
+    }
+
+    handleChange(event) {
+
+        const book = this.state.book;
+        book[event.target.name] = event.target.value;
+        console.log("set state")
+        console.log(book)
+        this.setState({book: book});
+    }
+
     render() {
         let catJson = document.getElementById("categories").value;
         let cat = JSON.parse(catJson);
@@ -46,7 +66,7 @@ class EditBook extends React.Component {
                         </Col>
                         <Col sm={10}>
                             <FormControl type="text" name="titreBook" value={this.state.book.titreBook}
-                                   onChange={this.handleChange}/>
+                                         onChange={this.handleChange}/>
                         </Col>
                     </FormGroup>
                     <FormGroup>
@@ -72,7 +92,8 @@ class EditBook extends React.Component {
                             isbn:
                         </Col>
                         <Col sm={10}>
-                            <FormControl type="text" name="isbn" value={this.state.book.isbn} onChange={this.handleChange}/>
+                            <FormControl type="text" name="isbn" value={this.state.book.isbn}
+                                         onChange={this.handleChange}/>
                         </Col>
                     </FormGroup>
                     <FormGroup>
@@ -90,28 +111,10 @@ class EditBook extends React.Component {
                     <Button type="submit" value="Submit">Valider</Button>
                 </Form>
             </div>
-    )
+        )
     }
 
-    handleSubmit(event){
-        console.log("handleSubmit")
-        console.log(this.state.book);
-        event.preventDefault();
-        helpers.saveBook(this.state.book, (this.props.params.bookId)?this.props.params.bookId:undefined).then((book) => {
-        console.log('redirect to my books');
-        this.props.router.push('/my-books')
-    });
 
-    }
+}
 
-    handleChange(event) {
-
-        const book = this.state.book;
-        book[event.target.name] = event.target.value;
-        console.log("set state")
-        console.log(book)
-        this.setState({book: book });
-    }
-    }
-
-    export default withRouter(EditBook);
+export default withRouter(EditBook);

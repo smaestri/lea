@@ -37,12 +37,7 @@ public class Livre extends BaseDocumentImpl {
     private Categorie categorie;
 
     @Transient
-    @JsonIgnore
     private String userId;
-
-    @Transient
-    @JsonIgnore
-    private String userName;
 
     public List<Avis> getAvis() {
         return avis;
@@ -132,14 +127,6 @@ public class Livre extends BaseDocumentImpl {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
     @Override

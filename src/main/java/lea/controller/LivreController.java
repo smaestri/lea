@@ -195,6 +195,7 @@ public class LivreController extends CommonController {
         if (livres != null && livres.size() > 0) {
             for (Livre livre : livres) {
                 this.setBookImage(livre);
+                livre.setUserId(user.getId());
             }
         }
         return livres;
@@ -205,14 +206,13 @@ public class LivreController extends CommonController {
     public String deleteLivre(@PathVariable("livre") String livreId) throws Exception {
         Utilisateur user = getPrincipal();
 
-        //TODO VERFIIER QUE LIVRE PAS UTILISE DANS UN EMPRUNT
         Emprunt empruntFromBook = empruntRepository.findEmpruntFromBook(livreId);
-        if(empruntFromBook != null){
+        if(empruntFromBook == null){
             userRepository.supprimerLivre(livreId, user.getId());
-            return "0";
+            return "1";
         }
 
-        return "1";
+        return "0";
     }
 
 }

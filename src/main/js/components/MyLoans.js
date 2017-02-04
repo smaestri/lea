@@ -8,7 +8,6 @@ class MyLoans extends React.Component{
         super(props);
         this.state = {loans:[]};
         this.loadEmprunt = this.loadEmprunt.bind(this);
-
     }
 
     loadEmprunt(){
@@ -17,6 +16,7 @@ class MyLoans extends React.Component{
                 loans: loans
             });
         });
+        this.props.onRefreshCount();
     }
 
     componentDidMount(){
@@ -25,7 +25,7 @@ class MyLoans extends React.Component{
 
     render(){
         const loans = this.state.loans.map( loan => {
-            return <Loan key={loan.id} id={loan.id} loan={loan} isLending={false} reloadEmprunt={this.loadEmprunt}/>
+            return <Loan key={loan.id} id={loan.id} loan={loan} isLending={false} onRefreshCount={this.props.onRefreshCount} reloadEmprunt={this.loadEmprunt}/>
         });
 
         return(

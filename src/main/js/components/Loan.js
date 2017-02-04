@@ -3,6 +3,7 @@ import { withRouter } from 'react-router';
 import { Link } from 'react-router';
 import ButtonsEmprunt from './ButtonsEmprunt';
 import '../../webapp/assets/css/loans.scss';
+import '../../webapp/assets/css/button.scss';
 
 class Loan extends React.Component {
 
@@ -23,7 +24,10 @@ class Loan extends React.Component {
                     <Link to={'loan-detail/' + this.props.id + '/' + this.props.isLending}>{envoyerMessage}</Link>}
                 </div>
                 <div>
-                    <ButtonsEmprunt loan={this.props.loan} reloadEmprunt={this.props.reloadEmprunt}  />
+                    {!this.props.isHistory && <ButtonsEmprunt loan={this.props.loan} reloadEmprunt={this.props.reloadEmprunt} onRefreshCount={this.props.onRefreshCount}  />}
+                </div>
+                <div>
+                    {this.props.isHistory && this.props.loan.motifRefus && <span>prêt refusé par le propriétaire du livre avec le motif: {this.props.loan.motifRefus}</span>}
                 </div>
             </div>
         )

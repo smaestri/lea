@@ -104,7 +104,6 @@ var helpers = {
     },
 
     getComments: function () {
-        console.log('API get comments')
         return axios.get('/comments')
             .then(function (response) {
                 console.log(response);
@@ -116,14 +115,12 @@ var helpers = {
     },
 
     loanBook: function (idBook) {
-        console.log('API LOAN book')
         return axios.post('/emprunter', {
             idLivre: idBook,
         }, {
             headers: {'X-CSRF-Token': getCsrf()},
         })
             .then(function (response) {
-                console.log(response);
                 return response.data;
             })
             .catch(function (error) {
@@ -131,9 +128,8 @@ var helpers = {
             });
     },
 
-    acceptLoan: function (idBook) {
-        console.log('API ACCEPT LOAN book')
-        return axios.post('/accepterEmprunt/' + idBook, null, {
+    acceptLoan: function (idEmprunt) {
+        return axios.post('/accepterEmprunt/' + idEmprunt, null, {
             headers: {'X-CSRF-Token': getCsrf()},
         })
             .then(function (response) {
@@ -145,13 +141,46 @@ var helpers = {
             });
     },
 
-    sendLoan: function (idBook) {
-        console.log('API ACCEPT LOAN book')
-        return axios.post('/envoyerEmprunt/' + idBook, null, {
+    refuseLoan: function (idEmprunt, refus) {
+        return axios.post('/refuserEmprunt/' + idEmprunt, {refus: refus}, {
             headers: {'X-CSRF-Token': getCsrf()},
         })
             .then(function (response) {
-                console.log(response);
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    },
+
+    countEmpruntAndPret: function() {
+        return axios.get('/countEmpruntAndPret')
+            .then(function (response) {
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+    },
+
+    getAccount: function() {
+        return axios.get('/account')
+            .then(function (response) {
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+    },
+
+
+    sendLoan: function (idEmprunt) {
+        return axios.post('/envoyerEmprunt/' + idEmprunt, null, {
+            headers: {'X-CSRF-Token': getCsrf()},
+        })
+            .then(function (response) {
                 return response.data;
             })
             .catch(function (error) {
@@ -160,12 +189,10 @@ var helpers = {
     },
 
     closeLoan: function (idBook) {
-        console.log('API CLOSE LOAN book')
         return axios.post('/cloreEmprunt/' + idBook, null, {
             headers: {'X-CSRF-Token': getCsrf()},
         })
             .then(function (response) {
-                console.log(response);
                 return response.data;
             })
             .catch(function (error) {
@@ -225,9 +252,7 @@ var helpers = {
     },
 
     saveBook: function (bookObj, idBook) {
-
         if (idBook) {
-            console.log('UPDATE BOOK')
             return axios.put('/livres/' + idBook, {
                 //TODO SPREAD OPERATOR?
                 titreBook: bookObj.titreBook,
@@ -239,7 +264,6 @@ var helpers = {
                 headers: {'X-CSRF-Token': getCsrf()},
             })
             .then(function (response) {
-                console.log(response);
                 return response.data;
             })
             .catch(function (error) {
@@ -247,7 +271,6 @@ var helpers = {
             });
         }
 
-        console.log('CREATE BOOK')
         return axios.post('/livres/new', {
             //TODO SPREAD OPERATOR?
             titreBook: bookObj.titreBook,
@@ -270,7 +293,6 @@ var helpers = {
 
     saveComment: function (commObj, idComm, idLoan) {
         if (idComm) {
-            console.log('UPDATE COMMENT')
             return axios.put('/comments/' + idComm, {
                 message: commObj.message
             }, {
@@ -285,7 +307,6 @@ var helpers = {
                 });
         }
 
-        console.log('CREATE COMM')
         return axios.post('/addComment/' + idLoan, {
             message: commObj.message,
         }, {
@@ -303,7 +324,6 @@ var helpers = {
 
     saveAvis: function (avisObj, idAvis, idBook) {
         if (idAvis) {
-            console.log('UPDATE AVIS')
             return axios.put('/avis/' + idAvis, {
                 note: avisObj.note,
                 libelle: avisObj.libelle,
@@ -319,7 +339,6 @@ var helpers = {
                 });
         }
 
-        console.log('CREATE COMM')
         return axios.post('/avis/' + idBook, {
             note: avisObj.note,
             libelle: avisObj.libelle,
@@ -327,7 +346,6 @@ var helpers = {
             headers: {'X-CSRF-Token': getCsrf()},
         })
             .then(function (response) {
-                console.log(response);
                 return response.data;
             })
             .catch(function (error) {
@@ -336,12 +354,10 @@ var helpers = {
     },
 
     deleteAvis: function(idAvis){
-        console.log('DELETE COMM')
         return axios.delete('/avis/' + idAvis, {
             headers: {'X-CSRF-Token': getCsrf()},
         })
             .then(function (response) {
-                console.log(response);
                 return response.data;
             })
             .catch(function (error) {
@@ -350,7 +366,6 @@ var helpers = {
     },
 
     getMyFriends: function () {
-        console.log('API get MY Friends')
         return axios.get('/myFriends')
             .then(function (response) {
                 return response.data;
@@ -361,7 +376,6 @@ var helpers = {
     },
 
     getMyPendingFriends: function () {
-        console.log('API get myPendingFriends')
         return axios.get('/myPendingFriends')
             .then(function (response) {
                 return response.data;
@@ -372,7 +386,6 @@ var helpers = {
     },
 
     getMyRequestedFriends: function () {
-        console.log('API get getMyRequestedFriends')
         return axios.get('/myRequestedFriends')
             .then(function (response) {
                 return response.data;
@@ -395,12 +408,11 @@ var helpers = {
             });
     },
 
-    acceptFriend: function (idFriend) {
-        return axios.post('/accepterAmi/'+ idFriend ,null , {
+    saveEditUser: function (user) {
+        return axios.post('/saveEditUser' , {firstName: user.firstName, lastName: user.lastName, password: user.password, confirmPassword: user.confirmPassword}, {
             headers: {'X-CSRF-Token': getCsrf()},
         })
             .then(function (response) {
-                console.log(response);
                 return response.data;
             })
             .catch(function (error) {
@@ -408,7 +420,17 @@ var helpers = {
             });
     },
 
-
+    acceptFriend: function (idFriend) {
+        return axios.post('/accepterAmi/'+ idFriend ,null , {
+            headers: {'X-CSRF-Token': getCsrf()},
+        })
+            .then(function (response) {
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    },
 };
 
 export default helpers

@@ -18,7 +18,6 @@ class MyHistorizedLendings extends React.Component{
     }
 
     render(){
-        console.log("render MyLendings")
         const lendings = this.state.lendings.map( lending => {
             return <Loan key={lending.id} id={lending.id} loan={lending} isLending={true} isHistory={true}/>
         });
@@ -26,9 +25,10 @@ class MyHistorizedLendings extends React.Component{
         return(
             <div>
                 <h1>My historized Lendings</h1>
-                <ul>{lendings}</ul>
+                <div className="loan-container">{lendings}</div>
             </div>
         )
     }
-
 }
+
+export default MyHistorizedLendings

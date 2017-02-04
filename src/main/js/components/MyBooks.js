@@ -1,7 +1,8 @@
 import React from 'react'
 import helpers from '../helpers/api'
 import MyBook from './MyBook'
-import Button from 'react-bootstrap/lib/Button';
+import {Button} from 'react-bootstrap';
+import {Modal} from 'react-bootstrap';
 import { withRouter } from 'react-router';
 import '../../webapp/assets/css/book.scss';
 
@@ -12,12 +13,14 @@ class MyBooks extends React.Component{
         this.state = {books:[]};
         this.handleDelete = this.handleDelete.bind(this);
         this.addBook = this.addBook.bind(this);
+        this.close = this.close.bind(this);
     }
 
     componentDidMount(){
         helpers.getMyBooks().then((books) => {
             this.setState({
-                books: books
+                books: books,
+                showModal: false
             });
         });
     }
@@ -30,7 +33,7 @@ class MyBooks extends React.Component{
         event.preventDefault();
         helpers.deleteBook(idBook).then( (data) => {
             if(data == "0"){
-                // TODO open modal
+                this.setState({showModal: true});
             }
             else{
                 this.componentDidMount();
@@ -38,9 +41,13 @@ class MyBooks extends React.Component{
         })
     }
 
+    close(){
+        this.setState({ showModal: false });
+    }
+
     render(){
         const books = this.state.books.map( book => {
-            return <MyBook key={book.id} id={book.id} book={book}handleDelete={this.handleDelete} />
+            return <MyBook key={book.id} id={book.id} book={book} handleDelete={this.handleDelete}/>
         });
         return(
             <div className="books-container">
@@ -49,6 +56,16 @@ class MyBooks extends React.Component{
                     {books}
                 </div>
                 <Button bsStyle="primary" bsSize="small" onClick={this.addBook}>Ajouter livre</Button>
+                <Modal show={this.state.showModal} onHide={this.close}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Livre en cours d'emprunt</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>Ce livre est en cours d'emprunt par un utilisateur. Veuillez clore ce prêt afin de supprimer ce livre!
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button onClick={this.close}>Close</Button>
+                    </Modal.Footer>
+                </Modal>
             </div>
         )
     }

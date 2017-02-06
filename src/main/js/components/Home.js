@@ -8,23 +8,23 @@ import NavDropdown from 'react-bootstrap/lib/NavDropdown';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import {LinkContainer} from 'react-router-bootstrap'
 import helpers from '../helpers/api'
-import { Link } from 'react-router';
+import {Link} from 'react-router';
 
 import '../../webapp/assets/css/home.scss';
 
 const {Component} = React;
 
-class Home extends Component{
+class Home extends Component {
 
     constructor(props) {
         super(props);
         this.refreshCount = this.refreshCount.bind(this);
         this.refreshNotif = this.refreshNotif.bind(this);
-        this.state = {nbEmprunt:0, nbPret: 0, requestedFriends: []};
+        this.refreshName = this.refreshName.bind(this);
+        this.state = {nbEmprunt: 0, nbPret: 0, requestedFriends: [], currentUser: ''};
     }
 
-
-    refreshCount(){
+    refreshCount() {
         helpers.countEmpruntAndPret().then((countBean) => {
             this.setState({
                 nbEmprunt: countBean.nbEmprunt,
@@ -33,7 +33,7 @@ class Home extends Component{
         });
     }
 
-    refreshNotif(){
+    refreshNotif() {
         helpers.getMyRequestedFriends().then((friends) => {
             this.setState({
                 requestedFriends: friends
@@ -41,65 +41,72 @@ class Home extends Component{
         });
     }
 
-
-    componentDidMount(){
-        this.refreshCount();
-        this.refreshNotif()
+    refreshName() {
+        helpers.getAccount().then((user) => {
+            this.setState({
+                currentUser: user.fullName
+            });
+        });
     }
 
+    componentDidMount() {
+        this.refreshCount();
+        this.refreshNotif();
+        this.refreshName();
+    }
 
+    render() {
+        const bienvenue = this.state.currentUser;
 
-  render(){
-      const bienvenue =  document.getElementById("userName").value;
+        return (
+            <div id="main-content">
+                <Navbar>
+                    <Navbar.Header>
+                        <Navbar.Brand>
+                            <a href="#">Livres entre amis</a>
+                        </Navbar.Brand>
+                    </Navbar.Header>
+                    <Nav>
+                        <LinkContainer to={{pathname: '/my-books'}}>
+                            <NavItem eventKey={1} href="#">Ma bibliothèque</NavItem>
+                        </LinkContainer>
+                        <LinkContainer to={{pathname: '/my-loans'}}>
+                            <NavItem eventKey={1} href="#">Mes emprunts ({this.state.nbEmprunt})</NavItem>
+                        </LinkContainer>
+                        <LinkContainer to={{pathname: '/my-lendings'}}>
+                            <NavItem eventKey={2} href="#">Mes prêts ({this.state.nbPret})</NavItem>
+                        </LinkContainer>
+                        <LinkContainer to={{pathname: '/my-friends'}}>
+                            <NavItem eventKey={2} href="#">Mes amis</NavItem>
+                        </LinkContainer>
+                        <NavDropdown eventKey={3} title={bienvenue} id="basic-nav-dropdown">
+                            <LinkContainer to={{pathname: '/historized-loans'}}>
+                                <MenuItem eventKey={3.1}>Mes emprunts historiés</MenuItem>
+                            </LinkContainer>
+                            <LinkContainer to={{pathname: '/historized-lendings'}}>
+                                <MenuItem eventKey={3.2}>Mes prêts historiés</MenuItem>
+                            </LinkContainer>
+                            <MenuItem divider/>
+                            <LinkContainer to={{pathname: '/account'}}>
+                                <MenuItem eventKey={3.3}>Mon compte</MenuItem>
+                            </LinkContainer>
+                            <MenuItem divider/>
+                            <MenuItem href="logout">Me d&eacute;connecter
+                            </MenuItem>
+                        </NavDropdown>
 
-    return(
-      <div id="main-content">
-          <Navbar>
-              <Navbar.Header>
-                  <Navbar.Brand>
-                      <a href="#">Livres entre amis</a>
-                  </Navbar.Brand>
-              </Navbar.Header>
-              <Nav>
-                  <LinkContainer to={{ pathname: '/my-books' }}>
-                      <NavItem eventKey={1} href="#">Ma bibliothèque</NavItem>
-                  </LinkContainer>
-                  <LinkContainer to={{ pathname: '/my-loans' }}>
-                    <NavItem eventKey={1} href="#">Mes emprunts ({this.state.nbEmprunt})</NavItem>
-                  </LinkContainer>
-                  <LinkContainer to={{ pathname: '/my-lendings' }}>
-                    <NavItem eventKey={2} href="#">Mes prêts ({this.state.nbPret})</NavItem>
-                  </LinkContainer>
-                  <LinkContainer to={{ pathname: '/my-friends' }}>
-                      <NavItem eventKey={2} href="#">Mes amis</NavItem>
-                  </LinkContainer>
-                  <NavDropdown eventKey={3} title={bienvenue} id="basic-nav-dropdown">
-                      <LinkContainer to={{ pathname: '/historized-loans' }}>
-                        <MenuItem eventKey={3.1}>Mes emprunts historiés</MenuItem>
-                      </LinkContainer>
-                      <LinkContainer to={{ pathname: '/historized-lendings' }}>
-                        <MenuItem eventKey={3.2}>Mes prêts historiés</MenuItem>
-                      </LinkContainer>
-                      <MenuItem divider />
-                      <LinkContainer to={{ pathname: '/account' }}>
-                        <MenuItem eventKey={3.3}>Mon compte</MenuItem>
-                      </LinkContainer>
-                      <MenuItem divider />
-                      <MenuItem href="logout">Me d&eacute;connecter
-                      </MenuItem>
-                  </NavDropdown>
-
-              </Nav>
-          </Navbar>
-        <Notification requestedFriends={this.state.requestedFriends} />
-        <SearchBar />
-          {this.props.children && React.cloneElement(this.props.children, {
-              onRefreshCount: this.refreshCount,
-              onRefreshNotification: this.refreshNotif
-          })}
-      </div>
-    )
-  }
+                    </Nav>
+                </Navbar>
+                <Notification requestedFriends={this.state.requestedFriends}/>
+                <SearchBar />
+                {this.props.children && React.cloneElement(this.props.children, {
+                    onRefreshCount: this.refreshCount,
+                    onRefreshNotification: this.refreshNotif,
+                    onRefreshName: this.refreshName
+                })}
+            </div>
+        )
+    }
 }
 
 export default Home

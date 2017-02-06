@@ -1,11 +1,11 @@
 import React from 'react'
-import {FormGroup} from 'react-bootstrap';
-import {Col} from 'react-bootstrap';
-import {FormControl} from 'react-bootstrap';
-import {Button} from 'react-bootstrap';
-import {Form} from 'react-bootstrap';
-import {ControlLabel} from 'react-bootstrap';
-import {withRouter} from 'react-router';
+import {FormGroup} from 'react-bootstrap'
+import {Col} from 'react-bootstrap'
+import {FormControl} from 'react-bootstrap'
+import {Button} from 'react-bootstrap'
+import {Form} from 'react-bootstrap'
+import {ControlLabel} from 'react-bootstrap'
+import {withRouter} from 'react-router'
 import helpers from '../helpers/api'
 
 class Account extends React.Component {
@@ -30,6 +30,7 @@ class Account extends React.Component {
             return;
         }
         helpers.saveEditUser(this.state.user).then(() => {
+            this.props.onRefreshName();
             this.props.router.push('/');
         });
     }
@@ -47,9 +48,8 @@ class Account extends React.Component {
     }
 
     render() {
-
         return (
-         <div>
+         <div className="main-content">
              <h2>Veuillez indiquer vos informations</h2>
              <Form horizontal onSubmit={this.handleSubmit}>
                  <FormGroup controlId="formHorizontalEmail">
@@ -77,7 +77,7 @@ class Account extends React.Component {
                      </Col>
                  </FormGroup>
 
-                 <Button type="submit" value="Submit">Valider</Button>
+                 <Button type="submit" value="Submit" bsStyle="primary">Valider</Button>
              </Form>
          </div>
         )

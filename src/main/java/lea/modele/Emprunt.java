@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 public class Emprunt extends BaseDocumentImpl implements Serializable {
 
@@ -18,7 +17,10 @@ public class Emprunt extends BaseDocumentImpl implements Serializable {
     private Date debutEmprunt;
     private Date finEmprunt;
     private boolean actif;
+    private Date dateAcceptOrRefus;
     private Date dateDemande;
+    private Date dateEnvoi;
+    private Date dateCloture;
 
     private String motifRefus;
     private String intermediaire;
@@ -111,6 +113,31 @@ public class Emprunt extends BaseDocumentImpl implements Serializable {
 
     public void setCommentaires(List<Commentaire> commentaires) {
         this.commentaires = commentaires;
+    }
+
+
+    public Date getDateEnvoi() {
+        return dateEnvoi;
+    }
+
+    public void setDateEnvoi(Date dateEnvoi) {
+        this.dateEnvoi = dateEnvoi;
+    }
+
+    public Date getDateCloture() {
+        return dateCloture;
+    }
+
+    public void setDateCloture(Date dateCloture) {
+        this.dateCloture = dateCloture;
+    }
+
+    public Date getDateAcceptOrRefus() {
+        return dateAcceptOrRefus;
+    }
+
+    public void setDateAcceptOrRefus(Date dateAcceptOrRefus) {
+        this.dateAcceptOrRefus = dateAcceptOrRefus;
     }
 
     @Override

@@ -3,6 +3,8 @@ package lea.controller;
 import lea.modele.*;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+
 @RestController
 public class AvisController extends CommonController {
 
@@ -12,6 +14,7 @@ public class AvisController extends CommonController {
         Utilisateur proprietaire = userRepository.findproprietaire(livreId);
         Utilisateur auteurAvis = this.getPrincipal();
         avis.setAuteur(auteurAvis.getId());
+        avis.setDateavis(new Date());
         userRepository.saveAvis(proprietaire, livreId, avis);
         return avis.getId();
     }
@@ -19,6 +22,7 @@ public class AvisController extends CommonController {
     // Editer un avis : PUT
     @RequestMapping(value = "/avis/{avisId}", method = RequestMethod.PUT)
     public String editAvis(@PathVariable("avisId") String avisId, @RequestBody Avis avis) {
+        avis.setDateavis(new Date());
         userRepository.updateAvis(avisId, avis);
         return "OK";
     }

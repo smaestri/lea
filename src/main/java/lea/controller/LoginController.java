@@ -37,11 +37,19 @@ public class LoginController extends CommonController {
     @Autowired
     private UserValidator userValidator;
 
+    @RequestMapping(value = "/home")
+    public String home(Model model) {
+        return "home";
+    }
+
     @RequestMapping(value = "/")
     public String welcomeHandler(Model model) {
+
+        Utilisateur userSpring = getPrincipal();
+        if(userSpring == null){
+            return "redirect:/home";
+        }
         initGlobalvariables(model, false);
-        List<Avis> avis = null; //avisRepository.getLastAvis();
-        model.addAttribute("avis", avis);
         return "index";
     }
 

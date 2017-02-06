@@ -4,7 +4,9 @@ import Comment from './Comment'
 import AddComment from './AddComment'
 import ButtonsEmprunt from './ButtonsEmprunt'
 import AddAvis from './AddAvis'
-import { withRouter } from 'react-router';
+import LoanAttributes from './LoanAttributes'
+import { withRouter } from 'react-router'
+import {Button} from 'react-bootstrap'
 import '../../webapp/assets/css/emprunt-detail.scss'
 
 class LoanDetail extends React.Component {
@@ -15,6 +17,7 @@ class LoanDetail extends React.Component {
         this.saveEditComment = this.saveEditComment.bind(this);
         this.deleteComment = this.deleteComment.bind(this);
         this.refreshEmprunt = this.refreshEmprunt.bind(this);
+        this.returnToLoans = this.returnToLoans.bind(this);
         this.state = {loan:{}};
     }
 
@@ -48,26 +51,35 @@ class LoanDetail extends React.Component {
     }
 
     saveComment(commObj){
-        helpers.saveComment(commObj, null, this.props.params.loanId).then((comm) => {
+        helpers.saveComment(commObj, null, this.props.params.loanId).then(() => {
             this.componentDidMount(true);
         });
     }
 
     deleteComment(commId){
-        helpers.deleteComment(commId).then((comm) => {
+        helpers.deleteComment(commId).then(() => {
             this.componentDidMount(true);
 
         });
     }
 
     saveEditComment(commObj, idComm){
-        helpers.saveComment(commObj, idComm, this.props.params.loanId).then((comm) => {
+        helpers.saveComment(commObj, idComm, this.props.params.loanId).then(() => {
             this.componentDidMount(true);
         });
     }
 
     refreshEmprunt(){
         this.componentDidMount(true);
+    }
+
+    returnToLoans() {
+        if(this.props.params.isLending == 'true'){
+            this.props.router.push('/my-lendings');
+        }
+        else{
+            this.props.router.push('/my-loans')
+        }
     }
 
     render() {
@@ -86,9 +98,13 @@ class LoanDetail extends React.Component {
                 displayButtons=true;
             }
 
+            let message ='';
+            if(comment.message) {
+                message = comment.message;
+            }
             return <Comment key={comment.id}
                             id={comment.id}
-                            message={comment.message}
+                            message={message}
                             dateMessage={comment.dateMessage}
                             auteur={comment.user.fullName}
                             displayButtons={displayButtons}
@@ -102,10 +118,10 @@ class LoanDetail extends React.Component {
         if(this.props.params.isLending == 'true'){
             isEmprunteur = false;
             typeEmprunt = "l'emprunteur";
-           title = <span>Pret du livre {loan.livre.titreBook} </span>
+           title = <span>Prêt du livre <i>{loan.livre.titreBook}</i> </span>
         }
         else{
-            title = <span>Emprunt du livre {loan.livre.titreBook}</span>
+            title = <span>Emprunt du livre <i>{loan.livre.titreBook}</i></span>
         }
 
         //Get rating for this book and this user
@@ -118,28 +134,26 @@ class LoanDetail extends React.Component {
         });
 
         let displayRating = false;
-        if (userConnected == loan.emprunteur.id && (loan.livre.statut == 'CURRENT') || (loan.livre.statut == 'SENT') ){
+        if (userConnected == loan.emprunteur.id && (loan.livre.statut == 'CURRENT' || loan.livre.statut == 'SENT') ){
             displayRating = true;
         }
-
         return (
-            <div>
+            <div className="main-content">
                 <h1>{title}</h1>
                 <div className="content-emprunt">
                     <div className="emprunt-information">
-                        {!isEmprunteur && <div>emprunteur : {loan.emprunteur.fullName}</div>}
-                        {isEmprunteur && <div>Preteur : {loan.preteur.fullName}</div>}
-                        <div>Date demande: {loan.dateDemande}</div>
+                        <LoanAttributes loan={loan} isHistory={false} isLending={this.props.params.isLending} displayLinks={false} />
                         <ButtonsEmprunt loan={loan} onRefreshCount={this.props.onRefreshCount} reloadEmprunt={this.refreshEmprunt} />
-                        {displayRating &&  <div>Noter ce livre</div>}
+                        {displayRating &&  <h3>Noter ce livre</h3>}
                         {displayRating &&  <AddAvis bookId={loan.livre.id} avis={avis} />}
                     </div>
                     <div className="emprunt-comments">
-                        <div>Commentaires entre vous et {typeEmprunt}</div>
+                        <h3>Commentaires entre vous et {typeEmprunt}</h3>
                         <ul>{comments}</ul>
                         <AddComment loanId={loan.id} saveComment={this.saveComment}></AddComment>
                     </div>
                 </div>
+                <Button bsStyle="primary" onClick={this.returnToLoans}>Retour</Button>
             </div>
         )
     }

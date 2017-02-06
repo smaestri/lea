@@ -32,7 +32,7 @@ public class UserController extends CommonController {
         if (!listeLivre.isEmpty()) {
             for (Livre livre : listeLivre) {
                 livre.setUserId(friend.getId());
-                //LivreController.setBookImage(livre);
+                LivreController.setBookImage(livre);
             }
         }
 
@@ -43,7 +43,7 @@ public class UserController extends CommonController {
                 List<Livre> listeLivre2 = subFriend.getLivres();
                 for (Livre livre : listeLivre2) {
                     livre.setUserId(subFriend.getId());
-                    //LivreController.setBookImage(livre);
+                    LivreController.setBookImage(livre);
                 }
                 friend.getUserFriends().add(subFriend);
             }
@@ -57,8 +57,6 @@ public class UserController extends CommonController {
         List<Emprunt> emprunts = empruntRepository.findEmprunts(userConnected.getId(), false);
 
         for (Emprunt emp : emprunts) {
-            Livre livre = userRepository.findBook(emp.getLivreId());
-            LivreController.setBookImage(livre);
             setEmpruntOjects(emp);
         }
         return emprunts;
@@ -70,8 +68,6 @@ public class UserController extends CommonController {
         List<Emprunt> prets = empruntRepository.findPrets(userConnected.getId(), false);
 
         for (Emprunt pret : prets) {
-            Livre livre = userRepository.findBook(pret.getLivreId());
-            LivreController.setBookImage(livre);
             setEmpruntOjects(pret);
         }
 
@@ -102,6 +98,7 @@ public class UserController extends CommonController {
         emp.setPreteur(userRepository.findOne(emp.getPreteurId()));
         emp.setEmprunteur(userRepository.findOne(emp.getEmprunteurId()));
         Livre book = userRepository.findBook(emp.getLivreId());
+        LivreController.setBookImage(book);
         emp.setLivre(book);
     }
 

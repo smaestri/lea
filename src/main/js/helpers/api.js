@@ -204,7 +204,6 @@ var helpers = {
         console.log('API get book detail')
         return axios.get('/livres/' + bookid)
             .then(function (response) {
-                console.log(response);
                 return response.data;
             })
             .catch(function (error) {
@@ -213,11 +212,9 @@ var helpers = {
     },
 
     getUserDetail: function (userId) {
-        console.log('API get user detail')
         return axios.get('/users/' + userId)
             .then(function (response) {
                 _books = response.data.livres;
-                console.log(response);
                 return response.data;
             })
             .catch(function (error) {
@@ -291,15 +288,14 @@ var helpers = {
 
     },
 
-    saveComment: function (commObj, idComm, idLoan) {
+    saveComment: function (message, idComm, idLoan) {
         if (idComm) {
             return axios.put('/comments/' + idComm, {
-                message: commObj.message
+                message: message
             }, {
                 headers: {'X-CSRF-Token': getCsrf()},
             })
                 .then(function (response) {
-                    console.log(response);
                     return response.data;
                 })
                 .catch(function (error) {
@@ -308,7 +304,7 @@ var helpers = {
         }
 
         return axios.post('/addComment/' + idLoan, {
-            message: commObj.message,
+            message: message,
         }, {
             headers: {'X-CSRF-Token': getCsrf()},
         })

@@ -1,27 +1,57 @@
-.books-container{
-  .book-container{
-    display: flex;
-    margin-bottom: 15px;
-    .book{
-      width: 100px;
-      margin: 10px;
-      border-style: solid;
-      border-width: 1px;
-      border-color: black;
-      border-radius: 10px;
-      .titreBook{
-        font-size: 22px;
+.book-container{
+  display: flex;
+  margin-bottom: 15px;
+  .book{
+    margin: 20px;
+    .titreBook{
+      font-size: 22px;
+      display: flex;
+      justify-content: center; /* align horizontal */
+      align-items: center; /* align vertical */
+    }
+
+    .imageBook{
+      display: flex;
+      justify-content: center; /* align horizontal */
+      align-items: center; /* align vertical */
+    }
+
+    .avisBook{
+      .moyenneNote{
+        display: flex;
+        justify-content: center; /* align horizontal */
+        align-items: center; /* align vertical */
+        font-weight:600;
+      }
+      .ratingBook{
+        display: flex;
+        justify-content: center; /* align horizontal */
+        align-items: center; /* align vertical */
       }
     }
-    button{
-      margin:5px;
+    .linkBook{
+      display: flex;
+      justify-content: center; /* align horizontal */
+      align-items: center; /* align vertical */
     }
+  }
+  button{
+    margin:5px;
   }
 }
 
-.form-horizontal{
-  text-align: center;
+.edit-book-container{
+
+  .form-horizontal{
+    text-align: center;
+  }
+
+  button{
+    margin-right: 10px;
+  }
+
 }
+
 
 
 

@@ -11,6 +11,7 @@
 
     <properties>
         <spring-security.version>4.0.1.RELEASE</spring-security.version>
+        <start-class>lea.Application</start-class>
     </properties>
 
     <parent>

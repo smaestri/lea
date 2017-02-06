@@ -22,10 +22,14 @@ class MyHistorizedLendings extends React.Component{
             return <Loan key={lending.id} id={lending.id} loan={lending} isLending={true} isHistory={true}/>
         });
 
+
+
+
         return(
-            <div>
-                <h1>My historized Lendings</h1>
-                <div className="loan-container">{lendings}</div>
+            <div className="main-content">
+                <h1>Mes prêts historiés</h1>
+                {lendings.length == 0 && <span>Vous n'avez pas de prêts historiés.</span>}
+                {lendings.length >0 &&  <div className="loan-container">{lendings}</div>}
             </div>
         )
     }

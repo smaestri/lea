@@ -1,10 +1,13 @@
 import React from 'react'
+import {FormControl} from 'react-bootstrap'
+import {Button} from 'react-bootstrap'
+import formatDate from '../helpers/utils'
 
 class Comment extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {editMode: false, comm:{}};
+        this.state = {editMode: false, comm: props.message};
         this.toggleEditmode = this.toggleEditmode.bind(this);
         this.undoEdit = this.undoEdit.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -19,9 +22,7 @@ class Comment extends React.Component {
     }
 
     handleChange(event){
-        const comm = this.state.comm;
-        comm[event.target.name] = event.target.value;
-        this.setState({comm: comm });
+        this.setState({comm: event.target.value });
     }
 
     deleteComment(){
@@ -41,18 +42,19 @@ class Comment extends React.Component {
     }
 
     render() {
+        let dateMessage = formatDate(this.props.dateMessage);
         return (
             <li>
-                <div>
-                    <span>Ajouté le {this.props.dateMessage} par {this.props.auteur}</span>
-                    {!this.state.editMode && this.props.displayButtons && <button onClick={this.toggleEditmode}>Edit</button>}
-                    {!this.state.editMode && this.props.displayButtons && <button onClick={this.deleteComment}>Delete</button>}
-                    {this.state.editMode && this.props.displayButtons && <button onClick={this.undoEdit}>Annuler</button>}
-                    {this.state.editMode && this.props.displayButtons && <button onClick={this.saveEditComment}>Sauvegarder</button>}
+                <div className="comment-container">
+                    <span>Ajouté le {dateMessage} par {this.props.auteur}</span>
+                    {!this.state.editMode && this.props.displayButtons && <Button bsStyle="primary" bsSize="small" onClick={this.toggleEditmode}>Modifier</Button>}
+                    {!this.state.editMode && this.props.displayButtons && <Button bsStyle="primary" bsSize="small" onClick={this.deleteComment}>Supprimer</Button>}
+                    {this.state.editMode && this.props.displayButtons && <Button bsStyle="primary" bsSize="small" onClick={this.undoEdit}>Annuler</Button>}
+                    {this.state.editMode && this.props.displayButtons && <Button bsStyle="primary" bsSize="small" onClick={this.saveEditComment}>Sauvegarder</Button>}
                 </div>
                <div>
-                       {this.state.editMode && <textarea name="message" onChange={this.handleChange}>{this.props.message}</textarea>}
-                       {!this.state.editMode && <span>{this.props.message}</span>}
+                   {this.state.editMode && <FormControl name="message" componentClass="textarea" onChange={this.handleChange} value={this.state.comm} />}
+                   {!this.state.editMode && <span className="txt-comment">{this.state.comm}</span>}
                </div>
             </li>
         )

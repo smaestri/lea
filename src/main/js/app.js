@@ -17,33 +17,9 @@ import Account from "./components/Account";
 import MyHistorizedLendings from "./components/MyHistorizedLendings";
 import MyHistorizedLoans from "./components/MyHistorizedLoans";
 import {Tests} from "./components/Test";
-import helpers from './helpers/api'
-//const store = createStore(todoReducer)
+import '../webapp/assets/css/common.scss';
 
 class App extends React.Component {
-
-    constructor(props) {
-        super(props);
-        //this.refreshCount = this.refreshCount.bind(this);
-        //this.state = {nbEmprunt: 0, nbPret: 0};
-
-    }
-
-    componentDidMount(){
-        //refresh nb prets/emprunts
-        this.refreshCount();
-    }
-
-    refreshCount() {
-        /*
-        helpers.countEmpruntAndPret().then((countBean) => {
-            this.setState({
-                nbEmprunt: countBean.nbEmprunt,
-                nbPret: countBean.nbPret
-            });
-        });
-        */
-    }
 
     render() {
         return(
@@ -54,7 +30,7 @@ class App extends React.Component {
                     <Route path="/edit-book/:bookId" component={EditBook}/>
                     <Route path="/my-loans" component={MyLoans}/>
                     <Route path="/loan-detail/:loanId/:isLending" component={LoanDetail}/>
-                    <Route path="/book-detail/:bookId" component={BookDetail}/>
+                    <Route path="/book-detail/:bookId/:previousPage" component={BookDetail}/>
                     <Route path="/list-book" component={ListBooks}/>
                     <Route path="/my-lendings" component={MyLendings} />
                     <Route path="/my-friends" component={MyFriends}/>
@@ -73,4 +49,3 @@ class App extends React.Component {
 export default App;
 
 render(<App/>, document.getElementById('app'));
-// store.subscribe(render);

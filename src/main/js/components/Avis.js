@@ -1,6 +1,7 @@
 import React from 'react'
 import Rating from 'react-rating'
 import helpers from '../helpers/api'
+import formatDate from '../helpers/utils'
 import '../../webapp/assets/css/rating.scss'
 
 class Avis extends React.Component {
@@ -20,9 +21,10 @@ class Avis extends React.Component {
     }
 
     render() {
+        let dateAvis = formatDate(this.state.avis.dateavis);
         return (
             <div>
-                <div>Ajouté le {this.state.avis.creationDate} par {this.state.avis.auteur} : </div>
+                <div>Ajouté le {dateAvis} par {this.state.avis.auteur} : </div>
                 <div className="rating-container">
                     <Rating readonly={true} initialRate={this.state.avis.note}/>
                     <span>{this.state.avis.libelle}</span>

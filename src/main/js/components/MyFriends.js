@@ -27,7 +27,6 @@ class MyFriends extends React.Component {
     }
 
     savePendingFriend(email){
-        console.log('savePendingFriend')
         helpers.savePendingFriend(email).then(() => {
             //TODO : unnecessary cal to get friends
             this.componentDidMount();
@@ -45,7 +44,7 @@ class MyFriends extends React.Component {
         });
 
         return (
-            <div>
+            <div className="main-content">
                 <h2>Mes amis actifs</h2>
                 <ul>{friends}</ul>
                 {(friends.length == 0) && <span>pas d'amis</span>}

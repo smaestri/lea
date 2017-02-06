@@ -1,4 +1,7 @@
 import React from 'react'
+import {FormControl} from 'react-bootstrap'
+import {Button} from 'react-bootstrap'
+import '../../webapp/assets/css/friend.scss'
 
 class AddFriend extends React.Component {
 
@@ -12,6 +15,7 @@ class AddFriend extends React.Component {
     handleSubmit(event){
         event.preventDefault();
         this.props.savePendingFriend(this.state.emailFriend);
+        this.setState({emailFriend: '' });
     }
 
     handleChange(event){
@@ -21,11 +25,15 @@ class AddFriend extends React.Component {
 
     render() {
         return (
-            <form onSubmit={this.handleSubmit}>
-              Saisir le mail de la personne:
-              <textarea name="email" onChange={this.handleChange}></textarea>
-              <input type="submit" value="Submit" />
-            </form>
+            <div className="add-friend">
+                <form>
+                    <label>Saisir le mail de la personne à ajouter comme ami:</label>
+                    <div className="txt-add-friend">
+                        <FormControl componentClass="textarea" onChange={this.handleChange} value={this.state.emailFriend} />
+                    </div>
+                    <Button bsStyle="primary" bsSize="small" onClick={this.handleSubmit}>Ajouter</Button>
+                </form>
+            </div>
         )
     }
 }

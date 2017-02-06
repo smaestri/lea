@@ -18,16 +18,16 @@ class ListBooks extends React.Component{
         });
     }
 
-
     render(){
         const books = this.state.books.map( book => {
-            return <Book key={book.id} id={book.id} book={book} />
+            return <Book key={book.id} id={book.id} book={book} previousPage="listBook" />
         });
 
         return(
-            <div className="books-container">
+            <div className="main-content">
                 <h1>Livres empruntables</h1>
-                <div className="book-container">{books}</div>
+                {books.length == 0 && <span>Pas de livres empruntables.</span>}
+                {books.length >0 && <div className="book-container">{books}</div>}
             </div>
         )
     }

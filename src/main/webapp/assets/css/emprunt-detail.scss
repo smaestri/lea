@@ -1,15 +1,34 @@
 .content-emprunt{
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  margin-bottom: 25px;
   .titreEmprunt{
     font-size: 20px;
   }
   .emprunt-information{
-    width: 300px;
-    margin-right: 25px;
+    button {
+      margin-right: 5px;
+    }
   }
-  .emprunt-comments{
-    width: 300px;
+  .avis-container{
+    display:flex;
+    .avis-content{
+      .avis-note, .avis-txt{
+        display: flex;
+        > *{
+        padding: 5px;
+      }
+    }
   }
+  .avis-buttons{
+  button{
+    margin: 5px;
+  }
+
+  }
+
+}
+
+
 
 }

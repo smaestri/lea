@@ -42,15 +42,6 @@ module.exports = {
         test: /\.scss$/,
         loaders: ["style-loader", "css-loader", "sass-loader"]
       }
-      /*,
-      {
-        test: /\.(jpg|png)$/,
-        loader: 'file-loader',
-        options: {
-          name: './src/main/webapp/assets/img/[name].[ext]',
-        },
-      },
-      */
     ]
   },
   sassLoader: {

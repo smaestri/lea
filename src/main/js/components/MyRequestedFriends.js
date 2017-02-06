@@ -1,6 +1,7 @@
 import React from 'react'
 import helpers from '../helpers/api'
 import { withRouter } from 'react-router'
+import {Button} from 'react-bootstrap'
 
 class MyRequestedFriends extends React.Component {
 
@@ -30,15 +31,14 @@ class MyRequestedFriends extends React.Component {
 
     render() {
         const requestedFriends = this.state.requestedFriends.map( friend => {
-            //TO STUDY
-            return <div><span>{friend.fullName}</span> - <button onClick={()=>{this.acceptRequestFriend(friend.id)}}>Accepter</button></div>
+            return <div><span>{friend.fullName}</span> - <Button bsStyle="primary" bsSize="small" onClick={()=>{this.acceptRequestFriend(friend.id)}}>Accepter</Button></div>
         });
 
         return (
-            <div>
-                <h2>Mes amis a confirmer</h2>
+            <div className="main-content">
+                <h2>Mes amis à confirmer</h2>
                 <ul>{requestedFriends}</ul>
-                {(requestedFriends.length == 0) && <span>pas d'amis a confirmer</span>}
+                {(requestedFriends.length == 0) && <span>Pas d'amis a confirmer</span>}
             </div>
         )
     }

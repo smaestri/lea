@@ -1,6 +1,9 @@
 import React from 'react'
 import Rating from 'react-rating'
 import helpers from '../helpers/api'
+import {Button} from 'react-bootstrap'
+import {FormControl} from 'react-bootstrap'
+import formatDate from '../helpers/utils'
 
 class AddAvis extends React.Component {
 
@@ -37,7 +40,6 @@ class AddAvis extends React.Component {
     saveAvis(){
         helpers.saveAvis(this.state.avis, null, this.props.bookId).then( (newAvisId) => {
             this.setState({editMode: false, avis: Object.assign(this.state.avis, {id: newAvisId})  });
-            console.log(this.state.avis)
         });
     }
 
@@ -60,15 +62,6 @@ class AddAvis extends React.Component {
     }
 
     render() {
-
-        // get initial rate for this book and this user
-
-        /*
-        this.props.bookRates.avis.forEach ( (avis) => {
-            console.log(avis);
-        })
-*/
-
         let showTextArea = false;
         // display if state not setted
         if(!this.state.avis.id){
@@ -79,19 +72,30 @@ class AddAvis extends React.Component {
                 showTextArea = true;
             }
         }
-
+        let dateAvis;
+        if(this.state.avis.dateavis){
+            dateAvis = formatDate(this.state.avis.dateavis);
+        }
 
         return (
-         <div>
-             <Rating readonly={!showTextArea} initialRate={this.state.avis.note} onClick={this.handleRating} />
-             {!showTextArea && <span>{this.state.avis.libelle}</span>}
-             { showTextArea && <textarea name="libelle" onChange={this.handleChange}>{this.state.avis.libelle}</textarea>}
-
-             {this.state.avis && this.state.avis.id && !this.state.editMode && <button onClick={this.toggleEditmode}>Edit</button>}
-             {this.state.avis && this.state.avis.id && !this.state.editMode && <button onClick={this.deleteAvis}>Delete</button>}
-             {this.state.avis && this.state.avis.id && this.state.editMode && <button onClick={this.undoEdit}>Annuler</button>}
-             {this.state.avis && this.state.avis.id && this.state.editMode && <button onClick={this.saveEditAvis}>Sauvegarder</button>}
-             {(!this.state.avis || !this.state.avis.id) && <button onClick={this.saveAvis}>Submit</button>}
+         <div className="avis-container">
+             <div className="avis-content">
+                 {dateAvis && <div>Ajouté le {dateAvis}</div>}
+                 <div className="avis-note">
+                     <label>Note: </label> <Rating readonly={!showTextArea} initialRate={this.state.avis.note} onClick={this.handleRating} />
+                 </div>
+                 <div className="avis-txt">
+                     <label>Message: </label>{!showTextArea && <span><i>{this.state.avis.libelle}</i></span>}
+                     { showTextArea && <FormControl name="libelle" componentClass="textarea" onChange={this.handleChange} value={this.state.avis.libelle} />}
+                 </div>
+             </div>
+             <div className="avis-buttons">
+                 {this.state.avis && this.state.avis.id && !this.state.editMode && <Button bsStyle="primary" bsSize="small" onClick={this.toggleEditmode}>Modifier</Button>}
+                 {this.state.avis && this.state.avis.id && !this.state.editMode && <Button bsStyle="primary" bsSize="small" onClick={this.deleteAvis}>Supprimer</Button>}
+                 {this.state.avis && this.state.avis.id && this.state.editMode && <Button bsStyle="primary" bsSize="small" onClick={this.undoEdit}>Annuler</Button>}
+                 {this.state.avis && this.state.avis.id && this.state.editMode && <Button bsStyle="primary" bsSize="small" onClick={this.saveEditAvis}>Sauvegarder</Button>}
+                 {(!this.state.avis || !this.state.avis.id) && <Button bsStyle="primary" bsSize="small" onClick={this.saveAvis}>Valider</Button>}
+             </div>
          </div>
         )
     }

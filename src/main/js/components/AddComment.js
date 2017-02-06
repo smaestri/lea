@@ -1,10 +1,13 @@
 import React from 'react'
+import {FormControl} from 'react-bootstrap'
+import {Button} from 'react-bootstrap'
+import '../../webapp/assets/css/comment.scss'
 
 class AddComment extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {comm: {}};
+        this.state = {comm: ''};
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
@@ -12,20 +15,21 @@ class AddComment extends React.Component {
     handleSubmit(event){
         event.preventDefault();
         this.props.saveComment(this.state.comm);
+        this.setState ({comm: ''});
     }
 
     handleChange(event){
-        const comm = this.state.comm;
-        comm[event.target.name] = event.target.value;
-        this.setState({comm: comm });
+        this.setState({comm:  event.target.value });
     }
 
     render() {
         return (
             <form onSubmit={this.handleSubmit}>
-              Ajouter un commentaire :
-              <textarea name="message" onChange={this.handleChange}></textarea>
-              <input type="submit" value="Submit" />
+                <div className="add-comment-container">
+                    <span>Ajouter un commentaire :</span>
+                    <FormControl name="message" componentClass="textarea" onChange={this.handleChange} value={this.state.comm} />
+                    <Button type="submit" bsStyle="primary" bsSize="small">Valider</Button>
+                </div>
           </form>
         )
     }

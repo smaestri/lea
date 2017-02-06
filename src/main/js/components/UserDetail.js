@@ -19,11 +19,11 @@ class UserDetail extends React.Component{
 
     render(){
         const books = this.state.user.livres.map( book => {
-            return <Book key={book.id} id={book.id} book={book} />
+            return <Book key={book.id} id={book.id} book={book} previousPage="userDetail" />
         });
 
         return(
-            <div className="books-container">
+            <div className="main-content">
                 <h1>Livres de {this.state.user.fullName}</h1>
                 <div className="book-container">{books}</div>
             </div>

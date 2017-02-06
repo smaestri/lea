@@ -1,6 +1,6 @@
 import React from 'react'
 import helpers from '../helpers/api'
-import MyBook from './MyBook'
+import Book from './Book'
 import {Button} from 'react-bootstrap';
 import {Modal} from 'react-bootstrap';
 import { withRouter } from 'react-router';
@@ -47,14 +47,13 @@ class MyBooks extends React.Component{
 
     render(){
         const books = this.state.books.map( book => {
-            return <MyBook key={book.id} id={book.id} book={book} handleDelete={this.handleDelete}/>
+            return <Book key={book.id} id={book.id} book={book} handleDelete={this.handleDelete} previousPage="myBooks"/>
         });
         return(
-            <div className="books-container">
+            <div className="main-content">
                 <h1>Ma bibiliothèque</h1>
-                <div className="book-container">
-                    {books}
-                </div>
+                {books.length == 0 && <span>Vous n'avez pas de livres.</span>}
+                {books.length >0 && <div className="book-container">{books}</div>}
                 <Button bsStyle="primary" bsSize="small" onClick={this.addBook}>Ajouter livre</Button>
                 <Modal show={this.state.showModal} onHide={this.close}>
                     <Modal.Header closeButton>

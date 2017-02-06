@@ -66,6 +66,7 @@ public class EmpruntController extends CommonController {
             emp.setPreteur(userRepository.findOne(emp.getPreteurId()));
             emp.setEmprunteur(userRepository.findOne(emp.getEmprunteurId()));
             Livre book = userRepository.findBook(emp.getLivreId());
+            book.setImage("assets/img/book.png");
             setCommentuser(emp);
             emp.setLivre(book);
         }
@@ -156,6 +157,7 @@ public class EmpruntController extends CommonController {
         }
         this.userRepository.updateBookStatus(principal, emprunt.getLivreId(), StatutEmprunt.CURRENT);
         emprunt.setActif(true);
+        emprunt.setDateAcceptOrRefus(new Date());
         empruntRepository.saveEmprunt(emprunt);
         String emprunteurId = emprunt.getEmprunteurId();
         Utilisateur emprunteur = userRepository.findOne(emprunteurId);
@@ -175,6 +177,7 @@ public class EmpruntController extends CommonController {
         }
         this.userRepository.updateBookStatus(principal, emprunt.getLivreId(), StatutEmprunt.FREE);
         emprunt.setActif(false);
+        emprunt.setDateAcceptOrRefus(new Date());
         emprunt.setMotifRefus(refusBean.getRefus());
         empruntRepository.saveEmprunt(emprunt);
         Utilisateur emprunteur = userRepository.findOne(emprunt.getEmprunteurId());
@@ -195,6 +198,7 @@ public class EmpruntController extends CommonController {
         Utilisateur preteur = userRepository.findOne(emprunt.getPreteurId());
         this.userRepository.updateBookStatus(preteur, emprunt.getLivreId(), StatutEmprunt.SENT);
         emprunt.setActif(true);
+        emprunt.setDateEnvoi(new Date());
         empruntRepository.saveEmprunt(emprunt);
         Livre livre = userRepository.findBook(emprunt.getLivreId());
         Utilisateur emprunteur = userRepository.findOne(emprunt.getEmprunteurId());
@@ -214,6 +218,7 @@ public class EmpruntController extends CommonController {
         }
         this.userRepository.updateBookStatus(principal, emprunt.getLivreId(), StatutEmprunt.FREE);
         emprunt.setActif(false);
+        emprunt.setDateCloture(new Date());
         empruntRepository.saveEmprunt(emprunt);
         Utilisateur emprunteur = userRepository.findOne(emprunt.getEmprunteurId());
         String content = "Le preteur a clot l'emprunt. Vous pouvez consulter celui-ci dans votre compte, à la rubrique 'Vos emprunts historiés'.";
@@ -231,7 +236,6 @@ public class EmpruntController extends CommonController {
         List<Emprunt> prets = empruntRepository.findPrets(principal.getId(), true);
         cbean.setNbEmprunt(emprunts.size());
         cbean.setNbPret(prets.size());
-
         return cbean;
 
     }

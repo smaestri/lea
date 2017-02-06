@@ -51,15 +51,16 @@ public class FriendController extends CommonController {
     @RequestMapping(value = "/ami/new", method = RequestMethod.POST)
     public String addUser(@RequestBody AmiBean amiBean) throws UnsupportedEncodingException, MessagingException {
 
-        Utilisateur user = getPrincipal();
-        if (user == null) {
+        Utilisateur userPrincipal = getPrincipal();
+        Utilisateur one = userRepository.findOne(userPrincipal.getId());
+        if (one == null) {
             return "redirect:/";
         }
-        String emailEmetteur = user.getEmail();
+        String emailEmetteur = one.getEmail();
 
         String emailFriend = amiBean.getEmail1();
         if (StringUtils.hasText(emailFriend) && LoginController.checkEmail(emailFriend) && !emailFriend.equals(emailEmetteur)) {
-            userRepository.addPendingFriend(user, emailFriend);
+            userRepository.addPendingFriend(one, emailFriend);
             String objet = "Livres entre Amis - Nouvelle demande d'ami";
             String contenu = emailEmetteur + " souhaite vous ajouter en tant qu'ami afin d'échanger des livres. Connectez-vous ou inscrivez vous sur livresentreamis.com afin de rentrer dans la communatuté!";
             try {

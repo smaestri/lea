@@ -27,7 +27,7 @@ public class LivreController extends CommonController {
     @Autowired
     UserRepository userRepository;
 
-    public static void setBookImage(Livre livre) throws IOException {
+    public static void setBookImage(Livre livre) {
         /*
         CloseableHttpClient httpclient = HttpClients.createDefault();
         String bookImageUrl = "http://covers.openlibrary.org/b/isbn/" + livre.getIsbn() + "-M.jpg";
@@ -109,7 +109,7 @@ public class LivreController extends CommonController {
         }
 
         if (addLivre && livre.getStatut() == StatutEmprunt.FREE) {
-            //setBookImage(livre);
+            setBookImage(livre);
             result.add(livre);
         }
     }

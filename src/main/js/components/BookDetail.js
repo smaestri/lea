@@ -11,6 +11,7 @@ class BookDetail extends React.Component {
         super(props);
         this.state = {book:{ avis: []}};
         this.handleLoan = this.handleLoan.bind(this);
+        this.returnToBooks = this.returnToBooks.bind(this);
     }
 
     componentDidMount(){
@@ -27,6 +28,19 @@ class BookDetail extends React.Component {
         })
     }
 
+    returnToBooks() {
+        if(this.props.params.previousPage == 'myBooks'){
+            this.props.router.push('/my-books')
+        }
+        else if (this.props.params.previousPage == 'listBooks'){
+            this.props.router.push('/list-books')
+        }
+        else{
+            this.props.router.push('/user-detail/' + this.state.book.userId);
+        }
+
+    }
+
     render() {
         const avis = this.state.book.avis.map( avis => {
             return <Avis key={avis.id} id={avis.id} avis={avis}/>
@@ -39,18 +53,16 @@ class BookDetail extends React.Component {
         }
 
         return (
-            <div className="book-detail-content">
+            <div className="main-content">
                 <div className="book-information">
-                    <div><h1>{this.state.book.titreBook}</h1></div>
-                    <span>{this.state.book.description}</span>
-                    <span>{this.state.book.statut}</span>
+                    <div><h1>Avis du livre <i>{this.state.book.titreBook}</i></h1></div>
                     {displayEmprunter && <Button bsStyle="primary" bsSize="small" onClick={this.handleLoan}>Emprunter</Button>}
                 </div>
                 <div className="book-rating">
-                    <h1>Avis</h1>
-                    {avis}
+                    {avis.length == 0 && <span>Pas d'avis pour ce livre actuellement.</span>}
+                    {avis.length >0 && <div className="book-container">{avis}</div>}
                 </div>
-
+                <Button bsStyle="primary" onClick={this.returnToBooks}>Retour</Button>
             </div>
         )
     }

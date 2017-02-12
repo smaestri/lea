@@ -29,7 +29,7 @@ class AddFriend extends React.Component {
                 <form>
                     <label>Saisir le mail de la personne à ajouter comme ami:</label>
                     <div className="txt-add-friend">
-                        <FormControl componentClass="textarea" onChange={this.handleChange} value={this.state.emailFriend} />
+                        <FormControl type="text" onChange={this.handleChange} value={this.state.emailFriend} />
                     </div>
                     <Button bsStyle="primary" bsSize="small" onClick={this.handleSubmit}>Ajouter</Button>
                 </form>

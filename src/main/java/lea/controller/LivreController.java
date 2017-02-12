@@ -57,38 +57,36 @@ public class LivreController extends CommonController {
         Utilisateur principal = getPrincipal();
         List<Livre> result = new ArrayList<Livre>();
         List<Utilisateur> friends = userRepository.findFriends(principal.getListFriendsId());
+
+        List<String> idAllFriends = new ArrayList<String>();
+
         for (Utilisateur friend : friends) {
+            idAllFriends.add(friend.getId());
             for (Livre livre : friend.getLivres()) {
                 livre.setUserId(friend.getId());
+                livre.setPreteur(friend.getFullName());
+                livre.setEmpruntable(true);
                 addBookinlist(result, livre, categorieId, titre);
             }
             List<Utilisateur> subFriends = userRepository.findFriends(friend.getListFriendsId());
             for (Utilisateur subFriend :subFriends) {
-                //L'ami d'ami ne doit pas etre l'utilisateur connecté
-                if (!subFriend.getEmail().equals(principal.getEmail())) {
+                idAllFriends.add(subFriend.getId());
+                if(!subFriend.getId().equals(principal.getId())){
                     for (Livre livre : subFriend.getLivres()) {
-                        //Si le livre n'a pas deja été ajoute (ami niveau 1 peut avoir le livre)
-                        if (!isBookInside(result, livre.getId())) {
-                            livre.setUserId(subFriend.getId());
-                            addBookinlist(result, livre, categorieId, titre);
-                        }
+                        livre.setUserId(subFriend.getId());
+                        livre.setPreteur(subFriend.getFullName());
+                        livre.setIntermediaireid(friend.getId());
+                        livre.setEmpruntable(true);
+                        addBookinlist(result, livre, categorieId, titre);
                     }
                 }
             }
         }
 
-        // setter barre de recherche
-        Livre livreRetour = new Livre();
-        if (titre != null && StringUtils.hasText(titre)) {
-            livreRetour.setTitreBook(titre);
-        }
-        if (categorieId != null && StringUtils.hasText(categorieId)) {
-            Categorie cat = categorieRepository.findOne(categorieId);
-            livreRetour.setCategorieId(cat.getId());
-        }
 
-       // model.addAttribute("command", livreRetour);
-       // model.addAttribute("livres", result);
+        // add other books non empruntables
+        List<Livre> listeLivres = userRepository.findOtherBooks(idAllFriends);
+        result.addAll(listeLivres);
 
         return result;
     }

@@ -43,22 +43,8 @@ public class EmpruntController extends CommonController {
     public  List<Emprunt> livresHandlerPrets() throws ServletException, IOException {
         Utilisateur principal = getPrincipal();
         List<Emprunt> prets = empruntRepository.findPrets(principal.getId(), true);
-        setIntermediaire(principal, prets, false);
         setEmpruntobjects(prets);
         return prets;
-    }
-
-    private void setIntermediaire(Utilisateur principal, List<Emprunt> prets, boolean isEmprunt) {
-        for (Emprunt emprunt : prets) {
-            try {
-                Utilisateur intermediaire = this.findIntermediaire(principal.getId(), isEmprunt ? emprunt.getPreteurId() : emprunt.getEmprunteurId());
-                if (intermediaire != null) {
-                    emprunt.setIntermediaire(intermediaire.getFullName());
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     private void setEmpruntobjects(List<Emprunt> listeEmp) {
@@ -71,7 +57,6 @@ public class EmpruntController extends CommonController {
             emp.setLivre(book);
         }
     }
-
 
     private void setCommentuser(Emprunt emp){
         for(Commentaire comm : emp.getCommentaires()){
@@ -100,21 +85,15 @@ public class EmpruntController extends CommonController {
         this.empruntRepository.saveEmprunt(emprunt);
         this.userRepository.updateBookStatus(proprietaire, emprunt.getLivreId(), StatutEmprunt.REQUESTED);
 
-        Utilisateur intermediaire;
-        String txtIntermediaire = "";
-        try {
-            intermediaire = this.findIntermediaire(principal.getId(), emprunt.getPreteurId());
-            if (intermediaire != null) {
-                txtIntermediaire = " (ami de " + intermediaire.getFullName() + ")";
-            }
-        } catch (Exception e) {
-            // logger.error("Erreur pour trouver l'ami intermediaire");
-            return null;
+        String txtIntermediaire ="";
+        if(empruntBean.getIdIntermediaire() != null){
+            Utilisateur one = userRepository.findOne(empruntBean.getIdIntermediaire());
+            txtIntermediaire = txtIntermediaire + " par l'intermédiaire de " + one.getFullName();
         }
 
         try {
             Livre livre = proprietaire.getLivre(empruntBean.getIdLivre());
-            String content = "Livres entre Amis - nouvelle demande d'emprunt de la part de " + principal.getFullName() + txtIntermediaire + " pour le livre '" + livre.getTitreBook() + "'. Connectez-vous au site pour consulter et accepter cet emprunt!";
+            String content = "Livres entre Amis - nouvelle demande d'emprunt de la part de " + principal.getFullName() +  txtIntermediaire + " pour le livre '" + livre.getTitreBook() + "'. Connectez-vous au site pour consulter et accepter cet emprunt!";
             String object = "Nouvelle demande d'emprunt";
             notificationService.sendNotificaition(proprietaire.getEmail(),object, content );
         }catch( Exception e ){
@@ -126,28 +105,6 @@ public class EmpruntController extends CommonController {
     }
 
 
-    private Utilisateur findIntermediaire(String userIdSource, String userIdToFind) throws Exception {
-        boolean amiDirect = false;
-        Utilisateur userSource = this.userRepository.findOne(userIdToFind);
-        Utilisateur userToFind = this.userRepository.findOne(userIdSource);
-
-        for (String friendId : userSource.getListFriendsId()) {
-            if (friendId.equalsIgnoreCase(userToFind.getId())) {
-                amiDirect = true;
-            }
-        }
-
-        if (!amiDirect) {
-            Utilisateur intermediaire = userRepository.findIntermediaire(userSource, userToFind.getId());
-            if (intermediaire == null) {
-                return null;
-            } else {
-                return intermediaire;
-            }
-        }
-        return null;
-    }
-
     @RequestMapping(value = "/accepterEmprunt/{empruntId}", method = RequestMethod.POST)
     public String accepterEmprunt(@PathVariable("empruntId") String empruntId) throws Exception {
         Utilisateur principal = getPrincipal();
@@ -157,7 +114,7 @@ public class EmpruntController extends CommonController {
         }
         this.userRepository.updateBookStatus(principal, emprunt.getLivreId(), StatutEmprunt.CURRENT);
         emprunt.setActif(true);
-        emprunt.setDateAcceptOrRefus(new Date());
+        emprunt.setDateAccept(new Date());
         empruntRepository.saveEmprunt(emprunt);
         String emprunteurId = emprunt.getEmprunteurId();
         Utilisateur emprunteur = userRepository.findOne(emprunteurId);
@@ -177,7 +134,7 @@ public class EmpruntController extends CommonController {
         }
         this.userRepository.updateBookStatus(principal, emprunt.getLivreId(), StatutEmprunt.FREE);
         emprunt.setActif(false);
-        emprunt.setDateAcceptOrRefus(new Date());
+        emprunt.setDateRefus(new Date());
         emprunt.setMotifRefus(refusBean.getRefus());
         empruntRepository.saveEmprunt(emprunt);
         Utilisateur emprunteur = userRepository.findOne(emprunt.getEmprunteurId());

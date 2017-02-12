@@ -1,5 +1,6 @@
 .book-container{
   display: flex;
+  flex-wrap: wrap;
   margin-bottom: 15px;
   .book{
     margin: 20px;
@@ -31,9 +32,15 @@
     }
     .linkBook{
       display: flex;
-      justify-content: center; /* align horizontal */
-      align-items: center; /* align vertical */
+      justify-content: center;
+      align-items: center;
     }
+
+    .buttonBook{
+      display: flex;
+      justify-content: center;
+    }
+
   }
   button{
     margin:5px;

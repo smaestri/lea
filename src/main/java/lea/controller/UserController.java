@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -22,19 +23,23 @@ public class UserController extends CommonController {
 
     //Detail d'un utilisateur ; ses livres et ceux de ses amis
     @RequestMapping(value = "/users/{userId}", method = RequestMethod.GET)
-    public Utilisateur userDetail(@PathVariable("userId") String userDetail) throws ServletException, IOException {
+    public List<Livre> userDetail(@PathVariable("userId") String userDetail) throws ServletException, IOException {
         Utilisateur userConnected = getPrincipal();
         Utilisateur friend = userRepository.findOne(userDetail);
 
+        List<Livre> result = new ArrayList<Livre>();
         List<Livre> listeLivre = friend.getLivres();
 
         // set image
         if (!listeLivre.isEmpty()) {
             for (Livre livre : listeLivre) {
                 livre.setUserId(friend.getId());
+                livre.setPreteur(friend.getFullName());
                 LivreController.setBookImage(livre);
             }
         }
+
+        result.addAll(listeLivre);
 
         //Check book of friends of friend
         List<Utilisateur> subFriends = userRepository.findFriends(friend.getListFriendsId());
@@ -44,11 +49,21 @@ public class UserController extends CommonController {
                 for (Livre livre : listeLivre2) {
                     livre.setUserId(subFriend.getId());
                     LivreController.setBookImage(livre);
+                    livre.setPreteur(subFriend.getFullName());
+                    livre.setIntermediaireid(friend.getId());
                 }
-                friend.getUserFriends().add(subFriend);
+                //friend.getUserFriends().add(subFriend);
+                result.addAll(listeLivre2);
             }
         }
-        return friend;
+        return result;
+    }
+
+    // account
+    @RequestMapping(value = "/userInfo/{userId}", method = RequestMethod.GET)
+    public Utilisateur getUserInfo(@PathVariable("userId") String userId) throws ServletException, IOException {
+        Utilisateur user = userRepository.findOne(userId);
+        return user;
     }
 
     @RequestMapping(value = "/historized-loans", method = RequestMethod.GET)

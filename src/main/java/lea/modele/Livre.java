@@ -39,6 +39,15 @@ public class Livre extends BaseDocumentImpl {
     @Transient
     private String userId;
 
+    @Transient
+    private String intermediaireid;
+
+    @Transient
+    private String preteur;
+
+    @Transient
+    private boolean empruntable;
+
     public List<Avis> getAvis() {
         return avis;
     }
@@ -104,6 +113,13 @@ public class Livre extends BaseDocumentImpl {
         this.editeur = editeur;
     }
 
+    public String getPreteur() {
+        return preteur;
+    }
+
+    public void setPreteur(String preteur) {
+        this.preteur = preteur;
+    }
 
     public String getCategorieId() {
         return categorieId;
@@ -128,6 +144,24 @@ public class Livre extends BaseDocumentImpl {
     public void setUserId(String userId) {
         this.userId = userId;
     }
+
+    public void setEmpruntable(boolean empruntable) {
+        this.empruntable = empruntable;
+    }
+
+    public boolean isEmpruntable() {
+        return empruntable;
+    }
+
+    public String getIntermediaireid() {
+        return intermediaireid;
+    }
+
+    public void setIntermediaireid(String intermediaireid) {
+        this.intermediaireid = intermediaireid;
+    }
+
+
 
     @Override
     public String toString() {

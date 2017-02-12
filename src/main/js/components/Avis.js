@@ -13,7 +13,7 @@ class Avis extends React.Component {
 
     // get auteur
     componentDidMount() {
-        helpers.getUserDetail(this.props.avis.auteur).then((user) => {
+        helpers.getUserInfo(this.props.avis.auteur).then((user) => {
             let avis = this.props.avis;
             avis.auteur = user.fullName;
             this.setState({avis: avis})

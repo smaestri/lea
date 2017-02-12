@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -35,20 +36,9 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean isFriend(Integer integer, Integer integer1) {
-        return false;
-    }
-
-    @Override
-    public Utilisateur findIntermediaire(Utilisateur userSource, String id) {
-        return null;
-    }
-
-    @Override
     public Utilisateur saveUser(Utilisateur userDetail) {
         return mongoUserRepository.save(userDetail);
     }
-
 
     @Override
     public void supprimerLivre(String bookId, String userId) {
@@ -68,25 +58,34 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void addPendingFriend(Utilisateur user, String emailFriend) {
-        user.getListPendingFriends().add(emailFriend);
+    public void addPendingFriend(Utilisateur user, PendingFriend pf) {
+        user.getListPendingFriends().add(pf);
         mongoTemplate.save(user);
     }
 
     @Override
-    public List<Utilisateur> findRequestedFriends(String email) {
+    public List<Utilisateur> findRequestedFriends(String idPf) {
         Query q = new Query();
-        q.addCriteria(Criteria.where("listPendingFriends").in(email));
+        q.addCriteria(Criteria.where("listPendingFriends.email").in(idPf));
         List<Utilisateur> all = mongoTemplate.find(q, Utilisateur.class);
         return all;
     }
 
     @Override
-    public void deletePendingFriend(Utilisateur userDetail, String pendingEmail) {
+    public void deleteFriend(Utilisateur userDetail, String friendId) {
         Query q = new Query();
         q.addCriteria(Criteria.where("id").is(new ObjectId(userDetail.getId())));
         Update update = new Update();
-        update.pull("listPendingFriends", pendingEmail);
+        update.pull("listFriendsId", friendId);
+        mongoTemplate.updateFirst(q, update, Utilisateur.class);
+    }
+
+    @Override
+    public void deletePendingFriend(Utilisateur userDetail, String idToDelete) {
+        Query q = new Query();
+        q.addCriteria(Criteria.where("id").is(new ObjectId(userDetail.getId())).and("listPendingFriends.id").is(new ObjectId(idToDelete)));
+        Update update = new Update();
+        update.pull("listPendingFriends", Query.query(Criteria.where("id").is(new ObjectId(idToDelete))));
         mongoTemplate.updateFirst(q, update, Utilisateur.class);
     }
 
@@ -111,6 +110,41 @@ public class UserRepositoryImpl implements UserRepository {
         q.addCriteria(Criteria.where("livres.id").is(new ObjectId(bookId)));
         Utilisateur user = mongoTemplate.findOne(q, Utilisateur.class);
         return user;
+    }
+
+    @Override
+    public PendingFriend findPendingFriend(Utilisateur user, String email) {
+        Query q = new Query();
+        q.addCriteria(Criteria.where("id").in(new ObjectId(user.getId())));
+        Utilisateur userRequested = mongoTemplate.findOne(q, Utilisateur.class);
+        for(PendingFriend pf : userRequested.getListPendingFriends()){
+            if(pf.getEmail().equals(email)){
+                return pf;
+            }
+        }
+        return null;
+
+    }
+
+    @Override
+    public List<Livre> findOtherBooks(List<String> idAllFriends) {
+        Query q = new Query();
+        q.addCriteria(Criteria.where("id").nin(idAllFriends));
+        List<Utilisateur> utilisateurs = mongoTemplate.find(q, Utilisateur.class);
+
+        List<Livre> result = new ArrayList<Livre>();
+
+        for(Utilisateur user : utilisateurs){
+            List<Livre> livres = user.getLivres();
+            for(Livre li : livres){
+                li.setPreteur(user.getFullName());
+                li.setUserId(user.getId());
+            }
+
+            result.addAll(livres);
+        }
+        return result;
+
     }
 
     @Override

@@ -12,10 +12,6 @@ public interface UserRepository {
 
     Utilisateur findOne(String id);
 
-    boolean isFriend(Integer integer, Integer integer1);
-
-    Utilisateur findIntermediaire(Utilisateur userSource, String id);
-
     Utilisateur saveUser(Utilisateur userDetail);
 
     void saveLivre(Utilisateur user, Livre livre);
@@ -24,10 +20,11 @@ public interface UserRepository {
 
     List<Utilisateur> findFriends(List<String> listFriendsId);
 
-    void addPendingFriend(Utilisateur user, String emailFriend);
+    void addPendingFriend(Utilisateur user, PendingFriend pf);
 
-    List<Utilisateur>  findRequestedFriends(String email);
+    List<Utilisateur> findRequestedFriends(String email);
 
+    void deleteFriend(Utilisateur userDetail, String pendingEmail);
     void deletePendingFriend(Utilisateur userDetail, String pendingEmail);
 
     Livre findBook(String id);
@@ -40,4 +37,8 @@ public interface UserRepository {
     public void deleteAvis(String idAvis);
     void saveAvis(Utilisateur user,String idLivre, Avis newAvis);
     public Utilisateur findproprietaire(String bookId);
+
+    PendingFriend findPendingFriend(Utilisateur user, String email);
+
+    List<Livre> findOtherBooks(List<String> idAllFriends);
 }

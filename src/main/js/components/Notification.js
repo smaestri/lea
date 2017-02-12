@@ -4,19 +4,19 @@ import { Link } from 'react-router';
 import '../../webapp/assets/css/searchbar.scss';
 
 class Notification extends React.Component{
-
-
     constructor(props) {
         super(props);
+        this.refresh = this.refresh.bind(this)
+    }
+
+    refresh(){
+        this.props.onRefreshNotification();
     }
 
     render(){
-        console.log('this.props.requestedFriends' )
-        console.log(this.props.requestedFriends )
-
         //nouvel ami
         const req = this.props.requestedFriends.map( () => {
-            return <li><Link to={'/my-requested-friends'}>Vous avez une nouvelle demande d'amis!</Link></li>
+            return <li><span onClick={this.refresh}>toto</span><Link to={'/my-requested-friends'}>Vous avez une nouvelle demande d'amis!</Link></li>
         })
 
         return(

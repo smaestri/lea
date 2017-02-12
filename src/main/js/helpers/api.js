@@ -114,9 +114,10 @@ var helpers = {
             });
     },
 
-    loanBook: function (idBook) {
+    loanBook: function (idBook, intermediaireid) {
         return axios.post('/emprunter', {
             idLivre: idBook,
+            idIntermediaire: intermediaireid
         }, {
             headers: {'X-CSRF-Token': getCsrf()},
         })
@@ -214,7 +215,17 @@ var helpers = {
     getUserDetail: function (userId) {
         return axios.get('/users/' + userId)
             .then(function (response) {
-                _books = response.data.livres;
+                _books = response.data;
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    },
+
+    getUserInfo: function (userId) {
+        return axios.get('/userInfo/' + userId)
+            .then(function (response) {
                 return response.data;
             })
             .catch(function (error) {
@@ -427,6 +438,31 @@ var helpers = {
                 console.log(error);
             });
     },
+
+    deleteFriend: function(idFriend){
+        return axios.delete('/friend/' + idFriend, {
+            headers: {'X-CSRF-Token': getCsrf()},
+        })
+            .then(function (response) {
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    },
+
+    deletePendingFriend: function(idFriend){
+        return axios.delete('/pendingFriend/' + idFriend, {
+            headers: {'X-CSRF-Token': getCsrf()},
+        })
+            .then(function (response) {
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    },
+
 };
 
 export default helpers

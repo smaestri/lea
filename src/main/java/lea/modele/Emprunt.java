@@ -17,7 +17,8 @@ public class Emprunt extends BaseDocumentImpl implements Serializable {
     private Date debutEmprunt;
     private Date finEmprunt;
     private boolean actif;
-    private Date dateAcceptOrRefus;
+    private Date dateAccept;
+    private Date dateRefus;
     private Date dateDemande;
     private Date dateEnvoi;
     private Date dateCloture;
@@ -132,12 +133,21 @@ public class Emprunt extends BaseDocumentImpl implements Serializable {
         this.dateCloture = dateCloture;
     }
 
-    public Date getDateAcceptOrRefus() {
-        return dateAcceptOrRefus;
+
+    public Date getDateAccept() {
+        return dateAccept;
     }
 
-    public void setDateAcceptOrRefus(Date dateAcceptOrRefus) {
-        this.dateAcceptOrRefus = dateAcceptOrRefus;
+    public void setDateAccept(Date dateAccept) {
+        this.dateAccept = dateAccept;
+    }
+
+    public Date getDateRefus() {
+        return dateRefus;
+    }
+
+    public void setDateRefus(Date dateRefus) {
+        this.dateRefus = dateRefus;
     }
 
     @Override

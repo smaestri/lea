@@ -50,35 +50,37 @@ class Account extends React.Component {
     render() {
         return (
          <div className="main-content">
-             <h2>Veuillez indiquer vos informations</h2>
-             <Form horizontal onSubmit={this.handleSubmit}>
-                 <FormGroup controlId="formHorizontalEmail">
-                     <Col componentClass={ControlLabel} sm={2}>Prénom:</Col>
-                     <Col sm={10}>
-                         <FormControl type="text" name="firstName" value={this.state.user.firstName} onChange={this.handleChange}/>
-                     </Col>
-                 </FormGroup>
-                 <FormGroup>
-                     <Col componentClass={ControlLabel} sm={2}>Nom:</Col>
-                     <Col sm={10}>
-                         <FormControl type="text" name="lastName" value={this.state.user.lastName} onChange={this.handleChange}/>
-                     </Col>
-                 </FormGroup>
-                 <FormGroup validationState={this.getValidationState()}>
-                     <Col componentClass={ControlLabel} sm={2}>Password:</Col>
-                     <Col sm={10}>
-                         <FormControl type="password" name="password" value={this.state.user.password} onChange={this.handleChange}/>
-                     </Col>
-                 </FormGroup>
-                 <FormGroup validationState={this.getValidationState()}>
-                     <Col componentClass={ControlLabel} sm={2}>Confirm password:</Col>
-                     <Col sm={10}>
-                         <FormControl type="password" name="confirmPassword" value={this.state.user.confirmPassword} onChange={this.handleChange}/>
-                     </Col>
-                 </FormGroup>
-
-                 <Button type="submit" value="Submit" bsStyle="primary">Valider</Button>
-             </Form>
+             <div className="account-container">
+                 <h2>Veuillez indiquer vos informations</h2>
+                 <Form horizontal onSubmit={this.handleSubmit}>
+                     <FormGroup controlId="formHorizontalEmail">
+                         <Col componentClass={ControlLabel} sm={2}>Prénom:</Col>
+                         <Col sm={10}>
+                             <FormControl type="text" name="firstName" value={this.state.user.firstName} onChange={this.handleChange}/>
+                         </Col>
+                     </FormGroup>
+                     <FormGroup>
+                         <Col componentClass={ControlLabel} sm={2}>Nom:</Col>
+                         <Col sm={10}>
+                             <FormControl type="text" name="lastName" value={this.state.user.lastName} onChange={this.handleChange}/>
+                         </Col>
+                     </FormGroup>
+                     <FormGroup validationState={this.getValidationState()}>
+                         <Col componentClass={ControlLabel} sm={2}>Password:</Col>
+                         <Col sm={10}>
+                             <FormControl type="password" name="password" value={this.state.user.password} onChange={this.handleChange}/>
+                         </Col>
+                     </FormGroup>
+                     <FormGroup validationState={this.getValidationState()}>
+                         <Col componentClass={ControlLabel} sm={2}>Confirm password:</Col>
+                         <Col sm={10}>
+                             <FormControl type="password" name="confirmPassword" value={this.state.user.confirmPassword} onChange={this.handleChange}/>
+                         </Col>
+                     </FormGroup>
+                     <Button bsStyle="primary" onClick= {() => this.props.router.push('/')}>Retour</Button>
+                     <Button type="submit" value="Submit" bsStyle="primary">Valider</Button>
+                 </Form>
+             </div>
          </div>
         )
     }

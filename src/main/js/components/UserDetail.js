@@ -1,34 +1,61 @@
 import React from 'react'
 import helpers from '../helpers/api'
 import Book from './Book'
+import {Button} from 'react-bootstrap'
 import '../../webapp/assets/css/book.scss'
+import {withRouter} from 'react-router'
 
 class UserDetail extends React.Component{
 
     constructor(props) {
         super(props);
-        this.state = {user:{ livres: []}};
+        this.state = {books: []};
+        this.returnToPreviousPage = this.returnToPreviousPage.bind(this);
     }
 
     //need to request server to get friend's books
     componentDidMount() {
-        helpers.getUserDetail(this.props.params.userId).then((newUser) => {
-            this.setState({user: newUser})
+        helpers.getUserDetail(this.props.params.userId).then((books) => {
+            this.setState({books: books})
         });
     }
 
+    returnToPreviousPage(){
+        if(this.props.params.previousPage == 'listBook'){
+            this.props.router.push('/list-book')
+        }
+        else
+        if (this.props.params.previousPage == 'myFriend'){
+            this.props.router.push('/my-friends')
+        }
+        else{ // requestedFriend
+            this.props.router.push('/my-requested-friends');
+        }
+    }
+
     render(){
-        const books = this.state.user.livres.map( book => {
-            return <Book key={book.id} id={book.id} book={book} previousPage="userDetail" />
+        let books = this.state.books.map( book => {
+            return <Book proprietaire={book.preteur} key={book.id} id={book.id} book={book} previousPage="userDetail" />
         });
+
+        //add sub friend books
+        /*
+        this.state.user.userFriends.map( user => {
+            return user.livres.map(livre => {
+                books.push(<Book proprietaire={user.fullName} key={livre.id} id={livre.id} book={livre} previousPage="userDetail" />);
+            })
+        });
+        */
 
         return(
             <div className="main-content">
-                <h1>Livres de {this.state.user.fullName}</h1>
-                <div className="book-container">{books}</div>
+                <h1>Livres</h1>
+                {books.length == 0 && <span>Cet utilisateur n'a pas encore de livres.</span>}
+                {books.length >0 && <div className="book-container">{books}</div>}
+                <Button bsStyle="primary" onClick= {this.returnToPreviousPage}>Retour</Button>
             </div>
         )
     }
 }
 
-export default UserDetail
+export default withRouter(UserDetail);

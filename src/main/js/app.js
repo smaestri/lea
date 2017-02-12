@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import {Router, Route, hashHistory} from 'react-router'
 import {render} from 'react-dom';
 import Home from "./components/Home";
@@ -35,14 +34,13 @@ class App extends React.Component {
                     <Route path="/my-lendings" component={MyLendings} />
                     <Route path="/my-friends" component={MyFriends}/>
                     <Route path="/my-requested-friends" component={MyRequestedFriends}/>
-                    <Route path="/user-detail/:userId" component={UserDetail}/>
+                    <Route path="/user-detail/:userId/:previousPage" component={UserDetail}/>
                     <Route path="/account" component={Account}/>
                     <Route path="/historized-lendings" component={MyHistorizedLendings}/>
                     <Route path="/historized-loans" component={MyHistorizedLoans}/>
                     <Route path="/test" component={Tests}/>
                 </Route>
             </Router>)
-
     }
 }
 

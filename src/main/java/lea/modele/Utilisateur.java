@@ -14,7 +14,8 @@ public class Utilisateur extends BaseDocumentImpl {
     private List<String> listPretsId;
     private List<String> listUserProfilesId = new ArrayList<String>();
     private List<String> listFriendsId = new ArrayList<String>();
-    private List<String> listPendingFriends= new ArrayList<String>();
+    // probleme with array of email : containing .
+    private List<PendingFriend> listPendingFriends= new ArrayList<PendingFriend>();
 
     @Transient
     private List<Utilisateur> userFriends = new ArrayList<Utilisateur>();
@@ -34,6 +35,8 @@ public class Utilisateur extends BaseDocumentImpl {
 
     @Size(min = 2, max = 25, message = "L'email doit comprendre entre 2 et 25 caractères")
     private String email;
+
+    private String avatar;
 
     private Boolean enabled;
 
@@ -127,12 +130,20 @@ public class Utilisateur extends BaseDocumentImpl {
         this.listFriendsId = listFriendsId;
     }
 
-    public List<String> getListPendingFriends() {
+    public List<PendingFriend> getListPendingFriends() {
         return listPendingFriends;
     }
 
-    public void setListPendingFriends(List<String> listPendingFriends) {
+    public void setListPendingFriends(List<PendingFriend> listPendingFriends) {
         this.listPendingFriends = listPendingFriends;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public Livre getLivre(String id){

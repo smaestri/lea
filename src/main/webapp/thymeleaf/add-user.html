@@ -11,10 +11,11 @@
     <h2>Inscription</h2>
     <div class="row">
         <form th:action="@{/users/new}" th:object="${utilisateur}" class="form-horizontal" method="POST">
+            <div class="form-error">
                 <ul th:if="${#fields.hasErrors('*')}">
                     <li th:each="err : ${#fields.errors('*')}" th:text="${err}">Input is incorrect</li>
                 </ul>
-
+            </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label">Email</label>
                 <div class="col-sm-5">

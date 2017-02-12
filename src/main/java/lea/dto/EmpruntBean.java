@@ -10,6 +10,7 @@ public class EmpruntBean {
     //private String idProprietaire;
     private String txtRencontre;
     private String mode;
+    private String idIntermediaire;
 
     public String getIdLivre() {
         return idLivre;
@@ -18,6 +19,14 @@ public class EmpruntBean {
     public void setIdLivre(String idLivre) {
         this.idLivre = idLivre;
 
+    }
+
+    public String getIdIntermediaire() {
+        return idIntermediaire;
+    }
+
+    public void setIdIntermediaire(String idIntermediaire) {
+        this.idIntermediaire = idIntermediaire;
     }
 
     public String getTxtRencontre() {

@@ -97,7 +97,7 @@ class Home extends Component {
 
                     </Nav>
                 </Navbar>
-                <Notification requestedFriends={this.state.requestedFriends}/>
+                <Notification requestedFriends={this.state.requestedFriends} onRefreshNotification={this.refreshNotif}/>
                 <SearchBar />
                 {this.props.children && React.cloneElement(this.props.children, {
                     onRefreshCount: this.refreshCount,

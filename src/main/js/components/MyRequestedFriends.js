@@ -1,13 +1,14 @@
 import React from 'react'
 import helpers from '../helpers/api'
 import { withRouter } from 'react-router'
-import {Button} from 'react-bootstrap'
+import PendingFriend from './PendingFriend'
 
 class MyRequestedFriends extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {requestedFriends: [] };
+        this.acceptRequestFriend = this.acceptRequestFriend.bind(this);
     }
 
     componentDidMount(){
@@ -19,26 +20,28 @@ class MyRequestedFriends extends React.Component {
     }
 
     acceptRequestFriend(id){
+        this.props.onRefreshNotification();
         helpers.acceptFriend(id).then( () => {
-            //freresh notification
             this.props.onRefreshNotification();
             this.componentDidMount();
-            //redirect to my friends
             this.props.router.push('/my-friends')
         })
     }
 
-
     render() {
+
+
+
         const requestedFriends = this.state.requestedFriends.map( friend => {
-            return <div><span>{friend.fullName}</span> - <Button bsStyle="primary" bsSize="small" onClick={()=>{this.acceptRequestFriend(friend.id)}}>Accepter</Button></div>
+            return <PendingFriend showAcceptButton={true} friend={friend} acceptRequestFriend={this.acceptRequestFriend}/>;
         });
 
         return (
             <div className="main-content">
-                <h2>Mes amis à confirmer</h2>
-                <ul>{requestedFriends}</ul>
-                {(requestedFriends.length == 0) && <span>Pas d'amis a confirmer</span>}
+                <h2>Mes demande d'amis</h2>
+                {requestedFriends.length == 0 && <span>Vous n'avez pas d'amis à confirmer.</span>}
+                {requestedFriends.length >0 && <span>Vous trouverez ci-dessous les personnes qui vous ont ajoutée en tant qu'ami; Si vous connaissez cette, personne, acceptez-l et partagez vos livres et les siens!</span>}
+                {requestedFriends.length >0 && <div className="friend-container">{requestedFriends}</div>}
             </div>
         )
     }

@@ -24,7 +24,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("favicon.ico").permitAll()
                 .antMatchers("/home").permitAll()
                 .antMatchers("/").permitAll()
-                .anyRequest().authenticated()
+                //TODO change thar before deploying
+                //.anyRequest().authenticated()
                 .and()
             .formLogin()
                 .loginPage("/login")

@@ -31,11 +31,10 @@ var helpers = {
         if (_books && _books.length > 0){
             return _books.filter((book) => book.id == id)[0]
         }
-
     },
 
     getMyBooks: function () {
-        return axios.get('/myBooks')
+        return axios.get('/api/myBooks')
             .then(function (response) {
                 _books = response.data;
                 return response.data;
@@ -46,7 +45,7 @@ var helpers = {
     },
 
     getAllBooks: function () {
-        return axios.get('/searchBook')
+        return axios.get('/api/searchBook')
             .then(function (response) {
                 _books = response.data;
                 return response.data;
@@ -57,12 +56,10 @@ var helpers = {
     },
 
     getLoans:  () => {
-        console.log('API get LOANS')
-        return axios.get('/emprunts')
+        return axios.get('/api/emprunts')
             .then((response) =>  {
                 _loans = response.data;
                 _lendings= undefined;
-                console.log(response);
                 return response.data;
             })
             .catch(function (error) {
@@ -70,9 +67,8 @@ var helpers = {
             });
     },
 
-
     getHistorizedLoans:  () => {
-        return axios.get('/historized-loans')
+        return axios.get('/api/historized-loans')
             .then((response) =>  {
                 return response.data;
             })
@@ -82,7 +78,7 @@ var helpers = {
     },
 
     getLendings: function () {
-        return axios.get('/prets')
+        return axios.get('/api/prets')
             .then(function (response) {
                 _loans = undefined;
                 _lendings= response.data;
@@ -94,7 +90,7 @@ var helpers = {
     },
 
     getHistorizedLendings: function () {
-        return axios.get('/historized-lendings')
+        return axios.get('/api/historized-lendings')
             .then(function (response) {
                 return response.data;
             })
@@ -104,9 +100,8 @@ var helpers = {
     },
 
     getComments: function () {
-        return axios.get('/comments')
+        return axios.get('/api/comments')
             .then(function (response) {
-                console.log(response);
                 return response.data;
             })
             .catch(function (error) {
@@ -115,7 +110,7 @@ var helpers = {
     },
 
     loanBook: function (idBook, intermediaireid) {
-        return axios.post('/emprunter', {
+        return axios.post('/api/emprunter', {
             idLivre: idBook,
             idIntermediaire: intermediaireid
         }, {
@@ -130,11 +125,10 @@ var helpers = {
     },
 
     acceptLoan: function (idEmprunt) {
-        return axios.post('/accepterEmprunt/' + idEmprunt, null, {
+        return axios.post('/api/accepterEmprunt/' + idEmprunt, null, {
             headers: {'X-CSRF-Token': getCsrf()},
         })
             .then(function (response) {
-                console.log(response);
                 return response.data;
             })
             .catch(function (error) {
@@ -143,7 +137,7 @@ var helpers = {
     },
 
     refuseLoan: function (idEmprunt, refus) {
-        return axios.post('/refuserEmprunt/' + idEmprunt, {refus: refus}, {
+        return axios.post('/api/refuserEmprunt/' + idEmprunt, {refus: refus}, {
             headers: {'X-CSRF-Token': getCsrf()},
         })
             .then(function (response) {
@@ -155,30 +149,27 @@ var helpers = {
     },
 
     countEmpruntAndPret: function() {
-        return axios.get('/countEmpruntAndPret')
+        return axios.get('/api/countEmpruntAndPret')
             .then(function (response) {
                 return response.data;
             })
             .catch(function (error) {
                 console.log(error);
             });
-
     },
 
     getAccount: function() {
-        return axios.get('/account')
+        return axios.get('/api/account')
             .then(function (response) {
                 return response.data;
             })
             .catch(function (error) {
                 console.log(error);
             });
-
     },
 
-
     sendLoan: function (idEmprunt) {
-        return axios.post('/envoyerEmprunt/' + idEmprunt, null, {
+        return axios.post('/api/envoyerEmprunt/' + idEmprunt, null, {
             headers: {'X-CSRF-Token': getCsrf()},
         })
             .then(function (response) {
@@ -190,7 +181,7 @@ var helpers = {
     },
 
     closeLoan: function (idBook) {
-        return axios.post('/cloreEmprunt/' + idBook, null, {
+        return axios.post('/api/cloreEmprunt/' + idBook, null, {
             headers: {'X-CSRF-Token': getCsrf()},
         })
             .then(function (response) {
@@ -203,7 +194,7 @@ var helpers = {
 
     getBookDetail: function (bookid) {
         console.log('API get book detail')
-        return axios.get('/livres/' + bookid)
+        return axios.get('/api/livres/' + bookid)
             .then(function (response) {
                 return response.data;
             })
@@ -213,7 +204,7 @@ var helpers = {
     },
 
     getUserDetail: function (userId) {
-        return axios.get('/users/' + userId)
+        return axios.get('/api/users/' + userId)
             .then(function (response) {
                 _books = response.data;
                 return response.data;
@@ -224,7 +215,7 @@ var helpers = {
     },
 
     getUserInfo: function (userId) {
-        return axios.get('/userInfo/' + userId)
+        return axios.get('/api/userInfo/' + userId)
             .then(function (response) {
                 return response.data;
             })
@@ -234,7 +225,7 @@ var helpers = {
     },
 
     deleteBook: function(idBook){
-        return axios.delete('/livres/' + idBook, {
+        return axios.delete('/api/livres/' + idBook, {
             headers: {'X-CSRF-Token': getCsrf()},
         })
             .then(function (response) {
@@ -247,7 +238,7 @@ var helpers = {
 
     deleteComment: function(idComm){
         console.log('DELETE COMM')
-        return axios.delete('/comments/' + idComm, {
+        return axios.delete('/api/comments/' + idComm, {
             headers: {'X-CSRF-Token': getCsrf()},
         })
             .then(function (response) {
@@ -261,7 +252,7 @@ var helpers = {
 
     saveBook: function (bookObj, idBook) {
         if (idBook) {
-            return axios.put('/livres/' + idBook, {
+            return axios.put('/api/livres/' + idBook, {
                 //TODO SPREAD OPERATOR?
                 titreBook: bookObj.titreBook,
                 auteur: bookObj.auteur,
@@ -279,7 +270,7 @@ var helpers = {
             });
         }
 
-        return axios.post('/livres/new', {
+        return axios.post('/api/livres/new', {
             //TODO SPREAD OPERATOR?
             titreBook: bookObj.titreBook,
             auteur: bookObj.auteur,
@@ -301,7 +292,7 @@ var helpers = {
 
     saveComment: function (message, idComm, idLoan) {
         if (idComm) {
-            return axios.put('/comments/' + idComm, {
+            return axios.put('/api/comments/' + idComm, {
                 message: message
             }, {
                 headers: {'X-CSRF-Token': getCsrf()},
@@ -314,7 +305,7 @@ var helpers = {
                 });
         }
 
-        return axios.post('/addComment/' + idLoan, {
+        return axios.post('/api/addComment/' + idLoan, {
             message: message,
         }, {
             headers: {'X-CSRF-Token': getCsrf()},
@@ -331,7 +322,7 @@ var helpers = {
 
     saveAvis: function (avisObj, idAvis, idBook) {
         if (idAvis) {
-            return axios.put('/avis/' + idAvis, {
+            return axios.put('/api/avis/' + idAvis, {
                 note: avisObj.note,
                 libelle: avisObj.libelle,
             }, {
@@ -346,7 +337,7 @@ var helpers = {
                 });
         }
 
-        return axios.post('/avis/' + idBook, {
+        return axios.post('/api/avis/' + idBook, {
             note: avisObj.note,
             libelle: avisObj.libelle,
         }, {
@@ -361,7 +352,7 @@ var helpers = {
     },
 
     deleteAvis: function(idAvis){
-        return axios.delete('/avis/' + idAvis, {
+        return axios.delete('/api/avis/' + idAvis, {
             headers: {'X-CSRF-Token': getCsrf()},
         })
             .then(function (response) {
@@ -373,7 +364,7 @@ var helpers = {
     },
 
     getMyFriends: function () {
-        return axios.get('/myFriends')
+        return axios.get('/api/myFriends')
             .then(function (response) {
                 return response.data;
             })
@@ -384,7 +375,7 @@ var helpers = {
 
 
     getLastAvis: function () {
-        return axios.get('/getLastAvis')
+        return axios.get('/api/getLastAvis')
             .then(function (response) {
                 return response.data;
             })
@@ -394,7 +385,7 @@ var helpers = {
     },
 
     getMyPendingFriends: function () {
-        return axios.get('/myPendingFriends')
+        return axios.get('/api/myPendingFriends')
             .then(function (response) {
                 return response.data;
             })
@@ -404,7 +395,7 @@ var helpers = {
     },
 
     getMyRequestedFriends: function () {
-        return axios.get('/myRequestedFriends')
+        return axios.get('/api/myRequestedFriends')
             .then(function (response) {
                 return response.data;
             })
@@ -415,7 +406,7 @@ var helpers = {
 
 
     savePendingFriend: function (email) {
-        return axios.post('/ami/new/' , {email1: email}, {
+        return axios.post('/api/ami/new/' , {email1: email}, {
             headers: {'X-CSRF-Token': getCsrf()},
         })
             .then(function (response) {
@@ -428,7 +419,7 @@ var helpers = {
     },
 
     saveEditUser: function (user) {
-        return axios.post('/saveEditUser' , {firstName: user.firstName, lastName: user.lastName, password: user.password, confirmPassword: user.confirmPassword}, {
+        return axios.post('/api/saveEditUser' , {firstName: user.firstName, lastName: user.lastName, password: user.password, confirmPassword: user.confirmPassword}, {
             headers: {'X-CSRF-Token': getCsrf()},
         })
             .then(function (response) {
@@ -440,7 +431,7 @@ var helpers = {
     },
 
     acceptFriend: function (idFriend) {
-        return axios.post('/accepterAmi/'+ idFriend ,null , {
+        return axios.post('/api/accepterAmi/'+ idFriend ,null , {
             headers: {'X-CSRF-Token': getCsrf()},
         })
             .then(function (response) {
@@ -452,7 +443,7 @@ var helpers = {
     },
 
     deleteFriend: function(idFriend){
-        return axios.delete('/friend/' + idFriend, {
+        return axios.delete('/api/friend/' + idFriend, {
             headers: {'X-CSRF-Token': getCsrf()},
         })
             .then(function (response) {
@@ -464,7 +455,7 @@ var helpers = {
     },
 
     deletePendingFriend: function(idFriend){
-        return axios.delete('/pendingFriend/' + idFriend, {
+        return axios.delete('/api/pendingFriend/' + idFriend, {
             headers: {'X-CSRF-Token': getCsrf()},
         })
             .then(function (response) {

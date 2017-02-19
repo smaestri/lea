@@ -25,7 +25,7 @@ public class FriendController extends CommonController {
     private NotificationService mailService;
 
     // My friends: GET
-    @RequestMapping(value = "/myFriends", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/myFriends", method = RequestMethod.GET)
     public List<Utilisateur>  myFriends() {
         Utilisateur user = getPrincipal();
         Utilisateur one = userRepository.findOne(user.getId());
@@ -34,14 +34,13 @@ public class FriendController extends CommonController {
         List<Utilisateur> users = userRepository.findFriends(one.getListFriendsId());
 
         for(Utilisateur userDetail : users){
-            userDetail.setAvatar("assets/img/user.png");
+            userDetail.setAvatar("/assets/img/user.png");
         }
-
         return users;
     }
 
     // My pending friends: GET the emails added but not responded
-    @RequestMapping(value = "/myPendingFriends", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/myPendingFriends", method = RequestMethod.GET)
     public List<PendingFriend> myPendingFriends() {
         Utilisateur user =getPrincipal();
         //need to reload
@@ -50,7 +49,7 @@ public class FriendController extends CommonController {
     }
 
     // My requested friends: GET : show the users whoses have added the current connected one
-    @RequestMapping(value = "/myRequestedFriends", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/myRequestedFriends", method = RequestMethod.GET)
     public List<Utilisateur> myRequestedFriends() {
         Utilisateur user = getPrincipal();
         List<Utilisateur> requestedFriends = userRepository.findRequestedFriends(user.getEmail());
@@ -58,7 +57,7 @@ public class FriendController extends CommonController {
     }
 
     // Creer un ami : POST
-    @RequestMapping(value = "/ami/new", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/ami/new", method = RequestMethod.POST)
     public void addUser(@RequestBody AmiBean amiBean) throws UnsupportedEncodingException, MessagingException {
         Utilisateur userPrincipal = getPrincipal();
         Utilisateur one = userRepository.findOne(userPrincipal.getId());
@@ -84,27 +83,7 @@ public class FriendController extends CommonController {
 
     }
 
-
-    private String addPendingFriend(Utilisateur source, String emailFriend){
-        PendingFriend pf = new PendingFriend();
-        pf.setDateDemande(new Date());
-        pf.setEmail(emailFriend);
-        if (StringUtils.hasText(emailFriend) && LoginController.checkEmail(emailFriend) && !emailFriend.equals(source.getEmail())) {
-            userRepository.addPendingFriend(source, pf);
-            String objet = "Livres entre Amis - Nouvelle demande d'ami";
-            String contenu = source.getFullName() + " souhaite vous ajouter en tant qu'ami afin d'échanger des livres. Connectez-vous ou inscrivez vous sur livresentreamis.com afin de rentrer dans la communatuté!";
-            try {
-                this.mailService.sendNotificaition(emailFriend, objet, contenu);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        } else {
-            return "KO email incorrect";
-        }
-        return "OK";
-    }
-
-    @RequestMapping(value = "/accepterAmi/{friendId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/accepterAmi/{friendId}", method = RequestMethod.POST)
     public String accepterAmi(@PathVariable("friendId") String idFriend) {
         Utilisateur userConnected = getPrincipal();
         Utilisateur userFriend = userRepository.findOne(idFriend);
@@ -116,7 +95,7 @@ public class FriendController extends CommonController {
     }
 
     // Supprimer friend : DELETE
-    @RequestMapping(value = "/friend/{friendId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/api/friend/{friendId}", method = RequestMethod.DELETE)
     public String deleteFriend(@PathVariable("friendId") String friendId) throws Exception {
         Utilisateur userConnected = getPrincipal();
 
@@ -134,6 +113,13 @@ public class FriendController extends CommonController {
         return "0";
     }
 
+    // Supprimer pending friend : DELETE
+    @RequestMapping(value = "/api/pendingFriend/{friendId}", method = RequestMethod.DELETE)
+    public String deletePendingFriend(@PathVariable("friendId") String friendId) throws Exception {
+        Utilisateur userConnected = getPrincipal();
+        userRepository.deletePendingFriend(userConnected, friendId);
+        return "1";
+    }
 
     private boolean isUserLender(List<Emprunt> emprunts, String idUser){
         for(Emprunt emp : emprunts){
@@ -153,14 +139,6 @@ public class FriendController extends CommonController {
         return false;
     }
 
-    // Supprimer pending friend : DELETE
-    @RequestMapping(value = "/pendingFriend/{friendId}", method = RequestMethod.DELETE)
-    public String deletePendingFriend(@PathVariable("friendId") String friendId) throws Exception {
-        Utilisateur userConnected = getPrincipal();
-        userRepository.deletePendingFriend(userConnected, friendId);
-        return "1";
-    }
-
     private void addRealFriendAndDeletePending(Utilisateur user, Utilisateur friend) {
         user.getListFriendsId().add(friend.getId());
         userRepository.saveUser(user);
@@ -170,7 +148,25 @@ public class FriendController extends CommonController {
         if(pf != null){
             userRepository.deletePendingFriend(user, pf.getId());
         }
+    }
 
+    private String addPendingFriend(Utilisateur source, String emailFriend){
+        PendingFriend pf = new PendingFriend();
+        pf.setDateDemande(new Date());
+        pf.setEmail(emailFriend);
+        if (StringUtils.hasText(emailFriend) && LoginController.checkEmail(emailFriend) && !emailFriend.equals(source.getEmail())) {
+            userRepository.addPendingFriend(source, pf);
+            String objet = "Livres entre Amis - Nouvelle demande d'ami";
+            String contenu = source.getFullName() + " souhaite vous ajouter en tant qu'ami afin d'échanger des livres. Connectez-vous ou inscrivez vous sur livresentreamis.com afin de rentrer dans la communatuté!";
+            try {
+                this.mailService.sendNotificaition(emailFriend, objet, contenu);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            return "KO email incorrect";
+        }
+        return "OK";
     }
 
 }

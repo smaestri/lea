@@ -11,7 +11,7 @@ class ListCategories extends React.Component {
 
         return(
         <div className="main-content">
-            TODO LIST CATEGORIES
+            TODO LIST CATEGORIES ss
         </div>);
     }
 }

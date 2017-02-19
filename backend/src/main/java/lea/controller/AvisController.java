@@ -9,7 +9,7 @@ import java.util.List;
 @RestController
 public class AvisController extends CommonController {
 
-    @RequestMapping(value = "/avis/{bookId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/avis/{bookId}", method = RequestMethod.POST)
     @ResponseBody
     public String addAvis(@PathVariable("bookId") String livreId, @RequestBody Avis avis) throws Exception {
         Utilisateur proprietaire = userRepository.findproprietaire(livreId);
@@ -21,21 +21,21 @@ public class AvisController extends CommonController {
     }
 
     // Editer un avis : PUT
-    @RequestMapping(value = "/avis/{avisId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/api/avis/{avisId}", method = RequestMethod.PUT)
     public String editAvis(@PathVariable("avisId") String avisId, @RequestBody Avis avis) {
         avis.setDateavis(new Date());
         userRepository.updateAvis(avisId, avis);
         return "OK";
     }
 
-    @RequestMapping(value = "/avis/{avisId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/api/avis/{avisId}", method = RequestMethod.DELETE)
     @ResponseBody
     public Livre deleteAvis(@PathVariable("avisId") String avisId) throws Exception {
         userRepository.deleteAvis(avisId);
         return null;
     }
 
-    @RequestMapping(value = "/getLastAvis", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/getLastAvis", method = RequestMethod.GET)
     @ResponseBody
     public List<Avis> getLast() throws Exception {
        return userRepository.findlastAvis();

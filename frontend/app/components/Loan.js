@@ -9,7 +9,6 @@ import '../../assets/css/button.scss'
 class Loan extends React.Component {
 
     render() {
-
         return (
             <div className="loan">
                 <div className="loan-image">

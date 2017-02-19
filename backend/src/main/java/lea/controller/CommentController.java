@@ -26,7 +26,7 @@ public class CommentController extends CommonController {
     @Autowired
     private EmpruntRepository empruntRepository;
 
-    @RequestMapping(value = "/comments", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/api/comments", method = RequestMethod.GET, produces = "application/json")
     public List<Commentaire> getEchanges(Model model, @RequestParam(value = "empruntId", required = false) String empruntId) throws ServletException, IOException {
         List<Commentaire> comments = empruntRepository.getCommentaires(empruntId);
         //set user author
@@ -36,7 +36,7 @@ public class CommentController extends CommonController {
         return comments;
     }
 
-    @RequestMapping(value = "/addComment/{empruntId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/addComment/{empruntId}", method = RequestMethod.POST)
     public Commentaire addCommentaire(@PathVariable("empruntId") String empruntId, @RequestBody Commentaire commentaire) throws ServletException, IOException {
         Utilisateur principal = getPrincipal();
         Emprunt emprunt = this.empruntRepository.findOne(empruntId);
@@ -51,7 +51,7 @@ public class CommentController extends CommonController {
     }
 
     // Editer un commentaire : PUT
-    @RequestMapping(value = "/comments/{commentId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/api/comments/{commentId}", method = RequestMethod.PUT)
     public Commentaire editComment(@PathVariable("commentId") String commentId, @RequestBody Commentaire newComment) {
         Commentaire comment = this.empruntRepository.findComment(commentId);
         comment.setDateMessage(new Date());
@@ -61,7 +61,7 @@ public class CommentController extends CommonController {
     }
 
     // Supprimer commentaire : DELETE
-    @RequestMapping(value = "/comments/{commentId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/api/comments/{commentId}", method = RequestMethod.DELETE)
     public String deleteLivre(@PathVariable("commentId") String commentId) throws Exception {
         Emprunt empruntsFromCommentid = empruntRepository.findEmpruntFromCommentid(commentId);
         empruntRepository.deleteComment(commentId, empruntsFromCommentid.getId());

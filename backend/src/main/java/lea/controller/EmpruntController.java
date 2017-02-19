@@ -31,7 +31,7 @@ public class EmpruntController extends CommonController {
     @Autowired
     private NotificationService notificationService;
 
-    @RequestMapping(value = "/emprunts", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/emprunts", method = RequestMethod.GET)
     public List<Emprunt> livresHandler() throws ServletException, IOException {
         Utilisateur principal = getPrincipal();
         List<Emprunt> emprunts = empruntRepository.findEmprunts(principal.getId(), true);
@@ -39,7 +39,7 @@ public class EmpruntController extends CommonController {
         return emprunts;
     }
 
-    @RequestMapping(value = "/prets", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/prets", method = RequestMethod.GET)
     public  List<Emprunt> livresHandlerPrets() throws ServletException, IOException {
         Utilisateur principal = getPrincipal();
         List<Emprunt> prets = empruntRepository.findPrets(principal.getId(), true);
@@ -52,7 +52,7 @@ public class EmpruntController extends CommonController {
             emp.setPreteur(userRepository.findOne(emp.getPreteurId()));
             emp.setEmprunteur(userRepository.findOne(emp.getEmprunteurId()));
             Livre book = userRepository.findBook(emp.getLivreId());
-            book.setImage("assets/img/book.png");
+            book.setImage("/webjars/app-react/1.0.0/img/book.png");
             setCommentuser(emp);
             emp.setLivre(book);
         }
@@ -66,7 +66,7 @@ public class EmpruntController extends CommonController {
     }
 
 
-    @RequestMapping(value = "/emprunter", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/emprunter", method = RequestMethod.POST)
     public String processNewEmpruntForm(@RequestBody EmpruntBean empruntBean) throws ParseException {
         Utilisateur principal = getPrincipal();
         Utilisateur proprietaire = userRepository.findproprietaire(empruntBean.getIdLivre());
@@ -105,7 +105,7 @@ public class EmpruntController extends CommonController {
     }
 
 
-    @RequestMapping(value = "/accepterEmprunt/{empruntId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/accepterEmprunt/{empruntId}", method = RequestMethod.POST)
     public String accepterEmprunt(@PathVariable("empruntId") String empruntId) throws Exception {
         Utilisateur principal = getPrincipal();
         Emprunt emprunt = empruntRepository.findOne(empruntId);
@@ -125,7 +125,7 @@ public class EmpruntController extends CommonController {
         return "OK";
     }
 
-    @RequestMapping(value = "/refuserEmprunt/{empruntId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/refuserEmprunt/{empruntId}", method = RequestMethod.POST)
     public String refuserEmprunt(@PathVariable("empruntId") String empruntId, @RequestBody RefusBean refusBean) throws Exception {
         Utilisateur principal = getPrincipal();
         Emprunt emprunt = empruntRepository.findOne(empruntId);
@@ -145,7 +145,7 @@ public class EmpruntController extends CommonController {
         return "OK";
     }
 
-    @RequestMapping(value = "/envoyerEmprunt/{empruntId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/envoyerEmprunt/{empruntId}", method = RequestMethod.POST)
     public String sendEmprunt(@PathVariable("empruntId") String empruntId) throws Exception {
         Utilisateur principal = getPrincipal();
         Emprunt emprunt = empruntRepository.findOne(empruntId);
@@ -166,7 +166,7 @@ public class EmpruntController extends CommonController {
         return "OK";
     }
 
-    @RequestMapping(value = "/cloreEmprunt/{empruntId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/cloreEmprunt/{empruntId}", method = RequestMethod.POST)
     public String cloreEmprunt(@PathVariable("empruntId") String empruntId) throws Exception {
         Utilisateur principal = getPrincipal();
         Emprunt emprunt = empruntRepository.findOne(empruntId);
@@ -185,7 +185,7 @@ public class EmpruntController extends CommonController {
     }
 
     //TODO PERF
-    @RequestMapping(value = "/countEmpruntAndPret", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/countEmpruntAndPret", method = RequestMethod.GET)
     public CountBean countEmpruntAndPret(){
         Utilisateur principal = getPrincipal();
         CountBean cbean = new CountBean();

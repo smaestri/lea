@@ -13,7 +13,7 @@ class Main extends React.Component {
     render() {
         return(
         <div className="main-content">
-           <LastAvis />
+           <LastAvis />TOTO ssr
            <ListCategories />
         </div>);
     }

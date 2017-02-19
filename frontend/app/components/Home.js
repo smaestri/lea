@@ -1,6 +1,5 @@
 import React from 'react';
 import SearchBar from './SearchBar';
-import LastAvis from './LastAvis';
 import Notification from './Notification';
 import Navbar from 'react-bootstrap/lib/Navbar';
 import Nav from 'react-bootstrap/lib/Nav';

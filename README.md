@@ -5,7 +5,7 @@ prerequisites :
  - Launch a mongoDB instance on port 27018
 mongod --port 27018
 
-1 - Launch FRONT : npm run build
+1 - Launch FRONT : npm run install && npm run build
 
 2 - launch BACK : mvn spring-boot:run
 

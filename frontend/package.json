@@ -1,0 +1,36 @@
+{
+  "name": "app-react",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build-dev": "webpack --watch -d",
+    "build": "webpack -d"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.9.1",
+    "react": "^15.3.2",
+    "react-bootstrap": "^0.30.7",
+    "react-dom": "^15.3.2",
+    "react-rating": "^0.6.3",
+    "react-redux": "4.4.6",
+    "react-router": "^2.0.0",
+    "react-router-bootstrap": "^0.23.1",
+    "redux": "3.6.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.3.26",
+    "babel-loader": "^6.2.0",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
+    "css-loader": "^0.26.1",
+    "html-webpack-plugin": "^2.7.1",
+    "node-sass": "^4.3.0",
+    "sass-loader": "^4.1.1",
+    "style-loader": "^0.13.1",
+    "webpack": "^1.12.9",
+    "webpack-dev-server": "^1.16.2"
+  }
+}

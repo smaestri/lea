@@ -1,4 +1,5 @@
 import axios from 'axios';
+import React from 'react'
 
 // cache for loans, lendings, books
 let _loans = [];
@@ -14,7 +15,23 @@ function getCsrf() {
         }
     }
     return "";
-}
+};
+
+export const SVGIcon = React.createClass({
+    render: function () {
+        // Namespaced attributes are not supported in JSX. As a workaround
+        // we can use the dangerouslySetInnerHTML to set the innerHTML property.
+        // See https://github.com/facebook/react/issues/2250
+        var svg =
+            '<svg class="' + this.props.className + '">' +
+            '<use xlink:href="' + this.props.href + '"></use>' +
+            '</svg>';
+        return React.createElement('div', {
+            dangerouslySetInnerHTML: {__html: svg}
+        });
+    }
+});
+
 
 var helpers = {
     getLoan: function (id) {
@@ -384,6 +401,16 @@ var helpers = {
             });
     },
 
+    getCategories: function () {
+        return axios.get('/api/getCategories')
+            .then(function (response) {
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    },
+
     getMyPendingFriends: function () {
         return axios.get('/api/myPendingFriends')
             .then(function (response) {
@@ -465,6 +492,12 @@ var helpers = {
                 console.log(error);
             });
     },
+
+    getSvgIcon: function(){
+        return SVGIcon;
+    }
+
+
 
 };
 

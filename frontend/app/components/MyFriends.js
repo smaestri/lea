@@ -79,7 +79,7 @@ class MyFriends extends React.Component {
         });
 
         return (
-            <div className="main-content">
+            <div className="container">
                 <h2>Mes amis actifs</h2>
                 {friends.length == 0 && <span>Vous n'avez pas d'amis.</span>}
                 {friends.length >0 && <div className="friend-container">{friends}</div>}

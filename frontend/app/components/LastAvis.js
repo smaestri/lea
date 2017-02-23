@@ -1,5 +1,6 @@
 import React from 'react'
 import helpers from '../helpers/api'
+import Avis from './Avis.js'
 
 class LastAvis extends React.Component {
 
@@ -18,14 +19,16 @@ class LastAvis extends React.Component {
 
     render() {
         const avis = this.state.avis.map( avis => {
-            return <li>{avis.libelle}</li>
+            return <Avis key={avis.id} id={avis.id} avis={avis}/>
         });
 
 
         return(
-        <div className="main-content">
-            <ul>{avis}</ul>
-        </div>);
+            <div className="height columns">
+                <h3>Les derniers avis</h3>
+                {avis}
+            </div>
+        );
     }
 }
 

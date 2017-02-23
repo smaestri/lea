@@ -4,6 +4,7 @@ import helpers from '../helpers/api'
 import {Button} from 'react-bootstrap'
 import {FormControl} from 'react-bootstrap'
 import formatDate from '../helpers/utils'
+import {SVGIcon} from '../helpers/api'
 
 class AddAvis extends React.Component {
 
@@ -79,13 +80,19 @@ class AddAvis extends React.Component {
 
         return (
          <div className="avis-container">
+             <h3>Noter ce livre</h3>
              <div className="avis-content">
                  {dateAvis && <div>Ajouté le {dateAvis}</div>}
                  <div className="avis-note">
-                     <label>Note: </label> <Rating readonly={!showTextArea} initialRate={this.state.avis.note} onClick={this.handleRating} />
+                     <label>Note: </label>
+                     <Rating empty={<SVGIcon  href='#icon-star-empty' className='icon-rating'/>}
+                             full={<SVGIcon  href='#icon-star-full' className='icon-rating'/>}
+                             readonly={!showTextArea}
+                             initialRate={this.state.avis.note}
+                             onClick={this.handleRating} />
                  </div>
                  <div className="avis-txt">
-                     <label>Message: </label>{!showTextArea && <span><i>{this.state.avis.libelle}</i></span>}
+                     <label>Message: </label>{!showTextArea && <span><blockquote>{this.state.avis.libelle}</blockquote></span>}
                      { showTextArea && <FormControl name="libelle" componentClass="textarea" onChange={this.handleChange} value={this.state.avis.libelle} />}
                  </div>
              </div>

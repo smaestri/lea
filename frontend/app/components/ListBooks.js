@@ -1,7 +1,6 @@
 import React from 'react'
 import helpers from '../helpers/api'
 import Book from './Book'
-import '../../assets/css/book.scss'
 
 class ListBooks extends React.Component{
 
@@ -12,7 +11,6 @@ class ListBooks extends React.Component{
 
     componentDidMount(){
         let allBooks  = [];
-        let myPendingFriends = [];
         helpers.getAllBooks().then((books) => {
             allBooks = books;
 
@@ -36,7 +34,7 @@ class ListBooks extends React.Component{
         });
 
         return(
-            <div className="main-content">
+            <div className="container">
                 <h1>Livres empruntables</h1>
                 {books.length == 0 && <span>Pas de livres empruntables.</span>}
                 {books.length >0 && <div className="book-container">{books}</div>}

@@ -32,7 +32,7 @@ class MyLendings extends React.Component{
         });
 
         return(
-            <div className="main-content">
+            <div className="container">
                 <h1>Mes prêts</h1>
                 {lendings.length == 0 && <span>Vous n'avez pas de prêts en cours.</span>}
                 {lendings.length >0 &&  <div className="loan-container">{lendings}</div>}

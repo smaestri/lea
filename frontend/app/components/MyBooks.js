@@ -4,7 +4,6 @@ import Book from './Book'
 import {Button} from 'react-bootstrap';
 import {Modal} from 'react-bootstrap';
 import { withRouter } from 'react-router';
-import '../../assets/css/book.scss';
 
 class MyBooks extends React.Component{
 
@@ -50,7 +49,7 @@ class MyBooks extends React.Component{
             return <Book key={book.id} id={book.id} book={book} handleDelete={this.handleDelete} previousPage="myBooks"/>
         });
         return(
-            <div className="main-content">
+            <div className="container">
                 <h1>Ma bibiliothèque</h1>
                 {books.length == 0 && <span>Vous n'avez pas de livres.</span>}
                 {books.length >0 && <div className="book-container">{books}</div>}

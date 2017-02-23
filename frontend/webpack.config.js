@@ -35,6 +35,7 @@ module.exports = {
                 logLevel: 'debug',
             },
             // as spring-boot is serving assets (located in webjar), we must add proxy
+            // Not used In development mode, we set the local path to not have to build the webjar
                 '/webjars/**': {
                     target: 'http://localhost:8090',
                     // changeOrigin: true,
@@ -56,6 +57,7 @@ module.exports = {
                     presets: ['es2015', 'react']
                 }
             },
+            /*
             {
                 test: /\.scss$/,
                 loaders: ["style-loader", "css-loader", "sass-loader"]
@@ -64,10 +66,13 @@ module.exports = {
                 test: /\.css$/,
                 use: ['style-loader', 'css-loader']
             }
+            */
         ]
     },
+    /*
     sassLoader: {
         includePaths: [path.resolve(__dirname, "./assets/css/")]
     }
+    */
     //plugins: [HTMLWebpackPluginConfig]
 }

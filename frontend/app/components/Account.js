@@ -49,7 +49,7 @@ class Account extends React.Component {
 
     render() {
         return (
-         <div className="main-content">
+         <div className="container">
              <div className="account-container">
                  <h2>Veuillez indiquer vos informations</h2>
                  <Form horizontal onSubmit={this.handleSubmit}>

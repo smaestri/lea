@@ -15,7 +15,7 @@ public class Avis extends BaseDocumentImpl {
     private String auteur;
 
     @Transient
-    private String bookId;
+    private String livre;
 
     private String libelle;
 
@@ -88,11 +88,11 @@ public class Avis extends BaseDocumentImpl {
         return result;
     }
 
-    public String getBookId() {
-        return bookId;
+    public String getLivre() {
+        return livre;
     }
 
-    public void setBookId(String bookId) {
-        this.bookId = bookId;
+    public void setLivre(String livre) {
+        this.livre = livre;
     }
 }

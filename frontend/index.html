@@ -1,14 +1,82 @@
 <!DOCTYPE html>
-<html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
 <head>
-    <meta charset="UTF-8">
-    <title>App</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/spacelab/bootstrap.min.css" rel="stylesheet" integrity="sha384-L/tgI3wSsbb3f/nW9V6Yqlaw3Gj7mpE56LWrhew/c8MIhAYWZ/FNirA64AVkB5pI" crossorigin="anonymous" />
+
+    <!-- Agility - Responsive HTML5/CSS3 Template by SevenSpark http://agility-html.sevenspark.com -->
+
+    <!-- Basic Page Needs
+      ================================================== -->
+    <meta charset="utf-8">
+    <title>Livres entre amis</title>
+    <meta name="description" content="Agility is a fully responsive, minimalist, HTML5 / CSS3 template.">
+    <meta name="author" content="Chris Mavricos, SevenSpark">
+
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Mobile Specific Metas
+      ================================================== -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!-- CSS
+      ================================================== -->
+    <link rel="stylesheet" href="/assets/stylesheets/base.css">
+    <link rel="stylesheet" href="/assets/stylesheets/skeleton.css">
+    <link rel="stylesheet" href="/assets/stylesheets/layout.css">
+
+    <!-- prettyPhoto plugin -->
+    <link rel="stylesheet" href="/assets/javascripts/prettyPhoto/css/prettyPhoto.css" type="text/css" media="screen" />
+
+    <!-- FlexSlider plugin -->
+    <link rel="stylesheet" href="/assets/javascripts/flexslider/flexslider.css" type="text/css" media="screen" />
+
+
+    <!-- Favicons
+    ================================================== -->
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/assets/images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/assets/images/apple-touch-icon-114x114.png">
+
+    <!-- Fonts
+    ================================================== -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+
+
+    <!-- Modernizr -->
+    <script type="text/javascript" src="/assets/javascripts/modernizr.js"></script>
+
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="/assets/stylesheets/ie7.css">
+    <![endif]-->
+
+
+
 </head>
-<body>
-<input type="hidden" id="userId" value="58a2067a44d06e2781a61e5a" />
-<input type="hidden" id="categories" value="[]" />
-<div id="app"></div>
-<script src="./built/bundle.js"></script>
+<body class="skin-red bkg-fiber">
+    <input type="hidden" id="userId" value="58a2067a44d06e2781a61e5a" />
+    <input type="hidden" id="categories" value="[]" />
+
+    <svg id="svg-source" style="display: none;" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <symbol id="icon-star-empty" viewBox="0 0 1024 1024">
+                <title>star-empty</title>
+                <path class="path1" d="M1024 397.050l-353.78-51.408-158.22-320.582-158.216 320.582-353.784 51.408 256 249.538-60.432 352.352 316.432-166.358 316.432 166.358-60.434-352.352 256.002-249.538zM512 753.498l-223.462 117.48 42.676-248.83-180.786-176.222 249.84-36.304 111.732-226.396 111.736 226.396 249.836 36.304-180.788 176.222 42.678 248.83-223.462-117.48z"></path>
+            </symbol>
+            <symbol id="icon-star-full" viewBox="0 0 1024 1024" fill="#d83f28">
+                <title>star-full</title>
+                <path class="path1" d="M1024 397.050l-353.78-51.408-158.22-320.582-158.216 320.582-353.784 51.408 256 249.538-60.432 352.352 316.432-166.358 316.432 166.358-60.434-352.352 256.002-249.538z"></path>
+            </symbol>
+        </defs>
+    </svg>
+
+
+    <div id="app" class="wrap"></div>
+    <script src="./built/bundle.js"></script>
 </body>
 </html>

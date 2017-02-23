@@ -2,21 +2,28 @@ import React from 'react'
 import helpers from '../helpers/api'
 import Book from './Book'
 import {Button} from 'react-bootstrap'
-import '../../assets/css/book.scss'
 import {withRouter} from 'react-router'
 
 class UserDetail extends React.Component{
 
     constructor(props) {
         super(props);
-        this.state = {books: []};
+        this.state = {books: [], pendingFriends: [], firstUser: ''};
         this.returnToPreviousPage = this.returnToPreviousPage.bind(this);
     }
 
     //need to request server to get friend's books
     componentDidMount() {
+
+
+    }
+
+    componentWillReceiveProps(nextProps){
+        console.log('componentWillReceiveProps')
+        console.log(nextProps)
         helpers.getUserDetail(this.props.params.userId).then((books) => {
-           // this.setState({books: books})
+            this.setState({firstUser: books[0].preteur});
+            // this.setState({books: books})
             let allBooks = books;
             //my pending friends to see if user added and display adequate sentence
             helpers.getMyPendingFriends().then((pf) => {
@@ -24,7 +31,7 @@ class UserDetail extends React.Component{
                 let pending = pf;
                 //my friends to see if user added and display adequate sentence
                 helpers.getMyFriends().then((friends) => {
-                    this.setState( {books: allBooks, friends: friends, pendingFriends: pending });
+                    this.setState( {books: allBooks, pendingFriends: pending });
                 });
             });
         });
@@ -44,6 +51,7 @@ class UserDetail extends React.Component{
     }
 
     render(){
+
         let books = this.state.books.map( book => {
             return <Book key={book.id} id={book.id} book={book} previousPage="userDetail" pendingFriends={this.state.pendingFriends} />
         });
@@ -58,8 +66,8 @@ class UserDetail extends React.Component{
         */
 
         return(
-            <div className="main-content">
-                <h1>Livres</h1>
+            <div className="container">
+                <h1>Livres de {this.state.firstUser} et ses amis</h1>
                 {books.length == 0 && <span>Cet utilisateur n'a pas encore de livres.</span>}
                 {books.length >0 && <div className="book-container">{books}</div>}
                 <Button bsStyle="primary" onClick= {this.returnToPreviousPage}>Retour</Button>

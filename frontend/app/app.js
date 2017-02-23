@@ -17,7 +17,6 @@ import Account from "./components/Account";
 import MyHistorizedLendings from "./components/MyHistorizedLendings";
 import MyHistorizedLoans from "./components/MyHistorizedLoans";
 import {Tests} from "./components/Test";
-import '../assets/css/common.scss';
 
 class App extends React.Component {
 

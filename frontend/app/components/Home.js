@@ -1,18 +1,10 @@
-import React from 'react';
-import SearchBar from './SearchBar';
-import Notification from './Notification';
-import Navbar from 'react-bootstrap/lib/Navbar';
-import Nav from 'react-bootstrap/lib/Nav';
-import NavItem from 'react-bootstrap/lib/NavItem';
-import NavDropdown from 'react-bootstrap/lib/NavDropdown';
-import MenuItem from 'react-bootstrap/lib/MenuItem';
-import {LinkContainer} from 'react-router-bootstrap'
+import React from 'react'
+import SearchBar from './SearchBar'
+import Notification from './Notification'
+import Footer from './Footer'
 import helpers from '../helpers/api'
 import {Link} from 'react-router'
 import { withRouter } from 'react-router'
-
-import '../../assets/css/home.scss';
-import '../../assets/css/form.scss';
 
 const {Component} = React;
 
@@ -62,51 +54,97 @@ class Home extends Component {
         const bienvenue = this.state.currentUser;
 
         return (
-            <div id="main-content">
-                <Navbar className="container-header">
-                    <Navbar.Header>
-                        <Navbar.Brand>
-                            <a href="#/home">Livres entre amis</a>
-                        </Navbar.Brand>
-                    </Navbar.Header>
-                    <Nav>
-                        <LinkContainer to={{pathname: '/my-books'}}>
-                            <NavItem eventKey={1} href="#">Ma bibliothèque</NavItem>
-                        </LinkContainer>
-                        <LinkContainer to={{pathname: '/my-loans'}}>
-                            <NavItem eventKey={1} href="#">Mes emprunts ({this.state.nbEmprunt})</NavItem>
-                        </LinkContainer>
-                        <LinkContainer to={{pathname: '/my-lendings'}}>
-                            <NavItem eventKey={2} href="#">Mes prêts ({this.state.nbPret})</NavItem>
-                        </LinkContainer>
-                        <LinkContainer to={{pathname: '/my-friends'}}>
-                            <NavItem eventKey={2} href="#">Mes amis</NavItem>
-                        </LinkContainer>
-                        <NavDropdown eventKey={3} title={bienvenue} id="basic-nav-dropdown">
-                            <LinkContainer to={{pathname: '/historized-loans'}}>
-                                <MenuItem eventKey={3.1}>Mes emprunts historiés</MenuItem>
-                            </LinkContainer>
-                            <LinkContainer to={{pathname: '/historized-lendings'}}>
-                                <MenuItem eventKey={3.2}>Mes prêts historiés</MenuItem>
-                            </LinkContainer>
-                            <MenuItem divider/>
-                            <LinkContainer to={{pathname: '/account'}}>
-                                <MenuItem eventKey={3.3}>Mon compte</MenuItem>
-                            </LinkContainer>
-                            <MenuItem divider/>
-                            <MenuItem href="logout">Me d&eacute;connecter
-                            </MenuItem>
-                        </NavDropdown>
+            <div>
+                <header id="header"  className="container">
 
-                    </Nav>
-                </Navbar>
+                    <div id="header-inner"  className="sixteen columns over">
+
+                        <div id="masthead"  className="one-third column alpha">
+                            <h1 id="site-title"  className="remove-bottom">
+                                <a href="index.html"><img src="assets/img/logo.png" /></a></h1>
+                        </div>
+
+                        <div className="container-search">
+                            <div className="top-header">
+                                <div className="content-search">
+                                    <SearchBar />
+                                </div>
+                                <div className="menu-user">
+                                    <div className="dropdown">
+                                        <span>Bienvenue, {bienvenue}</span>
+                                        <div className="dropdown-content">
+                                            <ul>
+                                                <li>
+                                                    <Link to={'/historized-loans/'} >
+                                                        Mes emprunts historiés
+                                                    </Link>
+                                                </li>
+                                                <li>
+                                                    <Link to={'/historized-lendings/'}>
+                                                        Mes prêts historiés
+                                                    </Link>
+                                                </li>
+                                                <li>
+                                                    <Link to={'/account/'}>
+                                                        Mon compte
+                                                    </Link>
+                                                </li>
+                                                <li>
+                                                    <a href="logout">
+                                                        Me déconnecter
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="top-menu">
+                                <nav id="main-nav"  className="two-thirds column omega">
+                                    <a href="#main-nav-menu"  className="mobile-menu-button button">+ Menu</a>
+                                    <ul id="main-nav-menu"  className="nav-menu">
+                                        <li id="nav-home"  className="current" >
+                                            <Link to={'/home/'} activeClassName="current">
+                                               Accueil
+                                            </Link>
+                                        </li>
+                                        <li id="nav-bib">
+                                            <Link to={'/my-books/'} activeClassName="current">
+                                                Ma bibliothèque
+                                            </Link>
+                                        </li>
+                                        <li id="nav-emprunt" >
+                                            <Link to={'/my-loans/'} activeClassName="current">
+                                                Mes emprunts ({this.state.nbEmprunt})
+                                            </Link>
+                                        </li>
+                                        <li id="nav-portfolio" >
+                                            <Link to={'/my-lendings/'} activeClassName="current">
+                                                Mes prêts ({this.state.nbPret})
+                                            </Link>
+                                        </li>
+                                        <li id="nav-amis" >
+                                            <Link to={'/my-friends/'} activeClassName="current">
+                                                Mes amis
+                                            </Link>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+
+                </header>
+
+
                 <Notification requestedFriends={this.state.requestedFriends} onRefreshNotification={this.refreshNotif}/>
-                <SearchBar />
                 {this.props.children && React.cloneElement(this.props.children, {
                     onRefreshCount: this.refreshCount,
                     onRefreshNotification: this.refreshNotif,
                     onRefreshName: this.refreshName
                 })}
+                <Footer></Footer>
+
             </div>
         )
     }

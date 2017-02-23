@@ -7,7 +7,6 @@ import AddAvis from './AddAvis'
 import LoanAttributes from './LoanAttributes'
 import { withRouter } from 'react-router'
 import {Button} from 'react-bootstrap'
-import '../../assets/css/emprunt-detail.scss'
 
 class LoanDetail extends React.Component {
 
@@ -136,13 +135,14 @@ class LoanDetail extends React.Component {
             displayRating = true;
         }
         return (
-            <div className="main-content">
+            <div className="container">
                 <h1>{title}</h1>
+                <div className="emprunt-information">
+                    <LoanAttributes loan={loan} isHistory={false} isLending={this.props.params.isLending} displayLinks={false} />
+                    <ButtonsEmprunt loan={loan} onRefreshCount={this.props.onRefreshCount} reloadEmprunt={this.refreshEmprunt} />
+                </div>
                 <div className="content-emprunt">
-                    <div className="emprunt-information">
-                        <LoanAttributes loan={loan} isHistory={false} isLending={this.props.params.isLending} displayLinks={false} />
-                        <ButtonsEmprunt loan={loan} onRefreshCount={this.props.onRefreshCount} reloadEmprunt={this.refreshEmprunt} />
-                        {displayRating &&  <h3>Noter ce livre</h3>}
+                    <div className="emprunt-ratings">
                         {displayRating &&  <AddAvis bookId={loan.livre.id} avis={avis} />}
                     </div>
                     <div className="emprunt-comments">

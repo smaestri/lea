@@ -1,7 +1,6 @@
 import React from 'react'
 import {FormControl} from 'react-bootstrap'
 import {Button} from 'react-bootstrap'
-import '../../assets/css/friend.scss'
 
 class AddFriend extends React.Component {
 

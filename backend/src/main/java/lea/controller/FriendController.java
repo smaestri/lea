@@ -1,6 +1,7 @@
 package lea.controller;
 
 import lea.dto.AmiBean;
+import lea.modele.Categorie;
 import lea.modele.Emprunt;
 import lea.modele.PendingFriend;
 import lea.modele.Utilisateur;
@@ -54,6 +55,13 @@ public class FriendController extends CommonController {
         Utilisateur user = getPrincipal();
         List<Utilisateur> requestedFriends = userRepository.findRequestedFriends(user.getEmail());
         return requestedFriends;
+    }
+
+    // My requested friends: GET : show the users whoses have added the current connected one
+    @RequestMapping(value = "/api/getCategories", method = RequestMethod.GET)
+    public List<Categorie> getCategories() {
+        List<Categorie> all = categorieRepository.findAll();
+        return all;
     }
 
     // Creer un ami : POST

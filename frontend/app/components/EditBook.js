@@ -57,61 +57,27 @@ class EditBook extends React.Component {
         });
 
         return (
-            <div className="main-content">
-                <div className="edit-book-container">
+            <div className="container">
+                <div className="contact-form">
                     <h2>Veuillez indiquer les informations du livre</h2>
-                    <Form horizontal onSubmit={this.handleSubmit}>
-                        <FormGroup controlId="formHorizontalEmail">
-                            <Col componentClass={ControlLabel} sm={3}>
-                                titre:
-                            </Col>
-                            <Col sm={5}>
-                                <FormControl type="text" name="titreBook" value={this.state.book.titreBook}
-                                             onChange={this.handleChange}/>
-                            </Col>
-                        </FormGroup>
-                        <FormGroup>
-                            <Col componentClass={ControlLabel} sm={3}>
-                                auteur:
-                            </Col>
-                            <Col sm={5}>
-                                <FormControl type="text" name="auteur" value={this.state.book.auteur}
-                                             onChange={this.handleChange}/>
-                            </Col>
-                        </FormGroup>
-                        <FormGroup>
-                            <Col componentClass={ControlLabel} sm={3}>
-                                description:
-                            </Col>
-                            <Col sm={5}>
-                                <FormControl type="text" name="description" value={this.state.book.description}
-                                             onChange={this.handleChange}/>
-                            </Col>
-                        </FormGroup>
-                        <FormGroup>
-                            <Col componentClass={ControlLabel} sm={3}>
-                                isbn:
-                            </Col>
-                            <Col sm={5}>
-                                <FormControl type="text" name="isbn" value={this.state.book.isbn}
-                                             onChange={this.handleChange}/>
-                            </Col>
-                        </FormGroup>
-                        <FormGroup>
-                            <Col componentClass={ControlLabel} sm={3}>
-                                Catégorie
-                            </Col>
-                            <Col sm={5}>
-                                <FormControl name="categorieId" value={this.state.book.categorieId} onChange={this.handleChange}
-                                             componentClass="select" placeholder="select">
-                                    {catReact}
-                                </FormControl>
-                            </Col>
-                        </FormGroup>
-
-                        <Button bsStyle="primary" onClick={this.returnToBooks}>Retour</Button>
-                        <Button bsStyle="primary" type="submit" >Valider</Button>
-                    </Form>
+                    <form horizontal onSubmit={this.handleSubmit}>
+                        <label for="titreBook">titre:</label>
+                        <input type="text" name="titreBook" value={this.state.book.titreBook}
+                               onChange={this.handleChange}/>
+                        <label for="auteur">Auteur:</label>
+                        <input type="text" name="auteur" value={this.state.book.auteur} onChange={this.handleChange}/>
+                        <label for="description">description:</label>
+                        <input type="text" name="description" value={this.state.book.description}
+                               onChange={this.handleChange}/>
+                        <label for="isbn">isbn:</label>
+                        <input type="text" name="isbn" value={this.state.book.isbn} onChange={this.handleChange}/>
+                        <label for="Catégorie">Catégorie:</label>
+                        <select name="categorieId" value={this.state.book.categorieId} onChange={this.handleChange}>
+                            {catReact}
+                        </select>
+                        <button onClick={this.returnToBooks}>Retour</button>
+                        <button type="submit">Valider</button>
+                    </form>
                 </div>
             </div>
         )

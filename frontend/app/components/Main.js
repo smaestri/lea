@@ -9,12 +9,17 @@ class Main extends React.Component {
         this.state = {avis: []};
     }
 
-
     render() {
         return(
-        <div className="main-content">
-           <LastAvis />TOTO ssr
-           <ListCategories />
+        <div className="container" id="main">
+            <div className="tagline">
+                Bienvenue sur <strong>Livres entre amis</strong>, partagez vos livres .... entre amis!<br />
+                <span className="fleuron"></span>
+            </div>
+            <div className="row">
+                <LastAvis />
+                <ListCategories />
+            </div>
         </div>);
     }
 }

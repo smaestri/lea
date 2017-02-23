@@ -1,8 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import '../../assets/css/searchbar.scss';
-
 class Notification extends React.Component{
     constructor(props) {
         super(props);

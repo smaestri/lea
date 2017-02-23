@@ -161,6 +161,9 @@ public class UserRepositoryImpl implements UserRepository {
             List<Livre> livres = u.getLivres();
             for(Livre l : livres){
                 List<Avis> avis = l.getAvis();
+                for(Avis a : avis){
+                    a.setLivre(l.getTitreBook());
+                }
                 returnList.addAll(avis);
             }
         }

@@ -46,7 +46,7 @@ class LoanAttributes extends React.Component {
         var isLending = (this.props.isLending == 'true');
 
         return (
-            <ul>
+            <ul className="pin">
                 {isLending && <li>Emprunteur : {this.props.loan.emprunteur.fullName}</li>}
                 {!isLending && <li>Prêteur : {this.props.loan.preteur.fullName}</li>}
                 <li>Demande effectuée le {formatDate(this.props.loan.dateDemande)} par {this.props.loan.emprunteur.fullName}</li>

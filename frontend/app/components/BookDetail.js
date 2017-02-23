@@ -3,7 +3,6 @@ import { withRouter } from 'react-router'
 import helpers from '../helpers/api'
 import Avis from './Avis.js'
 import {Button} from 'react-bootstrap'
-import '../../assets/css/book-detail.scss'
 
 class BookDetail extends React.Component {
 
@@ -38,7 +37,7 @@ class BookDetail extends React.Component {
         });
 
         return (
-            <div className="main-content">
+            <div className="container">
                 <div className="book-information">
                     <div><h1>Avis du livre <i>{this.state.book.titreBook}</i></h1></div>
                 </div>

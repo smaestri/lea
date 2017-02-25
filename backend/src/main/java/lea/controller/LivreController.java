@@ -33,42 +33,38 @@ public class LivreController extends CommonController {
     @RequestMapping(value = "/api/searchBook", method = RequestMethod.GET)
     public List<Livre> searchBook(@RequestParam(value = "titreBook", required = false) String titre,
                              @RequestParam(value = "categorie", required = false) String categorieId) throws ServletException, IOException {
-        Utilisateur principal = getPrincipal();
         List<Livre> result = new ArrayList<Livre>();
-        List<Utilisateur> friends = userRepository.findFriends(principal.getListFriendsId());
+        List<Utilisateur> users = userRepository.findAll();
 
-        List<String> idAllFriends = new ArrayList<String>();
+        Utilisateur principal = this.getPrincipal();
+        Utilisateur user = null;
+        if (principal != null){
+            user = this.userRepository.findOne(principal.getId());
+        }
 
+        for (Utilisateur friend : users) {
 
-        //Find first FRIENDS books
-        for (Utilisateur friend : friends) {
-            idAllFriends.add(friend.getId());
+            if(user != null && user.getId().equals(friend.getId())){
+                continue;
+            }
+
             for (Livre livre : friend.getLivres()) {
                 livre.setUserId(friend.getId());
                 livre.setPreteur(friend.getFullName());
-                livre.setEmpruntable(true);
-                addBookinlist(result, livre, categorieId, titre);
-            }
-            List<Utilisateur> subFriends = userRepository.findFriends(friend.getListFriendsId());
-            for (Utilisateur subFriend :subFriends) {
-                idAllFriends.add(subFriend.getId());
-                if(!subFriend.getId().equals(principal.getId())){
-                    for (Livre livre : subFriend.getLivres()) {
-                        livre.setUserId(subFriend.getId());
-                        livre.setPreteur(subFriend.getFullName());
-                        livre.setIntermediaireid(friend.getId());
-                        livre.setEmpruntable(true);
-                        addBookinlist(result, livre, categorieId, titre);
+                livre.setMailPreteur(friend.getEmail());
+
+                if(user != null && livre.getStatut().equals(StatutEmprunt.FREE)){
+                    //si ami
+                    List<Utilisateur> friends = userRepository.findFriends(user.getListFriendsId());
+                    for(Utilisateur u : friends){
+                        if(friend.getId().equals(u.getId())){
+                            livre.setEmpruntable(true);
+                        }
                     }
                 }
+                addBookinlist(result, livre, categorieId, titre);
             }
         }
-
-        // THEN FIND OTHER BOOKS
-        idAllFriends.add(principal.getId());
-        List<Livre> listeLivres = userRepository.findOtherBooks( idAllFriends);
-        result.addAll(listeLivres);
-
         return result;
     }
 
@@ -196,7 +192,7 @@ public class LivreController extends CommonController {
             response = httpclient.execute(httpget);
             if (response.getEntity().getContentType() == null || !response.getEntity().getContentType().getValue().equals("image/jpeg")) {
             */
-        livre.setImage("/assets/img/book.png");
+        livre.setImage("/webjars/app-react/1.0.0/img/book.png");
         /*
             } else {
                 livre.setImage(bookImageUrl);
@@ -207,6 +203,12 @@ public class LivreController extends CommonController {
             response.close();
         }
         */
+    }
+
+    public static void setBookImageLittl(Livre livre) {
+
+        livre.setImage("/webjars/app-react/1.0.0/img/book.png");
+
     }
 
 }

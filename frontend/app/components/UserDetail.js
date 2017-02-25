@@ -18,9 +18,7 @@ class UserDetail extends React.Component{
 
     }
 
-    componentWillReceiveProps(nextProps){
-        console.log('componentWillReceiveProps')
-        console.log(nextProps)
+    componentWillReceiveProps(){
         helpers.getUserDetail(this.props.params.userId).then((books) => {
             this.setState({firstUser: books[0].preteur});
             // this.setState({books: books})

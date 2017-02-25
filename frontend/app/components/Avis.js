@@ -27,7 +27,10 @@ class Avis extends React.Component {
         return (
             <div>
                 <div className="title-rating">
-                    <div className="rating-title"><Link className="title-livre" to={'/book-detail/'}>{this.state.avis.livre}</Link></div>
+                    <div className="rating-title">
+                        <Link className="title-livre" to={'/book-detail/'}>{this.state.avis.livre}</Link>
+                        <img src={this.state.avis.image} />
+                    </div>
                     <div className="rating-date">Ajouté le <span className="bolded">{dateAvis}</span> par <span className="bolded">{this.state.avis.auteur}</span> : </div>
                     <div className="rating-note">
                         <Rating empty={<SVGIcon  href='#icon-star-empty' className='icon-rating'/>}

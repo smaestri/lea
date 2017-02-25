@@ -11,6 +11,8 @@ public interface UserRepository {
 
     Utilisateur findOne(String id);
 
+    List<Utilisateur> findAll();
+
     Utilisateur saveUser(Utilisateur userDetail);
 
     void saveLivre(Utilisateur user, Livre livre);

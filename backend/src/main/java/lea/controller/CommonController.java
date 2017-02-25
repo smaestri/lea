@@ -24,9 +24,6 @@ public class CommonController {
 
     protected Utilisateur getPrincipal() {
 
-        /*
-
-        TODO UNCOMMENT THIS IN PROD
 
         Utilisateur user = null;
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -39,16 +36,17 @@ public class CommonController {
             user = ((CustomUserDetailsService.UserPrincipal) principal).getUser();
         }
         return user;
-        */
+
 
 
         /**
          * TODO COMMENT THIS
-         */
-        Utilisateur u = new Utilisateur();
-        u.setId("58a2067a44d06e2781a61e5a");
-        return u;
 
+
+        Utilisateur u = new Utilisateur();
+        u.setId("58a2069a44d06e2781a61e60");
+        return u;
+         */
 
     }
 }

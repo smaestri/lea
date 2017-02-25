@@ -1,23 +1,16 @@
-import React from 'react'
-
-class Footer extends React.Component {
-
-    render() {
-        return (
+<html xmlns:th="http://www.thymeleaf.org">
+    <div class="container-footer" th:fragment="contentA">
         <footer id="colophon">
             <div id="footer-base">
-                <div className="container">
-                    <div className="eight columns">
+                <div class="container">
+                    <div class="eight columns">
                         &copy; Livres entre amis, 2017
                     </div>
-                    <div className="eight columns far-edge">
+                    <div class="eight columns far-edge">
                         <a href="/camarche">Comment ça marche?</a> | <a href="/contact">Contact</a> | <a href="/faq">FAQ</a> | <a href="/info">Informations légales</a>
                     </div>
                 </div>
             </div>
         </footer>
-        )
-    }
-}
-
-export default Footer
+    </div>
+</html>

@@ -6,6 +6,9 @@
     <meta name="description" content="Agility is a fully responsive, minimalist, HTML5 / CSS3 template." />
     <meta name="author" content="Sylvain Maestri" />
 
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+
     <!--[if lt IE 9]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -48,10 +51,38 @@
     <![endif]-->
 
 </head>
-<body class="skin-red bkg-fiber">
-    <input type="hidden" id="userId" th:value="${userId}" />
-    <input type="hidden" id="categories" th:value="${categories}" />
-    <div id="app" class="wrap" />
-    <script src="/webjars/app-react/1.0.0/bundle.js"></script>
+<body class="skin-red bkg-smoky">
+    <div id="app" class="wrap">
+        <nav th:replace="header:: contentA" />
+        <div class="container">
+            <h2>Inscription</h2>
+            <div class="centerelem">
+                <div class="contact-form">
+                    <form th:action="@{/users/new}" th:object="${utilisateur}" method="POST">
+                        <div class="form-error">
+                            <ul th:if="${#fields.hasErrors('*')}">
+                                <li th:each="err : ${#fields.errors('*')}" th:text="${err}">Input is incorrect</li>
+                            </ul>
+                        </div>
+                        <label>Email</label>
+                        <input type="text" th:field="*{email}" placeholder="Votre e-mail"/>
+                        <label>Nom</label>
+                        <input type="text" th:field="*{lastName}" placeholder="Votre nom"/>
+                        <label>Pr&eacute;nom</label>
+                        <input type="text" th:field="*{firstName}" placeholder="Votre prénom" />
+                        <label>Password</label>
+                        <input type="password" th:field="*{password}" placeholder="Password" />
+                        <label>Confirmer Password</label>
+                        <input type="password" th:field="*{confirmPassword}" placeholder="Password"  />
+                        <div class="centerelem">
+                            <button type="submit" class="btn btn-primary">Valider</button>
+                        </div>
+                        <a href="/"><button type="button" class="btn btn-primary">Retour</button></a>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <nav th:replace="footer:: contentA" />
+    </div>
 </body>
 </html>

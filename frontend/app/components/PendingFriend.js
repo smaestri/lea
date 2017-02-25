@@ -14,7 +14,7 @@ class PendingFriend extends React.Component {
         return (
             <div className="friend">
                 <div className="imageUser">
-                        <img src="/assets/img/add-friend.png" />
+                        <img src="/webjars/app-react/1.0.0/img/add-friend.png" />
                 </div>
                 {!this.props.showAcceptButton  &&
                 <div>

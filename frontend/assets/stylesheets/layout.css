@@ -70,7 +70,7 @@
 
 body{
 	-webkit-font-smoothing: antialiased;
-	background:#222 url(../images/bkgs/stripes_tiny_10.png) 0 0 repeat;
+	/*background:#222 url(../images/bkgs/stripes_tiny_10.png) 0 0 repeat;*/
 	font: 14px/21px "Open Sans", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 .wrap{
@@ -234,7 +234,7 @@ strong { color:inherit; }
 }
 
 #masthead{
-	flex: 1;
+	flex: 0 0 230px
 	margin-top:1.5%;
 	font-size:100%;
 }
@@ -262,8 +262,14 @@ nav#main-nav{
 
 .searchbar-container {
 	display:flex;
-	//align-items: flex-end;
 }
+
+.searchbar-container input {
+	margin-right: 15px;
+}
+
+
+margin-right: 15px;
 
 /* All Levels */
 nav#main-nav ul{
@@ -1783,7 +1789,7 @@ input[type="email"],
 textarea{
 	padding: 8px 8px;
 	font: 12px "Open Sans", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
-	width: 345px;
+	width: 300px;
 }
 legend {
 	font-size: 12px;  
@@ -2313,6 +2319,7 @@ a.social-media.tooltip-container{
 	border-radius:0;
 	clear:both;
 	color:#000;
+	margin-bottom: 0px;
 }
 .contact-form input[type="text"]:focus,
 .contact-form textarea:focus{
@@ -2892,6 +2899,10 @@ img.scale-with-grid{
 PERSO
 */
 
+.title-aide{
+	font-weight: 500;
+}
+
 
 .title-rating{
 	display: flex;
@@ -2900,7 +2911,8 @@ PERSO
 }
 
 .rating-title{
-	width: 100px;
+	flex: 2;
+	max-width: 120px;
 }
 
 
@@ -2915,10 +2927,10 @@ PERSO
 }
 
 .rating-date{
-	width: 300px;
+	flex: 2;
 }
 .rating-note{
-	width: 220px;
+	flex: 1;
 }
 
 .bolded{
@@ -3017,6 +3029,7 @@ LIST BOOK
 
 .book{
 	padding: 5px;
+	max-width: 250px
 }
 
 .book-container {
@@ -3081,25 +3094,23 @@ DROPDOWN USER
 
 .dropdown {
 	position: relative;
+	padding: 0 20px 0 7px;
+	cursor: pointer;
 }
 
 .dropdown-content {
 	visibility: hidden;
-	opacity: 0;
 	position: absolute;
 	top: 100%;
 	left: 0;
 	background-color: rgba(220,220,220,.9);
-	transform: translateY(-2em);
-	transition: all 0.3s ease-in-out 0s, visibility 0s linear 0.3s, z-index 0s linear 0.01s;
+	border-radius: 10px;
+	cursor: pointer;
+	padding-top: 12px;
 }
 
 .dropdown:hover .dropdown-content {
 	visibility: visible;
-	opacity: 1;
-	transform: translateY(0%);
-	transition-delay: 0s, 0s, 0.3s;
-
 }
 
 .dropdown-content a{
@@ -3113,8 +3124,93 @@ DROPDOWN USER
 
 .top-header{
 	display: flex;
+	justify-content: space-between;
 	margin-top: 25px;
+	margin-left: 25px;
 }
+
+.top-menu a{
+	margin-right: 15px;
+}
+
+.centerelem{
+	display:flex;
+	justify-content: center;
+}
+
+button{
+	margin-top: 10px;
+}
+
+.friend-container {
+	display: flex;
+	flex-wrap: wrap;
+	margin-bottom: 15px;
+}
+
+.friend-container .friend {
+	margin: 20px;
+}
+
+.friend-container .imageUser{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.friend-container .linkUser{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.friend-container .accept-button{
+	margin-top: 15px;
+	display: flex;
+	justify-content: center;
+}
+
+.friend-container .txt-add-friend{
+	width: 250px;
+
+}
+
+.arrow:after{
+	position: absolute;
+	top: 0;
+	right: 5px;
+	bottom: auto;
+	left: auto;
+	content: '\25BE';
+}
+
+.arrow:after:hover{
+	position: absolute;
+	top: 0;
+	right: 5px;
+	bottom: auto;
+	left: auto;
+	content: '\25BE';
+}
+
+.arrow{
+	display: inline-block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	word-wrap: normal;
+}
+
+#footer-base a{
+	text-decoration: none;
+	color: white;
+}
+
+
+
+
+
+
 
 
 

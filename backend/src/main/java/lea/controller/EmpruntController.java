@@ -39,6 +39,14 @@ public class EmpruntController extends CommonController {
         return emprunts;
     }
 
+    @RequestMapping(value = "/api/isNewPret", method = RequestMethod.GET)
+    public String findNouveauPret() throws ServletException, IOException {
+        Utilisateur principal = getPrincipal();
+        List<Emprunt> prets = empruntRepository.findPrets(principal.getId(), true);
+        setEmpruntobjects(prets);
+        return isNewPret(prets)?"1":"0";
+    }
+
     @RequestMapping(value = "/api/prets", method = RequestMethod.GET)
     public  List<Emprunt> livresHandlerPrets() throws ServletException, IOException {
         Utilisateur principal = getPrincipal();
@@ -57,6 +65,17 @@ public class EmpruntController extends CommonController {
             emp.setLivre(book);
         }
     }
+
+    private boolean isNewPret(List<Emprunt> listeEmp) {
+        for (Emprunt emp : listeEmp) {
+            Livre book = userRepository.findBook(emp.getLivreId());
+            if(book.getStatut().equals(StatutEmprunt.REQUESTED)){
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     private void setCommentuser(Emprunt emp){
         for(Commentaire comm : emp.getCommentaires()){

@@ -15,53 +15,157 @@ class Home extends Component {
         this.refreshCount = this.refreshCount.bind(this);
         this.refreshNotif = this.refreshNotif.bind(this);
         this.refreshName = this.refreshName.bind(this);
-        this.state = {nbEmprunt: 0, nbPret: 0, requestedFriends: [], currentUser: ''};
+        this.state = {nbEmprunt: 0, nbPret: 0,isNewPret: false, requestedFriends: [], currentUser: ''};
         this.props.router.push('/home')
     }
 
     refreshCount() {
-        helpers.countEmpruntAndPret().then((countBean) => {
-            this.setState({
-                nbEmprunt: countBean.nbEmprunt,
-                nbPret: countBean.nbPret
+        const userConnected = document.getElementById("userId");
+        if (userConnected && userConnected.value != ""){
+            helpers.countEmpruntAndPret().then((countBean) => {
+                this.setState({
+                    nbEmprunt: countBean.nbEmprunt,
+                    nbPret: countBean.nbPret
+                });
             });
-        });
+        }
     }
 
     refreshNotif() {
-        helpers.getMyRequestedFriends().then((friends) => {
-            this.setState({
-                requestedFriends: friends
+        const userConnected = document.getElementById("userId");
+        if (userConnected && userConnected.value != "") {
+            helpers.getMyRequestedFriends().then((friends) => {
+                this.setState({
+                    requestedFriends: friends
+                });
             });
-        });
+        }
+    }
+
+    isNewPret() {
+        const userConnected = document.getElementById("userId");
+        if (userConnected && userConnected.value != "") {
+            helpers.isNewPret().then((isNewPret) => {
+                if(isNewPret === 1){
+                    this.setState({
+                        isNewPret: true
+                    });
+                }
+                else{
+                    this.setState({
+                        isNewPret: false
+                    });
+                }
+
+            });
+        }
     }
 
     refreshName() {
-        helpers.getAccount().then((user) => {
-            this.setState({
-                currentUser: user.fullName
+        const userConnected = document.getElementById("userId");
+        if (userConnected && userConnected.value != "") {
+            helpers.getAccount().then((user) => {
+                this.setState({
+                    currentUser: user.fullName
+                });
             });
-        });
+        }
     }
 
     componentDidMount() {
         this.refreshCount();
         this.refreshNotif();
         this.refreshName();
+        this.isNewPret();
     }
 
     render() {
         const bienvenue = this.state.currentUser;
+        const userConnected = document.getElementById("userId");
 
+        let menuUser;
+        let menugeneral, notif ="";
+
+
+        if (userConnected && userConnected.value != ""){
+
+            notif =( <Notification isNewPret={this.state.isNewPret} requestedFriends={this.state.requestedFriends} onRefreshNotification={this.refreshNotif}/>);
+
+            menuUser = (<div className="dropdown">
+                        <span className="arrow">Bienvenue, {bienvenue}</span>
+                        <div className="dropdown-content">
+                            <ul>
+                                <li>
+                                    <Link to={'/historized-loans/'} >
+                                        Mes emprunts historiés
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to={'/historized-lendings/'}>
+                                        Mes prêts historiés
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to={'/account/'}>
+                                        Mon compte
+                                    </Link>
+                                </li>
+                                <li>
+                                    <a href="logout">
+                                        Me déconnecter
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>);
+            menugeneral =  (<nav id="main-nav"  className="two-thirds column omega">
+                <a href="#main-nav-menu"  className="mobile-menu-button button">+ Menu</a>
+                <ul id="main-nav-menu"  className="nav-menu">
+                    <li id="nav-home"  className="current" >
+                        <Link to={'/home/'} activeClassName="current">
+                            Accueil
+                        </Link>
+                    </li>
+                    <li id="nav-bib">
+                        <Link to={'/my-books/'} activeClassName="current">
+                            Ma bibliothèque
+                        </Link>
+                    </li>
+                    <li id="nav-emprunt" >
+                        <Link to={'/my-loans/'} activeClassName="current">
+                            Mes emprunts ({this.state.nbEmprunt})
+                        </Link>
+                    </li>
+                    <li id="nav-portfolio" >
+                        <Link to={'/my-lendings/'} activeClassName="current">
+                            Mes prêts ({this.state.nbPret})
+                        </Link>
+                    </li>
+                    <li id="nav-amis" >
+                        <Link to={'/my-friends/'} activeClassName="current">
+                            Mes amis
+                        </Link>
+                    </li>
+                </ul>
+            </nav>)
+        }
+        else{
+            menuUser=  (<div className="dropdown">
+                <div className="top-menu">
+                    <a href="/login">Connexion</a>
+                    <a href="/users/new">Inscription</a>
+                </div>
+            </div>)
+            }
         return (
             <div>
                 <header id="header"  className="container">
 
-                    <div id="header-inner"  className="sixteen columns over">
+                    <div id="header-inner" className="row">
 
-                        <div id="masthead"  className="one-third column alpha">
+                        <div id="masthead">
                             <h1 id="site-title"  className="remove-bottom">
-                                <a href="index.html"><img src="assets/img/logo.png" /></a></h1>
+                                <a href="/"><img src="/webjars/app-react/1.0.0/img/logo.png" /></a></h1>
                         </div>
 
                         <div className="container-search">
@@ -70,74 +174,18 @@ class Home extends Component {
                                     <SearchBar />
                                 </div>
                                 <div className="menu-user">
-                                    <div className="dropdown">
-                                        <span>Bienvenue, {bienvenue}</span>
-                                        <div className="dropdown-content">
-                                            <ul>
-                                                <li>
-                                                    <Link to={'/historized-loans/'} >
-                                                        Mes emprunts historiés
-                                                    </Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={'/historized-lendings/'}>
-                                                        Mes prêts historiés
-                                                    </Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={'/account/'}>
-                                                        Mon compte
-                                                    </Link>
-                                                </li>
-                                                <li>
-                                                    <a href="logout">
-                                                        Me déconnecter
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
+                                    {menuUser}
+
                                 </div>
                             </div>
                             <div className="top-menu">
-                                <nav id="main-nav"  className="two-thirds column omega">
-                                    <a href="#main-nav-menu"  className="mobile-menu-button button">+ Menu</a>
-                                    <ul id="main-nav-menu"  className="nav-menu">
-                                        <li id="nav-home"  className="current" >
-                                            <Link to={'/home/'} activeClassName="current">
-                                               Accueil
-                                            </Link>
-                                        </li>
-                                        <li id="nav-bib">
-                                            <Link to={'/my-books/'} activeClassName="current">
-                                                Ma bibliothèque
-                                            </Link>
-                                        </li>
-                                        <li id="nav-emprunt" >
-                                            <Link to={'/my-loans/'} activeClassName="current">
-                                                Mes emprunts ({this.state.nbEmprunt})
-                                            </Link>
-                                        </li>
-                                        <li id="nav-portfolio" >
-                                            <Link to={'/my-lendings/'} activeClassName="current">
-                                                Mes prêts ({this.state.nbPret})
-                                            </Link>
-                                        </li>
-                                        <li id="nav-amis" >
-                                            <Link to={'/my-friends/'} activeClassName="current">
-                                                Mes amis
-                                            </Link>
-                                        </li>
-                                    </ul>
-                                </nav>
+                                {menugeneral}
                             </div>
                         </div>
                     </div>
 
                 </header>
-
-
-                <Notification requestedFriends={this.state.requestedFriends} onRefreshNotification={this.refreshNotif}/>
+                {notif}
                 {this.props.children && React.cloneElement(this.props.children, {
                     onRefreshCount: this.refreshCount,
                     onRefreshNotification: this.refreshNotif,

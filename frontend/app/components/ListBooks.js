@@ -7,25 +7,30 @@ class ListBooks extends React.Component{
     constructor(props) {
         super(props);
         this.state = {books:[], pendingFriends: []};
+        this._getBooks = this._getBooks.bind(this);
+    }
+
+    _getBooks(){
+        helpers.getAllBooks().then((books) => {
+            this.setState({books});
+        });
     }
 
     componentDidMount(){
-        let allBooks  = [];
-        helpers.getAllBooks().then((books) => {
-            allBooks = books;
+        this._getBooks();
+    }
 
+    componentWillReceiveProps(){
+        this._getBooks();
+        const userConnected = document.getElementById("userId");
+        if (userConnected && userConnected.value != "") {
             //my pending friends to see if user added and display adequate sentence
             helpers.getMyPendingFriends().then((pf) => {
                 let pending = pf;
-
-                //my friends to see if user added and display adequate sentence
-                helpers.getMyFriends().then((friends) => {
-                    this.setState( {books: allBooks, friends: friends, pendingFriends: pending });
-                });
+                this.setState({pendingFriends: pending});
 
             });
-        });
-
+        }
     }
 
     render(){
@@ -41,7 +46,6 @@ class ListBooks extends React.Component{
             </div>
         )
     }
-
 }
 
 export default ListBooks

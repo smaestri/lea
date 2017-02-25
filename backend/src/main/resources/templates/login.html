@@ -48,16 +48,33 @@
     <![endif]-->
 
 </head>
-
-<body class="skin-red bkg-fiber">
+<body class="skin-red bkg-smoky">
 <div id="app" class="wrap">
     <div th:replace="header:: contentA" />
     <div class="container">
-
-        TODo
+        <h2>Connexion</h2>
+        <div th:if="${param.error}" class="form-error">
+            E-mail ou mot de passe incorrect
+        </div>
+        <div th:if="${param.logout}">
+            <b>Vous avez été déconnecté</b>
+        </div>
+        <div class="centerelem">
+            <div class="contact-form">
+                <form th:action="@{/login}" method="post">
+                    <label >Email</label>
+                    <input type="text" name="username" placeholder="Votre e-mail" class="form-control"/>
+                    <label class="col-sm-3 control-label">Password</label>
+                    <input type="password" name="password" placeholder="Password" class="form-control"/>
+                    <div class="centerelem">
+                        <button type="submit" class="btn btn-primary">Se connecter</button>
+                    </div>
+                    <a href="/"><button type="button" class="btn btn-primary">Retour</button></a>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 <nav th:replace="footer:: contentA" />
-
 </body>
 </html>

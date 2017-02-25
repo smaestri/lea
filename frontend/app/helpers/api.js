@@ -431,6 +431,16 @@ var helpers = {
             });
     },
 
+    isNewPret: function () {
+        return axios.get('/api/isNewPret')
+            .then(function (response) {
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    },
+
 
     savePendingFriend: function (email) {
         return axios.post('/api/ami/new/' , {email1: email}, {

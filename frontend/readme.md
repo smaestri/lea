@@ -1,11 +1,11 @@
 Project structure taken from
 https://github.com/justin-calleja/webpack-mvn
 
-
 PREREQUISITES
-- make sur userId in index.html and in commoncontroller are the same
-
-
+To test in connected mode,
+- choose a correct userId in index.html (frontend side)
+- desactivate spring security : just comment .anyRequest().authenticated()
+- change commoncontroller to return same user as defined in index.html
 
 TODO :
 

@@ -44,12 +44,14 @@ public class LoginController extends CommonController {
 
     @RequestMapping(value = "/")
     public String welcomeHandler(Model model) {
-
+/*
         Utilisateur userSpring = getPrincipal();
         if(userSpring == null){
             return "redirect:/home";
         }
+        */
         initGlobalvariables(model, false);
+
         return "index";
     }
 
@@ -86,28 +88,7 @@ public class LoginController extends CommonController {
         return "redirect:/login?logout";
     }
 
-    private Utilisateur initGlobalvariables(Model model, boolean shouldInitInputSearch) {
-        Utilisateur userSpring = getPrincipal();
-        if (userSpring != null && userSpring.getEmail() != null) {
-            String userId = userSpring.getId();
-            Utilisateur user = this.userRepository.findOne(userId);
-            model.addAttribute("userId", user.getId());
-            model.addAttribute("userName", user.getFullName());
-            if (!shouldInitInputSearch) {
-                model.addAttribute("command", new Livre());
-            }
-            model.addAttribute("hasFriend", !user.getListFriendsId().isEmpty());
 
-            // categories
-            List<Categorie> all = categorieRepository.findAll();
-            Gson gson = new Gson();
-            String json = gson.toJson(all);
-            model.addAttribute("categories", json);
-
-            return user;
-        }
-        return null;
-    }
 
     // Creer un user : GET
     @RequestMapping(value = "/users/new", method = RequestMethod.GET)
@@ -115,6 +96,31 @@ public class LoginController extends CommonController {
         model.addAttribute("utilisateur", new Utilisateur());
         return "add-user";
     }
+
+    // faq
+    @RequestMapping(value = "/faq", method = RequestMethod.GET)
+    public String faq(Model model) {
+        return "faq";
+    }
+
+    // contact
+    @RequestMapping(value = "/contact", method = RequestMethod.GET)
+    public String contact(Model model) {
+        return "contact";
+    }
+
+    // info
+    @RequestMapping(value = "/info", method = RequestMethod.GET)
+    public String info(Model model) {
+        return "info";
+    }
+
+    // camarche
+    @RequestMapping(value = "/camarche", method = RequestMethod.GET)
+    public String camarche(Model model) {
+        return "camarche";
+    }
+
 
     // Editer user : POSt
     @RequestMapping(value = "/users/edit", method = RequestMethod.POST)
@@ -167,6 +173,29 @@ public class LoginController extends CommonController {
         authenticateManually(user);
 
         return "redirect:/";
+    }
+
+    private Utilisateur initGlobalvariables(Model model, boolean shouldInitInputSearch) {
+        Utilisateur userSpring = getPrincipal();
+        if (userSpring != null && userSpring.getEmail() != null) {
+            String userId = userSpring.getId();
+            Utilisateur user = this.userRepository.findOne(userId);
+            model.addAttribute("userId", user.getId());
+            model.addAttribute("userName", user.getFullName());
+            if (!shouldInitInputSearch) {
+                model.addAttribute("command", new Livre());
+            }
+            model.addAttribute("hasFriend", !user.getListFriendsId().isEmpty());
+
+            // categories
+            List<Categorie> all = categorieRepository.findAll();
+            Gson gson = new Gson();
+            String json = gson.toJson(all);
+            model.addAttribute("categories", json);
+
+            return user;
+        }
+        return null;
     }
 
 

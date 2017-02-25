@@ -35,7 +35,7 @@ public class FriendController extends CommonController {
         List<Utilisateur> users = userRepository.findFriends(one.getListFriendsId());
 
         for(Utilisateur userDetail : users){
-            userDetail.setAvatar("/assets/img/user.png");
+            userDetail.setAvatar("/webjars/app-react/1.0.0/img/user.png");
         }
         return users;
     }

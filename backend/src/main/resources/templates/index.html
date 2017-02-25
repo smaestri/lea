@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <title>Livres entre amis</title>
+    <meta name="description" content="Agility is a fully responsive, minimalist, HTML5 / CSS3 template." />
+    <meta name="author" content="Sylvain Maestri" />
+
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Mobile Specific Metas
+      ================================================== -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+    <!-- CSS
+      ================================================== -->
+    <link rel="stylesheet" href="/webjars/app-react/1.0.0/stylesheets/base.css" />
+    <link rel="stylesheet" href="/webjars/app-react/1.0.0/stylesheets/skeleton.css" />
+    <link rel="stylesheet" href="/webjars/app-react/1.0.0/stylesheets/layout.css" />
+
+    <!-- prettyPhoto plugin -->
+    <link rel="stylesheet" href="/webjars/app-react/1.0.0/javascripts/prettyPhoto/css/prettyPhoto.css" type="text/css" media="screen" />
+
+    <!-- FlexSlider plugin -->
+    <link rel="stylesheet" href="/webjars/app-react/1.0.0/javascripts/flexslider/flexslider.css" type="text/css" media="screen" />
+
+
+    <!-- Favicons
+    ================================================== -->
+    <link rel="shortcut icon" href="/webjars/app-react/1.0.0/images/favicon.ico" />
+    <link rel="apple-touch-icon" href="/webjars/app-react/1.0.0/images/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="/webjars/app-react/1.0.0/images/apple-touch-icon-72x72.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="/webjars/app-react/1.0.0/images/apple-touch-icon-114x114.png" />
+
+    <!-- Fonts
+    ================================================== -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css' />
+    <link href='http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css' />
+
+
+    <!-- Modernizr -->
+    <script type="text/javascript" src="/webjars/app-react/1.0.0/javascripts/modernizr.js"></script>
+
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="/webjars/app-react/1.0.0/stylesheets/ie7.css" />
+    <![endif]-->
+
+</head>
+<body class="skin-red bkg-smoky">
+    <input type="hidden" id="userId" th:value="${userId}" />
+    <input type="hidden" id="categories" th:value="${categories}" />
+    <div id="app" class="wrap" />
+    <script src="/webjars/app-react/1.0.0/bundle.js"></script>
+</body>
+</html>

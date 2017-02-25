@@ -36,6 +36,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public List<Utilisateur> findAll() {
+        return mongoTemplate.findAll(Utilisateur.class);
+    }
+
+    @Override
     public Utilisateur saveUser(Utilisateur userDetail) {
         return mongoUserRepository.save(userDetail);
     }
@@ -163,6 +168,9 @@ public class UserRepositoryImpl implements UserRepository {
                 List<Avis> avis = l.getAvis();
                 for(Avis a : avis){
                     a.setLivre(l.getTitreBook());
+                    LivreController.setBookImageLittl(l);
+                    a.setImage(l.getImage());
+
                 }
                 returnList.addAll(avis);
             }

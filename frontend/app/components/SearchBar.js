@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router';
-import Button from 'react-bootstrap/lib/Button';
+import helpers from '../helpers/api'
 
 class SearchBar extends React.Component{
 
@@ -11,7 +11,7 @@ class SearchBar extends React.Component{
     }
 
     searchBook() {
-        this.props.router.push('/list-book')
+        this.props.router.push({pathname: '/list-book'})
     }
 
     render(){

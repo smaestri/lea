@@ -17,6 +17,9 @@ public class Avis extends BaseDocumentImpl {
     @Transient
     private String livre;
 
+    @Transient
+    private String image;
+
     private String libelle;
 
     private int note;
@@ -94,5 +97,13 @@ public class Avis extends BaseDocumentImpl {
 
     public void setLivre(String livre) {
         this.livre = livre;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

@@ -23,7 +23,7 @@ public class NotificationServiceImpl implements NotificationService {
         System.out.println("Sleeping now...");
         System.out.println("Sending email...");
         SimpleMailMessage mail = new SimpleMailMessage();
-        mail.setTo("sylvainmaestri@gmail.com");
+        mail.setTo(mailDest);
         mail.setFrom("livresentreamis5@gmail.com");
         mail.setSubject(subject);
         mail.setText(text);

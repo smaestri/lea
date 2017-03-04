@@ -31,6 +31,9 @@ public class Livre extends BaseDocumentImpl {
 
     private String isbn;
 
+    @Transient
+    private boolean isPending;
+
     private StatutEmprunt statut;
 
     @Transient
@@ -172,7 +175,13 @@ public class Livre extends BaseDocumentImpl {
         this.intermediaireid = intermediaireid;
     }
 
+    public boolean isPending() {
+        return isPending;
+    }
 
+    public void setPending(boolean pending) {
+        isPending = pending;
+    }
 
     @Override
     public String toString() {

@@ -22,15 +22,6 @@ class ListBooks extends React.Component{
 
     componentWillReceiveProps(){
         this._getBooks();
-        const userConnected = document.getElementById("userId");
-        if (userConnected && userConnected.value != "") {
-            //my pending friends to see if user added and display adequate sentence
-            helpers.getMyPendingFriends().then((pf) => {
-                let pending = pf;
-                this.setState({pendingFriends: pending});
-
-            });
-        }
     }
 
     render(){

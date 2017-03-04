@@ -1,4 +1,5 @@
-import axios from 'axios';
+require('es6-promise').polyfill();
+import axios from 'axios'
 import React from 'react'
 
 // cache for loans, lendings, books

@@ -77,9 +77,9 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void deleteFriend(Utilisateur userDetail, String friendId) {
+    public void deleteFriend(String idUserConnected, String friendId) {
         Query q = new Query();
-        q.addCriteria(Criteria.where("id").is(new ObjectId(userDetail.getId())));
+        q.addCriteria(Criteria.where("id").is(new ObjectId(idUserConnected)));
         Update update = new Update();
         update.pull("listFriendsId", friendId);
         mongoTemplate.updateFirst(q, update, Utilisateur.class);

@@ -21,17 +21,8 @@ class UserDetail extends React.Component{
     componentWillReceiveProps(){
         helpers.getUserDetail(this.props.params.userId).then((books) => {
             this.setState({firstUser: books[0].preteur});
-            // this.setState({books: books})
-            let allBooks = books;
-            //my pending friends to see if user added and display adequate sentence
-            helpers.getMyPendingFriends().then((pf) => {
-                // this.setState( {books: allBooks, pendingFriends: pf });
-                let pending = pf;
-                //my friends to see if user added and display adequate sentence
-                helpers.getMyFriends().then((friends) => {
-                    this.setState( {books: allBooks, pendingFriends: pending });
-                });
-            });
+            this.setState( {books: books});
+
         });
     }
 
@@ -51,7 +42,7 @@ class UserDetail extends React.Component{
     render(){
 
         let books = this.state.books.map( book => {
-            return <Book key={book.id} id={book.id} book={book} previousPage="userDetail" pendingFriends={this.state.pendingFriends} />
+            return <Book key={book.id} id={book.id} book={book} previousPage="userDetail" />
         });
 
         //add sub friend books

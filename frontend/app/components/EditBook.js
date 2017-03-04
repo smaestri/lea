@@ -13,7 +13,10 @@ class EditBook extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {book: {titreBook: '', auteur: '', description: '', isbn: '', categorieId: ''}}
+        this.state = {
+                        book: {titreBook: '', auteur: '', description: '', isbn: '', categorieId: ''},
+                        categories: []
+        }
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.returnToBooks = this.returnToBooks.bind(this);
@@ -22,12 +25,17 @@ class EditBook extends React.Component {
     componentDidMount() {
         //if id passed load exising book
         if (this.props.params && this.props.params.bookId) {
-            console.log('get book detail')
             helpers.getBookDetail(this.props.params.bookId).then((book) => {
-                //TODO : dispatch REDUX ACTION type LOAD
                 this.setState({book: book});
             })
         }
+
+        helpers.getCategories().then((cat) => {
+            this.setState({
+                categories: cat
+            });
+        });
+
 
     }
 
@@ -50,9 +58,7 @@ class EditBook extends React.Component {
     }
 
     render() {
-        let catJson = document.getElementById("categories").value;
-        let cat = JSON.parse(catJson);
-        const catReact = cat.map(category => {
+        const catReact = this.state.categories.map(category => {
             return <option value={category.id}>{category.name}</option>
         });
 

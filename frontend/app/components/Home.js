@@ -39,12 +39,6 @@ class Home extends Component {
                     requestedFriends: friends
                 });
             });
-        }
-    }
-
-    isNewPret() {
-        const userConnected = document.getElementById("userId");
-        if (userConnected && userConnected.value != "") {
             helpers.isNewPret().then((isNewPret) => {
                 if(isNewPret === 1){
                     this.setState({
@@ -76,7 +70,6 @@ class Home extends Component {
         this.refreshCount();
         this.refreshNotif();
         this.refreshName();
-        this.isNewPret();
     }
 
     render() {
@@ -89,7 +82,11 @@ class Home extends Component {
 
         if (userConnected && userConnected.value != ""){
 
-            notif =( <Notification isNewPret={this.state.isNewPret} requestedFriends={this.state.requestedFriends} onRefreshNotification={this.refreshNotif}/>);
+            notif =(
+                <Notification
+                    isNewPret={this.state.isNewPret}
+                    requestedFriends={this.state.requestedFriends}
+                    onRefreshNotification={this.refreshNotif}/>);
 
             menuUser = (<div className="dropdown">
                         <span className="arrow">Bienvenue, {bienvenue}</span>
@@ -185,7 +182,9 @@ class Home extends Component {
                     </div>
 
                 </header>
+                <div className="container">
                 {notif}
+                </div>
                 {this.props.children && React.cloneElement(this.props.children, {
                     onRefreshCount: this.refreshCount,
                     onRefreshNotification: this.refreshNotif,

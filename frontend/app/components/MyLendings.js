@@ -19,6 +19,7 @@ class MyLendings extends React.Component{
     }
 
     loadPret(){
+        this.props.onRefreshNotification();
         helpers.getLendings().then((lendings) => {
             this.setState({
                 lendings: lendings

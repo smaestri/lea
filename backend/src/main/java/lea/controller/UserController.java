@@ -3,6 +3,7 @@ package lea.controller;
 import lea.dto.UserBean;
 import lea.modele.Emprunt;
 import lea.modele.Livre;
+import lea.modele.PendingFriend;
 import lea.modele.Utilisateur;
 import lea.repository.emprunt.EmpruntRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,19 @@ public class UserController extends CommonController {
         Utilisateur userConnected = getPrincipal();
         Utilisateur friend = userRepository.findOne(userDetail);
 
+        // Check if user friend of mine
+        Utilisateur user = userRepository.findOne(userConnected.getId());
+        // List<Utilisateur> friends = userRepository.findFriends(user.getListFriendsId());
+        boolean found = isMyfriend(user.getListFriendsId(), friend.getId());
+
+
+        // in my pending friends?
+        //si pending friend
+        boolean isPending = false;
+        if(!found){
+             isPending = isInPendingFriend(user, friend.getEmail());
+        }
+
         List<Livre> result = new ArrayList<Livre>();
         List<Livre> listeLivre = friend.getLivres();
 
@@ -34,7 +48,8 @@ public class UserController extends CommonController {
                 livre.setUserId(friend.getId());
                 livre.setPreteur(friend.getFullName());
                 livre.setMailPreteur(friend.getEmail());
-                livre.setEmpruntable(true);
+                livre.setEmpruntable(found);
+                livre.setPending(isPending);
                 LivreController.setBookImage(livre);
             }
         }
@@ -44,7 +59,10 @@ public class UserController extends CommonController {
         //Check book of friends of friend
         List<Utilisateur> subFriends = userRepository.findFriends(friend.getListFriendsId());
         for (Utilisateur subFriend: subFriends) {
+            boolean subFriendIsMyFriend = isMyfriend(user.getListFriendsId(), subFriend.getId());
+
             if (!subFriend.getId().equals(userConnected.getId())) {
+                isPending = isInPendingFriend(user, subFriend.getEmail());
                 List<Livre> listeLivre2 = subFriend.getLivres();
                 for (Livre livre : listeLivre2) {
                     livre.setUserId(subFriend.getId());
@@ -52,7 +70,8 @@ public class UserController extends CommonController {
                     livre.setPreteur(subFriend.getFullName());
                     livre.setIntermediaireid(friend.getId());
                     livre.setMailPreteur(subFriend.getEmail());
-                    livre.setEmpruntable(true);
+                    livre.setEmpruntable(subFriendIsMyFriend);
+                    livre.setPending(isPending);
                 }
                 result.addAll(listeLivre2);
             }
@@ -117,5 +136,48 @@ public class UserController extends CommonController {
         LivreController.setBookImage(book);
         emp.setLivre(book);
     }
+
+    private boolean isInPendingFriend(Utilisateur user, String mail){
+
+        List<PendingFriend> listPendingFriends = user.getListPendingFriends();
+        for(PendingFriend pf : listPendingFriends){
+            if(pf.getEmail().equals(mail)){
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    private boolean isMyfriend(List<String> friends, String friendId){
+        boolean isFriend = false;
+        for(String idfriend : friends){
+
+            if(idfriend.equals(friendId)){
+                isFriend = true;
+                break;
+            }
+
+            // check sub friend of this user
+           /*
+            List<Utilisateur> subFriends = userRepository.findFriends(us.getListFriendsId());
+            for(Utilisateur sub : subFriends){
+                // check if friend of friend is my friend
+               for(String myfriend : userConnected.getListFriendsId()){
+                   if (myfriend == sub.getId()){
+                       isFriend = true;
+                       break;
+                   }
+               }
+
+
+
+            }*/
+
+
+        }
+        return isFriend;
+    }
+
 
 }

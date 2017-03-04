@@ -25,7 +25,7 @@ public interface UserRepository {
 
     List<Utilisateur> findRequestedFriends(String email);
 
-    void deleteFriend(Utilisateur userDetail, String pendingEmail);
+    void deleteFriend(String idUserConnected, String pendingEmail);
     void deletePendingFriend(Utilisateur userDetail, String pendingEmail);
 
     Livre findBook(String id);

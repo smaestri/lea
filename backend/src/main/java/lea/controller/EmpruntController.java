@@ -55,34 +55,6 @@ public class EmpruntController extends CommonController {
         return prets;
     }
 
-    private void setEmpruntobjects(List<Emprunt> listeEmp) {
-        for (Emprunt emp : listeEmp) {
-            emp.setPreteur(userRepository.findOne(emp.getPreteurId()));
-            emp.setEmprunteur(userRepository.findOne(emp.getEmprunteurId()));
-            Livre book = userRepository.findBook(emp.getLivreId());
-            book.setImage("/webjars/app-react/1.0.0/img/book.png");
-            setCommentuser(emp);
-            emp.setLivre(book);
-        }
-    }
-
-    private boolean isNewPret(List<Emprunt> listeEmp) {
-        for (Emprunt emp : listeEmp) {
-            Livre book = userRepository.findBook(emp.getLivreId());
-            if(book.getStatut().equals(StatutEmprunt.REQUESTED)){
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    private void setCommentuser(Emprunt emp){
-        for(Commentaire comm : emp.getCommentaires()){
-            Utilisateur auteurComm = userRepository.findOne(comm.getAuteur());
-            comm.setUser(auteurComm);
-        }
-    }
 
 
     @RequestMapping(value = "/api/emprunter", method = RequestMethod.POST)
@@ -215,4 +187,34 @@ public class EmpruntController extends CommonController {
         return cbean;
 
     }
+
+    private void setEmpruntobjects(List<Emprunt> listeEmp) {
+        for (Emprunt emp : listeEmp) {
+            emp.setPreteur(userRepository.findOne(emp.getPreteurId()));
+            emp.setEmprunteur(userRepository.findOne(emp.getEmprunteurId()));
+            Livre book = userRepository.findBook(emp.getLivreId());
+            book.setImage("/webjars/app-react/1.0.0/img/book.png");
+            setCommentuser(emp);
+            emp.setLivre(book);
+        }
+    }
+
+    private boolean isNewPret(List<Emprunt> listeEmp) {
+        for (Emprunt emp : listeEmp) {
+            Livre book = userRepository.findBook(emp.getLivreId());
+            if(book.getStatut().equals(StatutEmprunt.REQUESTED)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    private void setCommentuser(Emprunt emp){
+        for(Commentaire comm : emp.getCommentaires()){
+            Utilisateur auteurComm = userRepository.findOne(comm.getAuteur());
+            comm.setUser(auteurComm);
+        }
+    }
+
 }

@@ -37,14 +37,14 @@ public class LivreController extends CommonController {
         List<Utilisateur> users = userRepository.findAll();
 
         Utilisateur principal = this.getPrincipal();
-        Utilisateur user = null;
+        Utilisateur userConnected = null;
         if (principal != null){
-            user = this.userRepository.findOne(principal.getId());
+            userConnected = this.userRepository.findOne(principal.getId());
         }
 
         for (Utilisateur friend : users) {
 
-            if(user != null && user.getId().equals(friend.getId())){
+            if(userConnected != null && userConnected.getId().equals(friend.getId())){
                 continue;
             }
 
@@ -53,9 +53,22 @@ public class LivreController extends CommonController {
                 livre.setPreteur(friend.getFullName());
                 livre.setMailPreteur(friend.getEmail());
 
-                if(user != null && livre.getStatut().equals(StatutEmprunt.FREE)){
+                if(userConnected != null && livre.getStatut().equals(StatutEmprunt.FREE)){
                     //si ami
-                    List<Utilisateur> friends = userRepository.findFriends(user.getListFriendsId());
+                    List<Utilisateur> friends = userRepository.findFriends(userConnected.getListFriendsId());
+                    for(Utilisateur u : friends){
+                        if(friend.getId().equals(u.getId())){
+                            livre.setEmpruntable(true);
+                        }
+                    }
+                    //si pending friend
+                    List<PendingFriend> listPendingFriends = userConnected.getListPendingFriends();
+                    for(PendingFriend pf : listPendingFriends){
+                        if(pf.getEmail().equals(friend.getEmail())){
+                            livre.setPending(true);
+                        }
+                    }
+
                     for(Utilisateur u : friends){
                         if(friend.getId().equals(u.getId())){
                             livre.setEmpruntable(true);

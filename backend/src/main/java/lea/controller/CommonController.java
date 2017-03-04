@@ -38,13 +38,13 @@ public class CommonController {
         return user;
 
 
-
         /**
          * TODO COMMENT THIS
 
 
         Utilisateur u = new Utilisateur();
-        u.setId("58a2069a44d06e2781a61e60");
+        u.setEmail("toto@toto.com");
+        u.setId("58bab4b106cbee161d07d3e4");
         return u;
          */
 

@@ -5,6 +5,7 @@ PREREQUISITES
 To test in connected mode,
 - choose a correct userId in index.html (frontend side)
 - desactivate spring security : just comment .anyRequest().authenticated()
+- desactiva csrf .csrf().disable()
 - change commoncontroller to return same user as defined in index.html
 
 TODO :

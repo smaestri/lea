@@ -18,6 +18,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+            // to uncomment
+            //.csrf().disable()
             .authorizeRequests()
                 .antMatchers("/users/new").permitAll()
                 .antMatchers("/webjars/**").permitAll()

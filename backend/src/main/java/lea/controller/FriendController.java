@@ -83,21 +83,20 @@ public class FriendController extends CommonController {
             }
         }
         else{
-            PendingFriend pf = new PendingFriend();
-            pf.setEmail(amiBean.getEmail1());
-            pf.setDateDemande(new Date());
-            userRepository.addPendingFriend(userPrincipal, pf);
+            this.addPendingFriend(one, amiBean.getEmail1());
         }
 
     }
 
     @RequestMapping(value = "/api/accepterAmi/{friendId}", method = RequestMethod.POST)
-    public String accepterAmi(@PathVariable("friendId") String idFriend) {
+    public String accepterAmi(@PathVariable("friendId") String idFriend) throws InterruptedException {
         Utilisateur userConnected = getPrincipal();
         Utilisateur userFriend = userRepository.findOne(idFriend);
 
         addRealFriendAndDeletePending(userConnected, userFriend);
         addRealFriendAndDeletePending(userFriend, userConnected);
+
+        this.mailService.sendNotificaition(userFriend.getEmail(), "Livres entre amis - Vous avez un nouvel ami!", userConnected.getEmail() + " a accecpté votre demande d'amis! Vous pouvez donc échanger des livres avec lui/elle! A bientôt sur Livres entre amis!");
 
         return "OK";
     }
@@ -114,7 +113,7 @@ public class FriendController extends CommonController {
             List<Emprunt> prets = empruntRepository.findPrets(friendId, true);
             found = isUserLoaner(prets, userConnected.getId());
             if (!found) {
-                userRepository.deleteFriend(userConnected, friendId);
+                userRepository.deleteFriend(userConnected.getId(), friendId);
                 return "1";
             }
         }
@@ -126,6 +125,7 @@ public class FriendController extends CommonController {
     public String deletePendingFriend(@PathVariable("friendId") String friendId) throws Exception {
         Utilisateur userConnected = getPrincipal();
         userRepository.deletePendingFriend(userConnected, friendId);
+        Utilisateur userFriend = userRepository.findOne(userConnected.getId());
         return "1";
     }
 

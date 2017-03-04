@@ -2989,9 +2989,14 @@ PERSO
 
 .avis-container .avis-content .avis-note, .avis-txt {
 	display: flex;
+	align-items:center;
 }
 .avis-container .avis-content .avis-note, .avis-txt > *{
 	  padding: 5px;
+}
+
+.avis-container .avis-content .avis-note label {
+	margin: 0px;
 }
 
 

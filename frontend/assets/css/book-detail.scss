@@ -1,11 +1,12 @@
-.book-information{
-    width: 300px;
+.book-information {
+  width: 300px;
 }
-.book-rating{
-    width: 300px;
-    .rating-container{
-        display:flex;
-        flex-direction: columns;
-    }
+
+.book-rating {
+  width: 300px;
+  .rating-container {
+    display: flex;
+    flex-direction: columns;
+  }
 }
 

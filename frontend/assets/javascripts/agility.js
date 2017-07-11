@@ -1,271 +1,157 @@
 /*
  * agility.js
- * 
+ *
  * The main javascript for Agility - Responsive HTML5/CSS3 Template by SevenSpark
- * 
+ *
  * Copyright 2011 Chris Mavricos, SevenSpark
  * http://sevenspark.com
- * 
+ *
  */
 
-jQuery(document).ready(function($){
-	
+jQuery(document).ready(function ($) {
+
 	/* Style for JS-enabled */
-	$('body').addClass('js-enabled');	
-	
+	$('body').addClass('js-enabled');
+
 	/* Keep track of the width for use in mobile browser displays */
 	var currentWindowWidth = $(window).width();
-	$(window).resize(function(){
+	$(window).resize(function () {
 		currentWindowWidth = $(window).width();
 	});
-	
-	/* FLEX SLIDER */
-	var $flexSlider = $('.flexslider');
-	$flexSlider.flexslider({
 
-		controlsContainer: '.flexslider-nav-container',
-		prevText: " ",
-		nextText: " ",
-		pauseOnHover: true,
-		pauseText: " ",
-		playText: ' ',
-		controlNav: false,
+	$('.height-expand').each(function () {
+		$(this).height($(this).prev().height());
+	});
 
-		animation: "slide",
-		pausePlay:true,
-		pauseOnHover:true,
-		before:	function($slider){
-			$slider.find('.flex-caption').fadeOut('fast');			
-		},
-		after: function($slider){
-			$slider.find('.flex-caption').fadeIn();			
+	/* MOBILE MENU */
+	$('.mobile-menu-button').click(function (e) {
+		e.preventDefault();
+		var $menu = $($(this).attr('href'));
+		$menu.toggleClass('menu-open'); //toggle()
+
+		if (typeof $navClose !== 'undefined' && !$menu.hasClass('menu-open')) {
+			console.log('hide');
+			$navClose.hide();
 		}
 	});
 
-	/* Carousels */
-	$( '.flexcarousel' ).flexslider({
-		animation: "slide",
-		animationLoop: false,
-		controlsContainer: '.flexslider-nav-container',
-		controlNav: false,
-		directionNav: true,
-		prevText: " ",
-		nextText: " ",
-		pausePlay:false,
-		pauseOnHover:false,
-		pauseText: " ",
-		playText: ' ',
-		slideshowSpeed 		: 7000,
-		animationSpeed 		: 600,
-		animation 	   		: 'slide',
-		slideshow 			: false,
-		itemWidth: 300,
-		itemMargin: 20,
-		minItems: 1,
-		maxItems: 3
-		
-	});
-
-
-
-	$('.height-expand').each(function(){
-		$(this).height($(this).prev().height());
-	});
-	
-	/* DROP PANEL */
-	$('#drop-panel-expando').click(function(e){
-		e.preventDefault();
-		$('.drop-panel').slideToggle();
-	});
-	
-	/* PRETTY PHOTO */
-	$("a[data-rel^='prettyPhoto']").prettyPhoto({
-		social_tools: '',
-		overlay_gallery: false
-	});
-	
-	/* MOBILE MENU */
-    $('.mobile-menu-button').click(function(e){
-    	e.preventDefault();
-    	var $menu = $($(this).attr('href'));
-    	$menu.toggleClass('menu-open'); //toggle()
-    	
-    	if(typeof $navClose !== 'undefined' && !$menu.hasClass('menu-open') ){
-    		console.log('hide');
-    		$navClose.hide();
-    	}
-    });
-	
 	/* Expander for featured images */
-	$('.single-post-feature-expander').click(function(){
+	$('.single-post-feature-expander').click(function () {
 		$('.featured-image').toggleClass('full-width');
 	});
-	
+
 	//Size images in IE
 	imgSizer.collate();
-	
-    
-    //IPHONE, IPAD, IPOD
-    var deviceAgent = navigator.userAgent.toLowerCase();    
+
+	//IPHONE, IPAD, IPOD
+	var deviceAgent = navigator.userAgent.toLowerCase();
 	var is_iOS = deviceAgent.match(/(iphone|ipod|ipad)/);
-	
+
 	if (is_iOS) {
-        
-        $('#main-nav').prepend('<a href="#" class="nav-close">&times;</a>'); // Close Submenu
-        
-        var $navClose = $('.nav-close');
-        $navClose.hide().click(function(e){
-        	e.preventDefault();
-        	if(currentWindowWidth >= 767){
-        		$(this).hide();
-        	}
-        });
-		
-        $('#main-nav > ul > li').hover(function(e){
-        	e.preventDefault();
-        	if(currentWindowWidth < 767){
-        		$navClose.css({ 
-        			top : $(this).position().top + 33,
-        			left : '',
-        			right : 0
-        		}).show();
-        	}
-        	else{
-        		$navClose.css({
-        			left : $(this).position().left + parseInt($(this).css('marginLeft')),
-        			top : '',
-        			right : 'auto'
-        		}).show();
-        	}
-        });
-              
-	}
-	
-	
-	//NON-IOS
-	if(!is_iOS){
-		//iOS doesn't like CSS3 transitioning preloader, so don't use it
-		$('.preload').preloadImages({
-	        showSpeed: 200   // length of fade-in animation, should be .2 in CSS transition
-	    });	   
-		$('.video-container').addClass('video-flex');
-	}
-	
-	
-	//ANDROID
-	var is_Android = deviceAgent.match(/(android)/);
-	if(is_Android){
-		//Do something special with Android
-	}
-    
-        
-    //IE automatic grid clears
-    if($.browser.msie){
-		$('.portfolio.col-4 article:nth-child(4n+1)').addClass('clear-grid');
-		$('.portfolio.col-3 article:nth-child(3n+1)').addClass('clear-grid');
-		$('.portfolio.col-2 article:nth-child(2n+1)').addClass('clear-grid');
-	}
-	
-	
-	//HTML5 Fallbacks
-	if(!Modernizr.input.placeholder){
-		$('.fallback').show();
-	}
-	
-	//Google Maps
-	if(typeof google.maps.LatLng !== 'undefined'){
-		$('.map_canvas').each(function(){
-			
-			var $canvas = $(this);
-			var dataZoom = $canvas.attr('data-zoom') ? parseInt($canvas.attr('data-zoom')) : 8;
-			
-			var latlng = $canvas.attr('data-lat') ? 
-							new google.maps.LatLng($canvas.attr('data-lat'), $canvas.attr('data-lng')) :
-							new google.maps.LatLng(40.7143528, -74.0059731);
-					
-			var myOptions = {
-				zoom: dataZoom,
-				mapTypeId: google.maps.MapTypeId.ROADMAP,
-				center: latlng
-			};
-					
-			var map = new google.maps.Map(this, myOptions);
-			
-			if($canvas.attr('data-address')){
-				var geocoder = new google.maps.Geocoder();
-				geocoder.geocode({ 
-						'address' : $canvas.attr('data-address') 
-					},
-					function(results, status) {					
-						if (status == google.maps.GeocoderStatus.OK) {
-							map.setCenter(results[0].geometry.location);
-							var marker = new google.maps.Marker({
-								map: map,
-								position: results[0].geometry.location,
-								title: $canvas.attr('data-mapTitle')
-							});
-						}
-				});
+
+		$('#main-nav').prepend('<a href="#" class="nav-close">&times;</a>'); // Close Submenu
+
+		var $navClose = $('.nav-close');
+		$navClose.hide().click(function (e) {
+			e.preventDefault();
+			if (currentWindowWidth >= 767) {
+				$(this).hide();
 			}
 		});
+
+		$('#main-nav > ul > li').hover(function (e) {
+			e.preventDefault();
+			if (currentWindowWidth < 767) {
+				$navClose.css({
+					top: $(this).position().top + 33,
+					left: '',
+					right: 0
+				}).show();
+			}
+			else {
+				$navClose.css({
+					left: $(this).position().left + parseInt($(this).css('marginLeft')),
+					top: '',
+					right: 'auto'
+				}).show();
+			}
+		});
+
 	}
-	
+
+	//NON-IOS
+	if (!is_iOS) {
+		//iOS doesn't like CSS3 transitioning preloader, so don't use it
+		$('.preload').preloadImages({
+			showSpeed: 200   // length of fade-in animation, should be .2 in CSS transition
+		});
+		$('.video-container').addClass('video-flex');
+	}
+
+	//ANDROID
+	var is_Android = deviceAgent.match(/(android)/);
+	if (is_Android) {
+		//Do something special with Android
+	}
+
+	//HTML5 Fallbacks
+	if (!Modernizr.input.placeholder) {
+		$('.fallback').show();
+	}
+
 	//Twitter
-	if($('#tweet').size() > 0){
-		getTwitters('tweet', { 
-			id: 'sevenspark', 
-			count: 1, 
-			enableLinks: true, 
-			ignoreReplies: true, 
+	if ($('#tweet').size() > 0) {
+		getTwitters('tweet', {
+			id: 'sevenspark',
+			count: 1,
+			enableLinks: true,
+			ignoreReplies: true,
 			clearContents: true,
-			template: '%text% <a href="http://twitter.com/%user_screen_name%/statuses/%id_str%/" class="tweet-time" target="_blank">%time%</a>'+
-						'<a href="http://twitter.com/%user_screen_name%" class="twitter-account" title="Follow %user_screen_name% on Twitter" target="_blank" ><img src="%user_profile_image_url%" /></a>'
+			template: '%text% <a href="http://twitter.com/%user_screen_name%/statuses/%id_str%/" class="tweet-time" target="_blank">%time%</a>' +
+			'<a href="http://twitter.com/%user_screen_name%" class="twitter-account" title="Follow %user_screen_name% on Twitter" target="_blank" ><img src="%user_profile_image_url%" /></a>'
 		});
 	}
-	
+
 });
 
-
-
 //Image Preloader
-jQuery.fn.preloadImages = function(options){
+jQuery.fn.preloadImages = function (options) {
 
-    var defaults = {
-        showSpeed: 200
-    };
+	var defaults = {
+		showSpeed: 200
+	};
 
-    var options = jQuery.extend(defaults, options);
+	var options = jQuery.extend(defaults, options);
 
-	return this.each(function(){
+	return this.each(function () {
 		var $container = jQuery(this);
 		var $image = $container.find('img');
 
 		$image.addClass('loading');	//hide image while loading
-         
-		$image.bind('load error', function(){
+
+		$image.bind('load error', function () {
 			$image.removeClass('loading'); //allow image to display (will fade in with CSS3 trans)
-			
-			setTimeout(function(){ 
+
+			setTimeout(function () {
 				$container.removeClass('preload'); //remove the preloading class to swap the bkg
 			}, options.showSpeed);
-			
+
 		});
-		
-		if($image[0].complete || (jQuery.browser.msie )) { 
+
+		if ($image[0].complete || (jQuery.browser.msie )) {
 			$image.trigger('load');	//IE has glitchy load triggers, so trigger it automatically
 		}
-    });
+	});
 }
-
 
 /* IE Image Resizing - by Ethan Marcotte - http://unstoppablerobotninja.com/entry/fluid-images/ */
 var imgSizer = {
-	Config : {
-		imgCache : []
-		,spacer : "../images/spacer.gif"
+	Config: {
+		imgCache: []
+		, spacer: "../images/spacer.gif"
 	}
 
-	,collate : function(aScope) {
+	, collate: function (aScope) {
 		var isOldIE = (document.all && !window.opera && !window.XDomainRequest) ? 1 : 0;
 		if (isOldIE && document.getElementsByTagName) {
 			var c = imgSizer;
@@ -282,7 +168,7 @@ var imgSizer = {
 			}
 
 			if (imgCache.length) {
-				c.resize(function() {
+				c.resize(function () {
 					for (var i = 0; i < imgCache.length; i++) {
 						var ratio = (imgCache[i].offsetWidth / imgCache[i].origWidth);
 						imgCache[i].style.height = (imgCache[i].origHeight * ratio) + "px";
@@ -292,7 +178,7 @@ var imgSizer = {
 		}
 	}
 
-	,ieAlpha : function(img) {
+	, ieAlpha: function (img) {
 		var c = imgSizer;
 		if (img.oldSrc) {
 			img.src = img.oldSrc;
@@ -306,12 +192,12 @@ var imgSizer = {
 	}
 
 	// Ghettomodified version of Simon Willison's addLoadEvent() -- http://simonwillison.net/2004/May/26/addLoadEvent/
-	,resize : function(func) {
+	, resize: function (func) {
 		var oldonresize = window.onresize;
 		if (typeof window.onresize != 'function') {
 			window.onresize = func;
 		} else {
-			window.onresize = function() {
+			window.onresize = function () {
 				if (oldonresize) {
 					oldonresize();
 				}

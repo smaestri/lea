@@ -112,7 +112,7 @@ public class EmpruntController extends CommonController {
         Utilisateur preteur = userRepository.findOne(emprunt.getPreteurId());
         String content = preteur.getFullName() + " a accepté votre demande d'emprunt pour le livre " + preteur.getLivre(emprunt.getLivreId()).getTitreBook() + ". Connectez-vous au site pour retourner le livre une fois que vous l'avez lu!";
         String object = "Le prêteur a accepté votre demande d'emprunt!";
-        notificationService.sendNotificaition(principal.getEmail(), object, content);
+        notificationService.sendNotificaition(emprunteur.getEmail(), object, content);
         return "OK";
     }
 

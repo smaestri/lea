@@ -1,11 +1,17 @@
 <!DOCTYPE html>
-<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
-<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
-<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
-<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<!--[if lt IE 7 ]>
+<html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]>
+<html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]>
+<html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+<html lang="en"> <!--<![endif]-->
 <head>
 
     <!-- Agility - Responsive HTML5/CSS3 Template by SevenSpark http://agility-html.sevenspark.com -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="/assets/javascripts/agility.js"></script>
 
     <!-- Basic Page Needs
       ================================================== -->
@@ -31,10 +37,10 @@
     <link rel="stylesheet" href="/assets/stylesheets/bootstrap.min.css">
 
     <!-- prettyPhoto plugin -->
-    <link rel="stylesheet" href="/assets/javascripts/prettyPhoto/css/prettyPhoto.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="/assets/javascripts/prettyPhoto/css/prettyPhoto.css" type="text/css" media="screen"/>
 
     <!-- FlexSlider plugin -->
-    <link rel="stylesheet" href="/assets/javascripts/flexslider/flexslider.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="/assets/javascripts/flexslider/flexslider.css" type="text/css" media="screen"/>
 
 
     <!-- Favicons
@@ -47,7 +53,8 @@
     <!-- Fonts
     ================================================== -->
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
-    <link href='http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet'
+          type='text/css'>
 
 
     <!-- Modernizr -->
@@ -57,24 +64,25 @@
     <link rel="stylesheet" href="/assets/stylesheets/ie7.css">
     <![endif]-->
 
-    <input type="hidden" id="userId" value="58bab4b106cbee161d07d3e4"/>
-
+    <input type="hidden" id="userId" value="58e95c2e0770d4577fadabe0"/>
 
 </head>
 <body class="skin-red bkg-smoky">
-    <svg id="svg-source" style="display: none;" version="1.1" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-            <symbol id="icon-star-empty" viewBox="0 0 1024 1024">
-                <title>star-empty</title>
-                <path class="path1" d="M1024 397.050l-353.78-51.408-158.22-320.582-158.216 320.582-353.784 51.408 256 249.538-60.432 352.352 316.432-166.358 316.432 166.358-60.434-352.352 256.002-249.538zM512 753.498l-223.462 117.48 42.676-248.83-180.786-176.222 249.84-36.304 111.732-226.396 111.736 226.396 249.836 36.304-180.788 176.222 42.678 248.83-223.462-117.48z"></path>
-            </symbol>
-            <symbol id="icon-star-full" viewBox="0 0 1024 1024" fill="#d83f28">
-                <title>star-full</title>
-                <path class="path1" d="M1024 397.050l-353.78-51.408-158.22-320.582-158.216 320.582-353.784 51.408 256 249.538-60.432 352.352 316.432-166.358 316.432 166.358-60.434-352.352 256.002-249.538z"></path>
-            </symbol>
-        </defs>
-    </svg>
-    <div id="app" class="wrap"></div>
-    <script src="./built/bundle.js"></script>
+<svg id="svg-source" style="display: none;" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <symbol id="icon-star-empty" viewBox="0 0 1024 1024">
+            <title>star-empty</title>
+            <path class="path1"
+                  d="M1024 397.050l-353.78-51.408-158.22-320.582-158.216 320.582-353.784 51.408 256 249.538-60.432 352.352 316.432-166.358 316.432 166.358-60.434-352.352 256.002-249.538zM512 753.498l-223.462 117.48 42.676-248.83-180.786-176.222 249.84-36.304 111.732-226.396 111.736 226.396 249.836 36.304-180.788 176.222 42.678 248.83-223.462-117.48z"></path>
+        </symbol>
+        <symbol id="icon-star-full" viewBox="0 0 1024 1024" fill="#d83f28">
+            <title>star-full</title>
+            <path class="path1"
+                  d="M1024 397.050l-353.78-51.408-158.22-320.582-158.216 320.582-353.784 51.408 256 249.538-60.432 352.352 316.432-166.358 316.432 166.358-60.434-352.352 256.002-249.538z"></path>
+        </symbol>
+    </defs>
+</svg>
+<div id="app" class="wrap"></div>
+<script src="./built/bundle.js"></script>
 </body>
 </html>

@@ -8,6 +8,10 @@ To test in connected mode,
 - desactiva csrf .csrf().disable()
 - change commoncontroller to return same user as defined in index.html
 
-TODO :
 
-- delete userId in index.html : should be possible to not have thie information front side
+
+LAUNCH
+npm run serve
+go to localhost:3333
+
+

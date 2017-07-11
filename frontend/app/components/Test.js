@@ -2,67 +2,67 @@ import React from 'react';
 
 class Tests extends React.Component {
 
-    constructor(props) {
-        super(props);
+	constructor(props) {
+		super(props);
 
-        this.state = {
-            data: 0
-        }
+		this.state = {
+			data: 0
+		}
 
-        this.setNewNumber = this.setNewNumber.bind(this)
-    };
+		this.setNewNumber = this.setNewNumber.bind(this)
+	};
 
-    setNewNumber() {
-        this.setState({data: this.state.data + 1})
-    }
+	setNewNumber() {
+		this.setState({ data: this.state.data + 1 })
+	}
 
-    render() {
-        return (
-            <div>
-                <button onClick = {this.setNewNumber}>INCREMENT</button>
-                <Content myNumber = {this.state.data}></Content>
-            </div>
-        );
-    }
+	render() {
+		return (
+			<div>
+				<button onClick={this.setNewNumber}>INCREMENT</button>
+				<Content myNumber={this.state.data}></Content>
+			</div>
+		);
+	}
 }
 
 class Content extends React.Component {
 
-    componentWillMount() {
-        console.log('Component WILL MOUNT!')
-    }
+	componentWillMount() {
+		console.log('Component WILL MOUNT!')
+	}
 
-    componentDidMount() {
-        console.log('Component DID MOUNT!')
-    }
+	componentDidMount() {
+		console.log('Component DID MOUNT!')
+	}
 
-    componentWillReceiveProps(newProps) {
-        console.log('Component WILL RECIEVE PROPS!')
-    }
+	componentWillReceiveProps(newProps) {
+		console.log('Component WILL RECIEVE PROPS!')
+	}
 
-    shouldComponentUpdate(newProps, newState) {
-        return true;
-    }
+	shouldComponentUpdate(newProps, newState) {
+		return true;
+	}
 
-    componentWillUpdate(nextProps, nextState) {
-        console.log('Component WILL UPDATE!');
-    }
+	componentWillUpdate(nextProps, nextState) {
+		console.log('Component WILL UPDATE!');
+	}
 
-    componentDidUpdate(prevProps, prevState) {
-        console.log('Component DID UPDATE!')
-    }
+	componentDidUpdate(prevProps, prevState) {
+		console.log('Component DID UPDATE!')
+	}
 
-    componentWillUnmount() {
-        console.log('Component WILL UNMOUNT!')
-    }
+	componentWillUnmount() {
+		console.log('Component WILL UNMOUNT!')
+	}
 
-    render() {
-        return (
-            <div>
-                <h3>{this.props.myNumber}</h3>
-            </div>
-        );
-    }
+	render() {
+		return (
+			<div>
+				<h3>{this.props.myNumber}</h3>
+			</div>
+		);
+	}
 }
 
-export {Tests}
+export { Tests }

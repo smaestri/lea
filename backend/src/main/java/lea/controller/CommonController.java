@@ -24,7 +24,6 @@ public class CommonController {
 
     protected Utilisateur getPrincipal() {
 
-
         Utilisateur user = null;
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
             return null;
@@ -40,13 +39,12 @@ public class CommonController {
 
         /**
          * TODO COMMENT THIS
-
-
-        Utilisateur u = new Utilisateur();
-        u.setEmail("toto@toto.com");
-        u.setId("58bab4b106cbee161d07d3e4");
-        return u;
          */
+//        Utilisateur u = new Utilisateur();
+//        u.setEmail("toto@toto.com");
+//        u.setId("58e95c2e0770d4577fadabe0");
+//        return u;
+
 
     }
 }

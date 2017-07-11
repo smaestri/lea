@@ -44,12 +44,15 @@ public class LoginController extends CommonController {
 
     @RequestMapping(value = "/")
     public String welcomeHandler(Model model) {
-/*
+
         Utilisateur userSpring = getPrincipal();
-        if(userSpring == null){
-            return "redirect:/home";
-        }
-        */
+
+
+
+//        if(userSpring == null){
+//            return "redirect:/home";
+//        }
+
         initGlobalvariables(model, false);
 
         return "index";

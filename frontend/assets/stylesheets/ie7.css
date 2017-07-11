@@ -1,10 +1,12 @@
-nav#main-nav > ul > li{
-	float:left;
+nav#main-nav > ul > li {
+    float: left;
 }
-.drop-bar a.social-media{
-	float:left;
+
+.drop-bar a.social-media {
+    float: left;
 }
-.drop-panel{
-	position:static;
+
+.drop-panel {
+    position: static;
 }
 

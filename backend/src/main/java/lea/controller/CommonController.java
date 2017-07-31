@@ -35,16 +35,5 @@ public class CommonController {
             user = ((CustomUserDetailsService.UserPrincipal) principal).getUser();
         }
         return user;
-
-
-        /**
-         * TODO COMMENT THIS
-         */
-//        Utilisateur u = new Utilisateur();
-//        u.setEmail("toto@toto.com");
-//        u.setId("58e95c2e0770d4577fadabe0");
-//        return u;
-
-
     }
 }

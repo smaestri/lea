@@ -7,6 +7,7 @@ let _loans = [];
 let _lendings = [];
 let _books = [];
 
+/*
 function getCsrf() {
 	var metas = document.getElementsByTagName('meta');
 	for (var i = 0; i < metas.length; i++) {
@@ -16,6 +17,7 @@ function getCsrf() {
 	}
 	return "";
 };
+*/
 
 export const SVGIcon = React.createClass({
 	render: function () {
@@ -129,9 +131,9 @@ var helpers = {
 		return axios.post('/api/emprunter', {
 			idLivre: idBook,
 			idIntermediaire: intermediaireid
-		}, {
+		}/*, {
 			headers: { 'X-CSRF-Token': getCsrf() },
-		})
+		}*/)
 			.then(function (response) {
 				return response.data;
 			})
@@ -141,9 +143,9 @@ var helpers = {
 	},
 
 	acceptLoan: function (idEmprunt) {
-		return axios.post('/api/accepterEmprunt/' + idEmprunt, null, {
+		return axios.post('/api/accepterEmprunt/' + idEmprunt, null/*, {
 			headers: { 'X-CSRF-Token': getCsrf() },
-		})
+		}*/)
 			.then(function (response) {
 				return response.data;
 			})
@@ -153,9 +155,9 @@ var helpers = {
 	},
 
 	refuseLoan: function (idEmprunt, refus) {
-		return axios.post('/api/refuserEmprunt/' + idEmprunt, { refus: refus }, {
+		return axios.post('/api/refuserEmprunt/' + idEmprunt, { refus: refus }/*, {
 			headers: { 'X-CSRF-Token': getCsrf() },
-		})
+		}*/)
 			.then(function (response) {
 				return response.data;
 			})
@@ -185,9 +187,9 @@ var helpers = {
 	},
 
 	sendLoan: function (idEmprunt) {
-		return axios.post('/api/envoyerEmprunt/' + idEmprunt, null, {
+		return axios.post('/api/envoyerEmprunt/' + idEmprunt, null/*, {
 			headers: { 'X-CSRF-Token': getCsrf() },
-		})
+		}*/)
 			.then(function (response) {
 				return response.data;
 			})
@@ -197,9 +199,9 @@ var helpers = {
 	},
 
 	closeLoan: function (idBook) {
-		return axios.post('/api/cloreEmprunt/' + idBook, null, {
+		return axios.post('/api/cloreEmprunt/' + idBook, null /*, {
 			headers: { 'X-CSRF-Token': getCsrf() },
-		})
+		}*/)
 			.then(function (response) {
 				return response.data;
 			})
@@ -209,7 +211,6 @@ var helpers = {
 	},
 
 	getBookDetail: function (bookid) {
-		console.log('API get book detail')
 		return axios.get('/api/livres/' + bookid)
 			.then(function (response) {
 				return response.data;
@@ -241,9 +242,9 @@ var helpers = {
 	},
 
 	deleteBook: function (idBook) {
-		return axios.delete('/api/livres/' + idBook, {
+		return axios.delete('/api/livres/' + idBook/*, {
 			headers: { 'X-CSRF-Token': getCsrf() },
-		})
+		}*/)
 			.then(function (response) {
 				return response.data;
 			})
@@ -254,11 +255,10 @@ var helpers = {
 
 	deleteComment: function (idComm) {
 		console.log('DELETE COMM')
-		return axios.delete('/api/comments/' + idComm, {
+		return axios.delete('/api/comments/' + idComm/*, {
 			headers: { 'X-CSRF-Token': getCsrf() },
-		})
+		}*/)
 			.then(function (response) {
-				console.log(response);
 				return response.data;
 			})
 			.catch(function (error) {
@@ -266,18 +266,17 @@ var helpers = {
 			});
 	},
 
-	saveBook: function (bookObj, idBook) {
-		if (idBook) {
-			return axios.put('/api/livres/' + idBook, {
-				//TODO SPREAD OPERATOR?
+	saveBook: function (bookObj) {
+		if (bookObj.id) {
+			return axios.put('/api/livres/' + bookObj.id, {
 				titreBook: bookObj.titreBook,
 				auteur: bookObj.auteur,
 				description: bookObj.description,
 				isbn: bookObj.isbn,
 				categorieId: bookObj.categorieId
-			}, {
+			}/*, {
 				headers: { 'X-CSRF-Token': getCsrf() },
-			})
+			}*/)
 				.then(function (response) {
 					return response.data;
 				})
@@ -293,11 +292,10 @@ var helpers = {
 			description: bookObj.description,
 			isbn: bookObj.isbn,
 			categorieId: bookObj.categorieId
-		}, {
+		}/*, {
 			headers: { 'X-CSRF-Token': getCsrf() },
-		})
+		}*/)
 			.then(function (response) {
-				console.log(response);
 				return response.data;
 			})
 			.catch(function (error) {
@@ -310,9 +308,9 @@ var helpers = {
 		if (idComm) {
 			return axios.put('/api/comments/' + idComm, {
 				message: message
-			}, {
+			}/*, {
 				headers: { 'X-CSRF-Token': getCsrf() },
-			})
+			}*/)
 				.then(function (response) {
 					return response.data;
 				})
@@ -323,11 +321,10 @@ var helpers = {
 
 		return axios.post('/api/addComment/' + idLoan, {
 			message: message,
-		}, {
+		}/*, {
 			headers: { 'X-CSRF-Token': getCsrf() },
-		})
+		}*/)
 			.then(function (response) {
-				console.log(response);
 				return response.data;
 			})
 			.catch(function (error) {
@@ -340,11 +337,10 @@ var helpers = {
 			return axios.put('/api/avis/' + idAvis, {
 				note: avisObj.note,
 				libelle: avisObj.libelle,
-			}, {
+			}/*, {
 				headers: { 'X-CSRF-Token': getCsrf() },
-			})
+			}*/)
 				.then(function (response) {
-					console.log(response);
 					return response.data;
 				})
 				.catch(function (error) {
@@ -355,9 +351,9 @@ var helpers = {
 		return axios.post('/api/avis/' + idBook, {
 			note: avisObj.note,
 			libelle: avisObj.libelle,
-		}, {
+		}/*, {
 			headers: { 'X-CSRF-Token': getCsrf() },
-		})
+		}*/)
 			.then(function (response) {
 				return response.data;
 			})
@@ -367,9 +363,9 @@ var helpers = {
 	},
 
 	deleteAvis: function (idAvis) {
-		return axios.delete('/api/avis/' + idAvis, {
+		return axios.delete('/api/avis/' + idAvis/*, {
 			headers: { 'X-CSRF-Token': getCsrf() },
-		})
+		}*/)
 			.then(function (response) {
 				return response.data;
 			})
@@ -439,11 +435,10 @@ var helpers = {
 	},
 
 	savePendingFriend: function (email) {
-		return axios.post('/api/ami/new/', { email1: email }, {
+		return axios.post('/api/ami/new/', { email1: email }/*, {
 			headers: { 'X-CSRF-Token': getCsrf() },
-		})
+		}*/)
 			.then(function (response) {
-				console.log(response);
 				return response.data;
 			})
 			.catch(function (error) {
@@ -457,9 +452,9 @@ var helpers = {
 			lastName: user.lastName,
 			password: user.password,
 			confirmPassword: user.confirmPassword
-		}, {
+		}/*, {
 			headers: { 'X-CSRF-Token': getCsrf() },
-		})
+		}*/)
 			.then(function (response) {
 				return response.data;
 			})
@@ -469,9 +464,9 @@ var helpers = {
 	},
 
 	acceptFriend: function (idFriend) {
-		return axios.post('/api/accepterAmi/' + idFriend, null, {
+		return axios.post('/api/accepterAmi/' + idFriend, null/*, {
 			headers: { 'X-CSRF-Token': getCsrf() },
-		})
+		}*/)
 			.then(function (response) {
 				return response.data;
 			})
@@ -481,9 +476,9 @@ var helpers = {
 	},
 
 	deleteFriend: function (idFriend) {
-		return axios.delete('/api/friend/' + idFriend, {
+		return axios.delete('/api/friend/' + idFriend/*, {
 			headers: { 'X-CSRF-Token': getCsrf() },
-		})
+		}*/)
 			.then(function (response) {
 				return response.data;
 			})
@@ -493,9 +488,9 @@ var helpers = {
 	},
 
 	deletePendingFriend: function (idFriend) {
-		return axios.delete('/api/pendingFriend/' + idFriend, {
+		return axios.delete('/api/pendingFriend/' + idFriend/*, {
 			headers: { 'X-CSRF-Token': getCsrf() },
-		})
+		}*/)
 			.then(function (response) {
 				return response.data;
 			})
@@ -506,11 +501,18 @@ var helpers = {
 
 	getSvgIcon: function () {
 		return SVGIcon;
-	}
+	},
+
+	isAuthenticated: function () {
+		return axios.get('/api/isAuthenticated/')
+			.then(function (response) {
+				return response.data;
+			})
+			.catch(function (error) {
+				console.log(error);
+			});
+	},
 
 };
 
 export default helpers
-
-
-

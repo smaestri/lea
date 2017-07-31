@@ -39,7 +39,7 @@ class Book extends React.Component {
 
 	render() {
 
-		const userConnected = document.getElementById("userId") && document.getElementById("userId").value != "";
+		const userConnected =  this.props.userId;
 
 		//compute book note
 		let sum = 0;

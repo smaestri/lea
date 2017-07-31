@@ -20,7 +20,14 @@ class MyhistorizedLoans extends React.Component {
 	render() {
 		console.log("render MyLoans")
 		const loans = this.state.loans.map(loan => {
-			return <Loan key={loan.id} id={loan.id} loan={loan} isLending={false} isHistory={true}/>
+			return <Loan
+			 				  key={loan.id}
+								id={loan.id}
+								loan={loan}
+								isLending={false}
+								isHistory={true}
+								userId={this.props.userId}
+							/>
 		});
 
 		return (

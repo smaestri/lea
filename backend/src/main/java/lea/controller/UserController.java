@@ -7,6 +7,7 @@ import lea.modele.PendingFriend;
 import lea.modele.Utilisateur;
 import lea.repository.emprunt.EmpruntRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletException;
@@ -19,6 +20,9 @@ public class UserController extends CommonController {
 
     @Autowired
     private EmpruntRepository empruntRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     //Detail d'un utilisateur ; ses livres et ceux de ses amis
     @RequestMapping(value = "/api/users/{userId}", method = RequestMethod.GET)
@@ -123,10 +127,20 @@ public class UserController extends CommonController {
         Utilisateur userDetail = userRepository.findOne(userConnected.getId());
         userDetail.setLastName(user.getLastName());
          userDetail.setFirstName(user.getFirstName());
-         userDetail.setPassword(user.getPassword());
-         userDetail.setConfirmPassword(user.getConfirmPassword());
+         userDetail.setPassword(passwordEncoder.encode(user.getPassword()));
+         // userDetail.setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
         userRepository.saveUser(userDetail);
         return "1";
+    }
+
+
+    @RequestMapping("/api/isAuthenticated")
+    public String isAuthenticated(){
+        Utilisateur userSpring = getPrincipal();
+        if(userSpring != null){
+            return userSpring.getId();
+        }
+        return "0";
     }
 
     private void setEmpruntOjects(Emprunt emp){

@@ -25,6 +25,7 @@ public class Utilisateur extends BaseDocumentImpl {
     @Size(min = 2, max = 14, message = "Le mot de passe doit comprendre entre 2 et 14 caractères")
     private String password;
 
+    @Transient
     private String confirmPassword;
 
     @Size(min = 2, max = 14, message = "Le prénom doit comprendre entre 2 et 14 caractères")

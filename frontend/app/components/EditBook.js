@@ -9,11 +9,14 @@ class EditBook extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			book: { titreBook: '', auteur: '', description: '', isbn: '', categorieId: '' },
-			categories: []
+			book: { titreBook: '', auteur: '', description: '', isbn: '', categorieId: '', avis: [] },
+			avis: {rating: '', libelle: ''},
+			categories: [],
+			auteurAvis: {}
 		}
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleChange = this.handleChange.bind(this);
+		this.handleAvisChange = this.handleAvisChange.bind(this);
 		this.returnToBooks = this.returnToBooks.bind(this);
 	}
 
@@ -21,7 +24,17 @@ class EditBook extends React.Component {
 		//if id passed load exising book
 		if (this.props.params && this.props.params.bookId) {
 			helpers.getBookDetail(this.props.params.bookId).then((book) => {
-				this.setState({ book: book });
+
+
+				// if user post avis on his book, search this avis to editMode		const auteurAvis = this.state.book.avis.find((avis)=>{
+				const auteurAvis = book.avis.find((avis)=>{
+					if(this.props.userId == avis.auteur ){
+						return avis;
+					}
+				})
+
+				this.setState({ book: book, auteurAvis });
+
 			})
 		}
 
@@ -30,7 +43,6 @@ class EditBook extends React.Component {
 				categories: cat
 			});
 		});
-
 	}
 
 	returnToBooks() {
@@ -39,16 +51,28 @@ class EditBook extends React.Component {
 
 	handleSubmit(event) {
 		event.preventDefault();
-		helpers.saveBook(this.state.book, (this.props.params.bookId) ? this.props.params.bookId : undefined).then((book) => {
-			this.props.router.push('/my-books')
+		// first save book
+		helpers.saveBook(this.state.book).then((book) => {
+			// then save avis
+			helpers.saveAvis(
+				this.state.avis,
+				 this.state.auteurAvis.id,
+				 book.id).then((newAvisId) => {
+				this.props.router.push('/my-books')
+			});
 		});
-
 	}
 
 	handleChange(event) {
 		const book = this.state.book;
 		book[event.target.name] = event.target.value;
 		this.setState({ book: book });
+	}
+
+	handleAvisChange (avis){
+		this.setState({
+			avis
+		})
 	}
 
 	render() {
@@ -80,7 +104,11 @@ class EditBook extends React.Component {
 						</select>
 
 						<label for="note">Noter ce livre</label>
-						<AddAvis/>
+						<AddAvis
+							avis={this.state.auteurAvis || []}
+							updateAvis={this.handleAvisChange}
+							allowModification={false}
+					  />
 
 						<button onClick={this.returnToBooks}>Retour</button>
 						<button type="submit">Valider</button>

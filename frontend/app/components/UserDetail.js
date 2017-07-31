@@ -12,16 +12,10 @@ class UserDetail extends React.Component {
 		this.returnToPreviousPage = this.returnToPreviousPage.bind(this);
 	}
 
-	//need to request server to get friend's books
-	componentDidMount() {
-
-	}
-
 	componentWillReceiveProps() {
 		helpers.getUserDetail(this.props.params.userId).then((books) => {
 			this.setState({ firstUser: books[0].preteur });
 			this.setState({ books: books });
-
 		});
 	}
 
@@ -38,9 +32,14 @@ class UserDetail extends React.Component {
 	}
 
 	render() {
-
 		let books = this.state.books.map(book => {
-			return <Book key={book.id} id={book.id} book={book} previousPage="userDetail"/>
+			return <Book
+			 				  key={book.id}
+								id={book.id}
+								book={book}
+								previousPage="userDetail"
+ 								userId={this.props.userId}
+								/>
 		});
 
 		//add sub friend books

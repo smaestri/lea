@@ -46,8 +46,14 @@ class MyBooks extends React.Component {
 
 	render() {
 		const books = this.state.books.map(book => {
-			return <Book key={book.id} id={book.id} book={book} handleDelete={this.handleDelete}
-			             previousPage="myBooks"/>
+			return <Book
+			 					key={book.id}
+								id={book.id}
+								book={book}
+								handleDelete={this.handleDelete}
+			          previousPage="myBooks"
+ 								userId={this.props.userId}
+							/>
 		});
 		return (
 			<div className="container">

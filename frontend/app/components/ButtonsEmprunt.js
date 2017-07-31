@@ -78,7 +78,7 @@ class ButtonsEmprunt extends React.Component {
 	render() {
 		let displayAcceptButton, displayCloseButton, displaySendButton = false;
 		const loan = this.props.loan;
-		const userConnected = document.getElementById("userId").value;
+		const userConnected = this.props.userId;
 
 		if (!loan || !loan.livre) {
 			return null;

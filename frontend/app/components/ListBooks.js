@@ -26,8 +26,14 @@ class ListBooks extends React.Component {
 
 	render() {
 		const books = this.state.books.map(book => {
-			return <Book key={book.id} id={book.id} book={book} previousPage="listBook"
-			             pendingFriends={this.state.pendingFriends}/>
+			return <Book
+							 key={book.id}
+							 id={book.id}
+							 book={book}
+							 previousPage="listBook"
+			         pendingFriends={this.state.pendingFriends}
+							 userId={this.props.userId}
+						 />
 		});
 
 		return (

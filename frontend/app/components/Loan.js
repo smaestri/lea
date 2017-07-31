@@ -14,14 +14,23 @@ class Loan extends React.Component {
 				<div className="loan-main">
 					<div className="loan-header">{this.props.loan.livre.titreBook}</div>
 					<div className="loan-details">
-						<LoanAttributes loan={this.props.loan} isHistory={this.props.isHistory}
-						                isLending={this.props.isLending} displayLinks={true}/>
+						<LoanAttributes
+						 	loan={this.props.loan}
+							isHistory={this.props.isHistory}
+							isLending={this.props.isLending}
+							displayLinks={true}
+							userId={this.props.userId}
+						/>
 					</div>
 				</div>
 				<div className="loan-buttons">
 					{!this.props.isHistory &&
-					<ButtonsEmprunt loan={this.props.loan} reloadEmprunt={this.props.reloadEmprunt}
-					                onRefreshCount={this.props.onRefreshCount}/>}
+					<ButtonsEmprunt
+					   loan={this.props.loan}
+						 reloadEmprunt={this.props.reloadEmprunt}
+					   onRefreshCount={this.props.onRefreshCount}
+						 userId={this.props.userId}
+					 />}
 				</div>
 			</div>
 		)

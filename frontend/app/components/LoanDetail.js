@@ -81,6 +81,13 @@ class LoanDetail extends React.Component {
 		}
 	}
 
+	handleAvisChange (avis){
+		this.setState({
+			avis
+		})
+	}
+
+
 	render() {
 		// if no loan return
 		const loan = this.state.loan;
@@ -89,7 +96,7 @@ class LoanDetail extends React.Component {
 		}
 
 		//get comments
-		const userConnected = document.getElementById("userId").value;
+		const userConnected = this.props.userId;
 		const comments = loan.commentaires.map(comment => {
 			let displayButtons = false;
 			// display edit and delete buttons for comments
@@ -138,14 +145,29 @@ class LoanDetail extends React.Component {
 			<div className="container">
 				<h1>{title}</h1>
 				<div className="emprunt-information">
-					<LoanAttributes loan={loan} isHistory={false}
-					                isLending={this.props.params.isLending} displayLinks={false}/>
-					<ButtonsEmprunt loan={loan} onRefreshCount={this.props.onRefreshCount}
-					                reloadEmprunt={this.refreshEmprunt}/>
+					<LoanAttributes
+					 	loan={loan}
+						isHistory={false}
+            isLending={this.props.params.isLending}
+						displayLinks={false}
+						userId={this.props.userId}
+					/>
+					<ButtonsEmprunt
+					 	loan={loan}
+						onRefreshCount={this.props.onRefreshCount}
+					  reloadEmprunt={this.refreshEmprunt}
+ 						userId={this.props.userId}
+						/>
 				</div>
 				<div className="content-emprunt">
 					<div className="emprunt-ratings">
-						{displayRating && <AddAvis bookId={loan.livre.id} avis={avis}/>}
+						{displayRating &&
+							 <AddAvis
+							    bookId={loan.livre.id}
+									avis={avis}
+									updateAvis={this.handleAvisChange}
+									allowModification={false}
+								/>}
 					</div>
 					<div className="emprunt-comments">
 						<h3>Commentaires entre vous et {typeEmprunt}</h3>

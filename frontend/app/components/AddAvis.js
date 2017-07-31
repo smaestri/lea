@@ -10,10 +10,10 @@ class AddAvis extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = { editMode: props.avis.length > 0 ? true : false, avis: props.avis };
+		this.state = { editMode: props.avis ? true : false, avis: props.avis };
 		this.handleRating = this.handleRating.bind(this);
-		this.handleChange = this.handleChange.bind(this);
-		this.saveAvis = this.saveAvis.bind(this);
+		this.handleMessageChange = this.handleMessageChange.bind(this);
+		//this.saveAvis = this.saveAvis.bind(this);
 		this.saveEditAvis = this.saveEditAvis.bind(this);
 		this.deleteAvis = this.deleteAvis.bind(this);
 		this.toggleEditmode = this.toggleEditmode.bind(this);
@@ -27,34 +27,27 @@ class AddAvis extends React.Component {
 	}
 
 	handleRating(event) {
-		const newAvis = this.state.avis;
+		const newAvis = this.props.avis;
 		newAvis["note"] = event;
 		this.setState({ avis: newAvis });
+		this.props.updateAvis(newAvis)
 	}
 
-	handleChange(event) {
-		const newAvis = this.state.avis;
+	handleMessageChange(event) {
+		const newAvis = this.props.avis;
 		newAvis["libelle"] = event.target.value;
 		this.setState({ avis: newAvis });
-	}
-
-	saveAvis() {
-		helpers.saveAvis(this.state.avis, null, this.props.bookId).then((newAvisId) => {
-			this.setState({
-				editMode: false,
-				avis: Object.assign(this.state.avis, { id: newAvisId })
-			});
-		});
+		this.props.updateAvis(newAvis)
 	}
 
 	saveEditAvis() {
-		helpers.saveAvis(this.state.avis, this.state.avis.id, this.props.bookId).then(() => {
+		helpers.saveAvis(this.props.avis, this.props.avis.id, this.props.bookId).then(() => {
 			this.setState({ editMode: false });
 		});
 	}
 
 	deleteAvis() {
-		helpers.deleteAvis(this.state.avis.id).then(() => {
+		helpers.deleteAvis(this.props.avis.id).then(() => {
 			this.setState({ avis: {}, editMode: true });
 		});
 	}
@@ -67,8 +60,8 @@ class AddAvis extends React.Component {
 
 	render() {
 		let showTextArea = false;
-		// display if state not setted
-		if (!this.state.avis.id) {
+		// create mode
+		if (this.props.avis) {
 			showTextArea = true;
 		}
 		else {
@@ -77,8 +70,8 @@ class AddAvis extends React.Component {
 			}
 		}
 		let dateAvis;
-		if (this.state.avis.dateavis) {
-			dateAvis = formatDate(this.state.avis.dateavis);
+		if (this.props.avis.dateavis) {
+			dateAvis = formatDate(this.props.avis.dateavis);
 		}
 
 		return (
@@ -91,32 +84,29 @@ class AddAvis extends React.Component {
 						<Rating empty={<SVGIcon href='#icon-star-empty' className='icon-rating'/>}
 						        full={<SVGIcon href='#icon-star-full' className='icon-rating'/>}
 						        readonly={!showTextArea}
-						        initialRate={this.state.avis.note}
+						        initialRate={this.props.avis.note}
 						        onClick={this.handleRating}/>
 					</div>
 					<div className="avis-txt">
-						<label>Message: </label>{!showTextArea && <span><blockquote>{this.state.avis.libelle}</blockquote></span>}
+						<label>Message: </label>{!showTextArea && <span><blockquote>{this.props.avis.libelle}</blockquote></span>}
 						{ showTextArea && <FormControl name="libelle" componentClass="textarea"
-						                               onChange={this.handleChange}
-						                               value={this.state.avis.libelle}/>}
+						                               onChange={this.handleMessageChange}
+						                               value={this.props.avis.libelle}/>}
 					</div>
 				</div>
 				<div className="avis-buttons">
-					{this.state.avis && this.state.avis.id && !this.state.editMode &&
+					{this.props.allowModification && !this.state.editMode &&
 					<Button bsStyle="primary" bsSize="small"
 					        onClick={this.toggleEditmode}>Modifier</Button>}
-					{this.state.avis && this.state.avis.id && !this.state.editMode &&
+					{this.props.allowModification && !this.state.editMode &&
 					<Button bsStyle="primary" bsSize="small"
 					        onClick={this.deleteAvis}>Supprimer</Button>}
-					{this.state.avis && this.state.avis.id && this.state.editMode &&
+					{this.props.allowModification && this.state.editMode &&
 					<Button bsStyle="primary" bsSize="small"
 					        onClick={this.undoEdit}>Annuler</Button>}
-					{this.state.avis && this.state.avis.id && this.state.editMode &&
+					{this.props.allowModification && this.state.editMode &&
 					<Button bsStyle="primary" bsSize="small"
 					        onClick={this.saveEditAvis}>Sauvegarder</Button>}
-					{(!this.state.avis || !this.state.avis.id) &&
-					<Button bsStyle="primary" bsSize="small"
-					        onClick={this.saveAvis}>Valider</Button>}
 				</div>
 			</div>
 		)

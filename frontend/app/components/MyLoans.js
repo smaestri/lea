@@ -25,9 +25,15 @@ class MyLoans extends React.Component {
 
 	render() {
 		const loans = this.state.loans.map(loan => {
-			return <Loan key={loan.id} id={loan.id} loan={loan} isLending={false}
-			             onRefreshCount={this.props.onRefreshCount}
-			             reloadEmprunt={this.loadEmprunt}/>
+			return <Loan
+								key={loan.id}
+								id={loan.id}
+								loan={loan}
+								isLending={false}
+	              onRefreshCount={this.props.onRefreshCount}
+			          reloadEmprunt={this.loadEmprunt}
+								userId={this.props.userId}
+							/>
 		});
 
 		return (

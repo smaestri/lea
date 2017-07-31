@@ -1,6 +1,7 @@
 import React from 'react'
-import formatDate from '../helpers/utils'
 import { Link } from 'react-router'
+import formatDate from '../helpers/utils'
+import helpers from '../helpers/api'
 
 class LoanAttributes extends React.Component {
 
@@ -22,7 +23,7 @@ class LoanAttributes extends React.Component {
 
 		let displayTextCurrent, displayLoanSentTextByProp, displayLoanRequestedText,
 			displaySendText = false;
-		const userConnected = document.getElementById("userId").value;
+		const userConnected = this.props.userId;
 
 		//Si statut = CURRENT et je suis preteur => afficher livre en cours de l'cture par
 		if (!this.props.isHistory && this.props.loan.livre.statut == 'CURRENT' && userConnected == this.props.loan.preteur.id) {

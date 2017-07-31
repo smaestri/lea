@@ -8,7 +8,27 @@ db.userProfile.save({type: 'USER'})
 
 launch mongo
 ******************
-dev : mongod --port 27018 --dbpath ~/temp
+
+be sure to add a user in admin DB in ROOT :
+use admin
+db.createUser(
+  {
+    user: "admin",
+    pwd: "password",
+    roles: [ { role: "root", db: "admin" } ]
+  }
+);
+exit;
+
+and change in MongoAuthenticateConfig.java accordingly
+
+Launch demon:
+dev : mongod --port 27018 --dbpath ~/temp --auth
+
+debug BACKEND
+**************
+
+Simply launch debug on main class Application.java
 
 
 deploy as a service on prod
@@ -30,3 +50,7 @@ on root :
 mvn -Dmaven.repo.local=/opt/maven/apache-maven-3.3.9/repo/ --settings /opt/maven/apache-maven-3.3.9/conf/settings.xml clean install
 
 and run spring boot on backend project
+
+
+TODO
+Add CSRF protection

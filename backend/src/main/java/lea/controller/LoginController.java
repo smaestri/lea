@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,6 +43,9 @@ public class LoginController extends CommonController {
         return "home";
     }
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @RequestMapping(value = "/")
     public String welcomeHandler(Model model) {
 
@@ -57,6 +61,8 @@ public class LoginController extends CommonController {
 
         return "index";
     }
+
+
 
     @RequestMapping("/mentions")
     public String mentionslegales() {
@@ -140,7 +146,7 @@ public class LoginController extends CommonController {
             Utilisateur userDetail = userRepository.findOne(user.getId());
             userDetail.setLastName(user.getLastName());
             userDetail.setFirstName(user.getFirstName());
-            userDetail.setPassword(user.getPassword());
+            userDetail.setPassword(passwordEncoder.encode(user.getPassword()));
             userRepository.saveUser(userDetail);
             authenticateManually(userDetail);
             return "redirect:/";
@@ -165,6 +171,9 @@ public class LoginController extends CommonController {
             return "add-user";
         }
 
+        // encrypt password
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         UserProfile profileUser = userProfileRepository.getProfileUser();
         List<String> set = new ArrayList<String>();
         set.add(profileUser.getId());
@@ -183,7 +192,6 @@ public class LoginController extends CommonController {
         if (userSpring != null && userSpring.getEmail() != null) {
             String userId = userSpring.getId();
             Utilisateur user = this.userRepository.findOne(userId);
-            model.addAttribute("userId", user.getId());
             model.addAttribute("userName", user.getFullName());
             if (!shouldInitInputSearch) {
                 model.addAttribute("command", new Livre());

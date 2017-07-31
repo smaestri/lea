@@ -15,84 +15,92 @@ class Header extends Component {
 		this.refreshCount = this.refreshCount.bind(this);
 		this.refreshNotif = this.refreshNotif.bind(this);
 		this.refreshName = this.refreshName.bind(this);
+		this.checkIfConnected = this.checkIfConnected.bind(this);
 		this.state = {
 			nbEmprunt: 0,
 			nbPret: 0,
 			isNewPret: false,
 			requestedFriends: [],
-			currentUser: ''
+			currentUser: '',
+			isConnected: false
 		};
 		this.props.router.push('/home')
 	}
 
 	refreshCount() {
-		const userConnected = document.getElementById("userId");
-		if (userConnected && userConnected.value != "") {
-			helpers.countEmpruntAndPret().then((countBean) => {
-				this.setState({
-					nbEmprunt: countBean.nbEmprunt,
-					nbPret: countBean.nbPret
+			if (this.state.isConnected){
+				helpers.countEmpruntAndPret().then((countBean) => {
+					this.setState({
+						nbEmprunt: countBean.nbEmprunt,
+						nbPret: countBean.nbPret
+					});
 				});
-			});
-		}
+			}
 	}
 
 	refreshNotif() {
-		const userConnected = document.getElementById("userId");
-		if (userConnected && userConnected.value != "") {
-			helpers.getMyRequestedFriends().then((friends) => {
-				this.setState({
-					requestedFriends: friends
+		if (this.state.isConnected){
+				helpers.getMyRequestedFriends().then((friends) => {
+					this.setState({
+						requestedFriends: friends
+					});
 				});
-			});
-			helpers.isNewPret().then((isNewPret) => {
-				if (isNewPret === 1) {
-					this.setState({
-						isNewPret: true
-					});
-				}
-				else {
-					this.setState({
-						isNewPret: false
-					});
-				}
+				helpers.isNewPret().then((isNewPret) => {
+					if (isNewPret === 1) {
+						this.setState({
+							isNewPret: true
+						});
+					}
+					else {
+						this.setState({
+							isNewPret: false
+						});
+					}
+				});
+		};
+	}
 
-			});
-		}
+	checkIfConnected(){
+		helpers.isAuthenticated().then( id => {
+			this.setState({isConnected: id != 0, userId: id})
+			this.refreshCount();
+			this.refreshNotif();
+			this.refreshName();
+		});
+
 	}
 
 	refreshName() {
-		const userConnected = document.getElementById("userId");
-		if (userConnected && userConnected.value != "") {
-			helpers.getAccount().then((user) => {
-				this.setState({
-					currentUser: user.fullName
+		const res =
+		console.log('toto')
+		console.log(res)
+		if (this.state.isConnected){
+				helpers.getAccount().then((user) => {
+					this.setState({
+						currentUser: user.fullName
+					});
 				});
-			});
 		}
 	}
 
 	componentDidMount() {
-		this.refreshCount();
-		this.refreshNotif();
-		this.refreshName();
+		this.checkIfConnected();
 	}
 
 	render() {
 		console.log('render home')
-		const bienvenue = this.state.currentUser;
-		const userConnected = document.getElementById("userId");
 
 		let menuUser;
 		let menugeneral, notif = "";
 
-		if (userConnected && userConnected.value != "") {
-
+		if (this.state.isConnected){
 			notif = (
 				<Notification
 					isNewPret={this.state.isNewPret}
 					requestedFriends={this.state.requestedFriends}
 					onRefreshNotification={this.refreshNotif}/>);
+
+			const bienvenue = this.state.currentUser;
 
 			menuUser = (<div className="dropdown">
 				<span className="arrow">Bienvenue, {bienvenue}</span>
@@ -160,6 +168,7 @@ class Header extends Component {
 				</div>
 			</div>)
 		}
+
 		return (
 			<div>
 				<header id="header" className="container">
@@ -195,13 +204,14 @@ class Header extends Component {
 				{this.props.children && React.cloneElement(this.props.children, {
 					onRefreshCount: this.refreshCount,
 					onRefreshNotification: this.refreshNotif,
-					onRefreshName: this.refreshName
+					onRefreshName: this.refreshName,
+					userId: this.state.userId
 				})}
 				<Footer></Footer>
 
 			</div>
 		)
-	}
+		}
 }
 
 export default withRouter(Header)

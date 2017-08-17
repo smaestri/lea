@@ -76,7 +76,7 @@ public class EmpruntRepositoryImpl implements EmpruntRepository {
     }
 
     @Override
-    public void saveComment(Commentaire comment) {
+    public void saveEditComment(Commentaire comment) {
         // Edit comment => id always supplied
         Query q = new Query();
         q.addCriteria(Criteria.where("commentaires.id").is(new ObjectId(comment.getId())));

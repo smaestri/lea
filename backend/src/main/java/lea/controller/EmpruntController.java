@@ -76,22 +76,24 @@ public class EmpruntController extends CommonController {
         this.empruntRepository.saveEmprunt(emprunt);
         this.userRepository.updateBookStatus(proprietaire, emprunt.getLivreId(), StatutEmprunt.REQUESTED);
 
-        String txtIntermediaire ="";
-        if(empruntBean.getIdIntermediaire() != null){
-            Utilisateur one = userRepository.findOne(empruntBean.getIdIntermediaire());
-            txtIntermediaire = txtIntermediaire + " par l'intermédiaire de " + one.getFullName();
-        }
+
+        // Not implemented : you have to add as friend to loan book
+
+        //        String txtIntermediaire ="";
+        //        if(empruntBean.getIdIntermediaire() != null){
+        //            Utilisateur one = userRepository.findOne(empruntBean.getIdIntermediaire());
+        //            txtIntermediaire = txtIntermediaire + " par l'intermédiaire de " + one.getFullName();
+        //        }
 
         try {
             Livre livre = proprietaire.getLivre(empruntBean.getIdLivre());
-            String content = "Livres entre Amis - nouvelle demande d'emprunt de la part de " + principal.getFullName() +  txtIntermediaire + " pour le livre '" + livre.getTitreBook() + "'. Connectez-vous au site pour consulter et accepter cet emprunt!";
+            String content = "Livres entre Amis - nouvelle demande d'emprunt de la part de " + principal.getFullName() /*+  txtIntermediaire*/ + " pour le livre '" + livre.getTitreBook() + "'. Connectez-vous au site pour consulter et accepter cet emprunt!";
             String object = "Nouvelle demande d'emprunt";
             notificationService.sendNotificaition(proprietaire.getEmail(),object, content );
         }catch( Exception e ){
             // catch error
             System.out.println("Error Sending Email: " + e.getMessage());
         }
-
         return "redirect:/emprunts";
     }
 

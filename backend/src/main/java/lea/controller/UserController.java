@@ -29,24 +29,15 @@ public class UserController extends CommonController {
     public List<Livre> userDetail(@PathVariable("userId") String userDetail) throws ServletException, IOException {
         Utilisateur userConnected = getPrincipal();
         Utilisateur friend = userRepository.findOne(userDetail);
-
         // Check if user friend of mine
         Utilisateur user = userRepository.findOne(userConnected.getId());
-        // List<Utilisateur> friends = userRepository.findFriends(user.getListFriendsId());
         boolean found = isMyfriend(user.getListFriendsId(), friend.getId());
-
-
-        // in my pending friends?
-        //si pending friend
         boolean isPending = false;
         if(!found){
              isPending = isInPendingFriend(user, friend.getEmail());
         }
-
         List<Livre> result = new ArrayList<Livre>();
         List<Livre> listeLivre = friend.getLivres();
-
-        // set image
         if (!listeLivre.isEmpty()) {
             for (Livre livre : listeLivre) {
                 livre.setUserId(friend.getId());
@@ -66,6 +57,7 @@ public class UserController extends CommonController {
             boolean subFriendIsMyFriend = isMyfriend(user.getListFriendsId(), subFriend.getId());
 
             if (!subFriend.getId().equals(userConnected.getId())) {
+                // to know if subfriend has already been added as friend
                 isPending = isInPendingFriend(user, subFriend.getEmail());
                 List<Livre> listeLivre2 = subFriend.getLivres();
                 for (Livre livre : listeLivre2) {
@@ -152,7 +144,6 @@ public class UserController extends CommonController {
     }
 
     private boolean isInPendingFriend(Utilisateur user, String mail){
-
         List<PendingFriend> listPendingFriends = user.getListPendingFriends();
         for(PendingFriend pf : listPendingFriends){
             if(pf.getEmail().equals(mail)){
@@ -160,7 +151,6 @@ public class UserController extends CommonController {
             }
         }
         return false;
-
     }
 
     private boolean isMyfriend(List<String> friends, String friendId){

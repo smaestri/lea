@@ -56,7 +56,7 @@ public class CommentController extends CommonController {
         Commentaire comment = this.empruntRepository.findComment(commentId);
         comment.setDateMessage(new Date());
         comment.setMessage(newComment.getMessage());
-        empruntRepository.saveComment(comment);
+        empruntRepository.saveEditComment(comment);
         return comment;
     }
 

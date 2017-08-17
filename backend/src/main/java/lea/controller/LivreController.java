@@ -34,7 +34,7 @@ public class LivreController extends CommonController {
     public List<Livre> searchBook(@RequestParam(value = "titreBook", required = false) String titre,
                              @RequestParam(value = "categorie", required = false) String categorieId) throws ServletException, IOException {
         List<Livre> result = new ArrayList<Livre>();
-        List<Utilisateur> users = userRepository.findAll();
+        List<Utilisateur> allUsers = userRepository.findAll();
 
         Utilisateur principal = this.getPrincipal();
         Utilisateur userConnected = null;
@@ -42,39 +42,36 @@ public class LivreController extends CommonController {
             userConnected = this.userRepository.findOne(principal.getId());
         }
 
-        for (Utilisateur friend : users) {
+        for (Utilisateur user : allUsers) {
 
-            if(userConnected != null && userConnected.getId().equals(friend.getId())){
+            if(userConnected != null && userConnected.getId().equals(user.getId())){
                 continue;
             }
 
-            for (Livre livre : friend.getLivres()) {
-                livre.setUserId(friend.getId());
-                livre.setPreteur(friend.getFullName());
-                livre.setMailPreteur(friend.getEmail());
+            for (Livre livre : user.getLivres()) {
+                livre.setUserId(user.getId());
+                livre.setPreteur(user.getFullName());
+                livre.setMailPreteur(user.getEmail());
 
+                //If I'm connected, check if the user fetched is my friend and display :
+                // - loan button
+                // - pending : " user added as friend"
                 if(userConnected != null && livre.getStatut().equals(StatutEmprunt.FREE)){
                     //si ami
                     List<Utilisateur> friends = userRepository.findFriends(userConnected.getListFriendsId());
                     for(Utilisateur u : friends){
-                        if(friend.getId().equals(u.getId())){
+                        if(user.getId().equals(u.getId())){
                             livre.setEmpruntable(true);
                         }
                     }
-                    //si pending friend
                     List<PendingFriend> listPendingFriends = userConnected.getListPendingFriends();
                     for(PendingFriend pf : listPendingFriends){
-                        if(pf.getEmail().equals(friend.getEmail())){
+                        if(pf.getEmail().equals(user.getEmail())){
                             livre.setPending(true);
                         }
                     }
-
-                    for(Utilisateur u : friends){
-                        if(friend.getId().equals(u.getId())){
-                            livre.setEmpruntable(true);
-                        }
-                    }
                 }
+                // Add book if it matches search criteria (category, title) + set image
                 addBookinlist(result, livre, categorieId, titre);
             }
         }

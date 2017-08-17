@@ -1,22 +1,21 @@
 import React from 'react';
 import { Router, Route, hashHistory } from 'react-router'
 import { render } from 'react-dom';
-import Header from "./components/Header";
-import Home from "./components/Home";
-import MyBooks from "./components/MyBooks";
-import MyLoans from "./components/MyLoans";
-import MyFriends from "./components/MyFriends";
-import MyRequestedFriends from "./components/MyRequestedFriends";
-import MyLendings from "./components/MyLendings";
-import ListBooks from "./components/ListBooks";
-import EditBook from "./components/EditBook";
-import LoanDetail from "./components/LoanDetail";
-import BookDetail from "./components/BookDetail";
-import UserDetail from "./components/UserDetail";
-import Account from "./components/Account";
-import MyHistorizedLendings from "./components/MyHistorizedLendings";
-import MyHistorizedLoans from "./components/MyHistorizedLoans";
-import { Tests } from "./components/Test";
+import Header from "./components/home/Header";
+import Home from "./components/home/Home";
+import MyBooks from "./components/user/MyBooks";
+import MyLoans from "./components/user/MyLoans";
+import MyFriends from "./components/user/MyFriends";
+import MyRequestedFriends from "./components/user/MyRequestedFriends";
+import MyLendings from "./components/user/MyLendings";
+import ListBooks from "./components/book/ListBooks";
+import EditBook from "./components/user/EditBook";
+import LoanDetail from "./components/loan/LoanDetail";
+import BookDetail from "./components/book/BookDetail";
+import UserDetail from "./components/user/UserDetail";
+import Account from "./components/user/Account";
+import MyHistorizedLendings from "./components/user/MyHistorizedLendings";
+import MyHistorizedLoans from "./components/user/MyHistorizedLoans";
 
 class App extends React.Component {
 
@@ -39,7 +38,6 @@ class App extends React.Component {
 					<Route path="/account" component={Account}/>
 					<Route path="/historized-lendings" component={MyHistorizedLendings}/>
 					<Route path="/historized-loans" component={MyHistorizedLoans}/>
-					<Route path="/test" component={Tests}/>
 				</Route>
 			</Router>)
 	}

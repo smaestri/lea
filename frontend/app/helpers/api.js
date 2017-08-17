@@ -332,9 +332,9 @@ var helpers = {
 			});
 	},
 
-	saveAvis: function (avisObj, idAvis, idBook) {
-		if (idAvis) {
-			return axios.put('/api/avis/' + idAvis, {
+	saveAvis: function (avisObj, idBook) {
+		if (avisObj.id) {
+			return axios.put('/api/avis/' + avisObj.id + '/' + idBook, {
 				note: avisObj.note,
 				libelle: avisObj.libelle,
 			}/*, {

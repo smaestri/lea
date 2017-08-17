@@ -128,32 +128,6 @@ public class UserRepositoryImpl implements UserRepository {
             }
         }
         return null;
-
-    }
-
-    @Override
-    public List<Livre> findOtherBooks(List<String> idsToexclude) {
-        Query q = new Query();
-        q.addCriteria(Criteria.where("id").nin(idsToexclude));
-        List<Utilisateur> utilisateurs = mongoTemplate.find(q, Utilisateur.class);
-
-        List<Livre> result = new ArrayList<Livre>();
-
-        for(Utilisateur user : utilisateurs){
-            List<Livre> livres = user.getLivres();
-
-            for(Livre li : livres){
-                li.setPreteur(user.getFullName());
-                li.setEmpruntable(false);
-                li.setUserId(user.getId());
-                li.setMailPreteur(user.getEmail());
-                LivreController.setBookImage(li);
-            }
-
-            result.addAll(livres);
-        }
-        return result;
-
     }
 
     @Override
@@ -179,41 +153,12 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Avis findAvis(String avisId) {
-        Query q = new Query();
-        q.addCriteria(Criteria.where("livres.avis.id").is(new ObjectId(avisId)));
-        Utilisateur user = mongoTemplate.findOne(q, Utilisateur.class);
-        Avis avis = user.getAvis(avisId);
-        return avis;
-    }
-
-    @Override
     public void updateBookStatus(Utilisateur proprietaire, String livreId, StatutEmprunt statut) {
         Query q = new Query();
         q.addCriteria(Criteria.where("id").is(new ObjectId(proprietaire.getId())).and("livres.id").is(new ObjectId(livreId)));
         Update update = new Update();
         update.set("livres.$.statut", statut);
         mongoTemplate.updateFirst(q, update, Utilisateur.class);
-    }
-
-    @Override
-    public void updateAvis(String avisId, Avis avis) {
-        Query q = new Query();
-        q.addCriteria(Criteria.where("livres.avis.id").is(new ObjectId(avisId)));
-        Update update = new Update();
-        update.set("livres.$.avis.0.note", avis.getNote());
-        update.set("livres.$.avis.0.libelle", avis.getLibelle());
-        //update.set("livres.0.avis.0.auteur", avis.getAuteur());
-
-        mongoTemplate.updateFirst(q, update, Utilisateur.class);
-    }
-
-    @Override
-    public void saveAvis(Utilisateur user,String idLivre, Avis newAvis) {
-        Query q = new Query();
-        q.addCriteria(Criteria.where("livres.id").is(new ObjectId(idLivre)));
-        user.getLivre(idLivre).getAvis().add(newAvis);
-        mongoTemplate.save(user);
     }
 
     @Override

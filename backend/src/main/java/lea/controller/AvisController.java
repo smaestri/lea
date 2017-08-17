@@ -14,18 +14,45 @@ public class AvisController extends CommonController {
     public String addAvis(@PathVariable("bookId") String livreId, @RequestBody Avis avis) throws Exception {
         Utilisateur proprietaire = userRepository.findproprietaire(livreId);
         Utilisateur auteurAvis = this.getPrincipal();
-        avis.setAuteur(auteurAvis.getId());
+        Avis newAvis = new Avis();
+        newAvis.setNote(avis.getNote());
+        newAvis.setLibelle(avis.getLibelle());
+        newAvis.setAuteur(auteurAvis.getId());
         avis.setDateavis(new Date());
-        userRepository.saveAvis(proprietaire, livreId, avis);
-        return avis.getId();
+        // retrieve book from user
+        List<Livre> livres = proprietaire.getLivres();
+        Livre bookToSave = null;
+        for(Livre livre : livres){
+            if (livre.getId().equals(livreId)){
+                bookToSave = livre;
+            }
+        }
+        if(bookToSave != null){
+            bookToSave.getAvis().add(newAvis);
+        }
+        userRepository.saveUser(proprietaire);
+        return newAvis.getId();
     }
 
+
     // Editer un avis : PUT
-    @RequestMapping(value = "/api/avis/{avisId}", method = RequestMethod.PUT)
-    public String editAvis(@PathVariable("avisId") String avisId, @RequestBody Avis avis) {
-        avis.setDateavis(new Date());
-        userRepository.updateAvis(avisId, avis);
-        return "OK";
+    @RequestMapping(value = "/api/avis/{avisId}/{bookId}", method = RequestMethod.PUT)
+    public String editAvis(@PathVariable("avisId") String avisId,
+                           @PathVariable("bookId") String bookId,
+                           @RequestBody Avis avis) {
+        //retrieve owner of the book
+        Utilisateur owner = userRepository.findproprietaire(bookId);
+        for(Livre livre : owner.getLivres()){
+            for(Avis oldAvis : livre.getAvis()){
+                if (oldAvis.getId().equals(avisId)){
+                    oldAvis.setLibelle(avis.getLibelle());
+                    oldAvis.setNote(avis.getNote());
+                    oldAvis.setDateavis(new Date());
+                }
+            }
+        }
+        userRepository.saveUser(owner);
+        return avisId;
     }
 
     @RequestMapping(value = "/api/avis/{avisId}", method = RequestMethod.DELETE)

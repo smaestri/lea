@@ -25,6 +25,7 @@ public class AvisController extends CommonController {
         for(Livre livre : livres){
             if (livre.getId().equals(livreId)){
                 bookToSave = livre;
+                break;
             }
         }
         if(bookToSave != null){
@@ -48,6 +49,7 @@ public class AvisController extends CommonController {
                     oldAvis.setLibelle(avis.getLibelle());
                     oldAvis.setNote(avis.getNote());
                     oldAvis.setDateavis(new Date());
+                    break;
                 }
             }
         }

@@ -66,7 +66,7 @@ public class FriendController extends CommonController {
 
     // Creer un ami : POST
     @RequestMapping(value = "/api/ami/new", method = RequestMethod.POST)
-    public void addUser(@RequestBody AmiBean amiBean) throws UnsupportedEncodingException, MessagingException {
+    public String addUser(@RequestBody AmiBean amiBean) throws UnsupportedEncodingException, MessagingException {
         Utilisateur userPrincipal = getPrincipal();
         Utilisateur one = userRepository.findOne(userPrincipal.getId());
 
@@ -78,14 +78,15 @@ public class FriendController extends CommonController {
                     if(pf.getEmail().equals(one.getEmail())){
                         addRealFriendAndDeletePending(one, user);
                         addRealFriendAndDeletePending(user, one);
+                        return "OK";
                     }
                 }
             }
         }
         else{
-            this.addPendingFriend(one, amiBean.getEmail1());
+           return this.addPendingFriend(one, amiBean.getEmail1());
         }
-
+    return "KO";
     }
 
     @RequestMapping(value = "/api/accepterAmi/{friendId}", method = RequestMethod.POST)

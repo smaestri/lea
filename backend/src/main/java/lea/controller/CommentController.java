@@ -26,8 +26,8 @@ public class CommentController extends CommonController {
     @Autowired
     private EmpruntRepository empruntRepository;
 
-    @RequestMapping(value = "/api/comments", method = RequestMethod.GET, produces = "application/json")
-    public List<Commentaire> getEchanges(Model model, @RequestParam(value = "empruntId", required = false) String empruntId) throws ServletException, IOException {
+    @RequestMapping(value = "/api/comments/{empruntId}", method = RequestMethod.GET, produces = "application/json")
+    public List<Commentaire> getEchanges(Model model, @PathVariable(value = "empruntId", required = true) String empruntId) throws ServletException, IOException {
         List<Commentaire> comments = empruntRepository.getCommentaires(empruntId);
         //set user author
         for(Commentaire com : comments){

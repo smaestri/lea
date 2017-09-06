@@ -26,7 +26,7 @@ public class UserController extends CommonController {
 
     //Detail d'un utilisateur ; ses livres et ceux de ses amis
     @RequestMapping(value = "/api/users/{userId}", method = RequestMethod.GET)
-    public List<Livre> userDetail(@PathVariable("userId") String userDetail) throws ServletException, IOException {
+    public Utilisateur userDetail(@PathVariable("userId") String userDetail) throws ServletException, IOException {
         Utilisateur userConnected = getPrincipal();
         Utilisateur friend = userRepository.findOne(userDetail);
         // Check if user friend of mine
@@ -36,7 +36,7 @@ public class UserController extends CommonController {
         if(!found){
              isPending = isInPendingFriend(user, friend.getEmail());
         }
-        List<Livre> result = new ArrayList<Livre>();
+
         List<Livre> listeLivre = friend.getLivres();
         if (!listeLivre.isEmpty()) {
             for (Livre livre : listeLivre) {
@@ -49,18 +49,18 @@ public class UserController extends CommonController {
             }
         }
 
-        result.addAll(listeLivre);
-
         //Check book of friends of friend
         List<Utilisateur> subFriends = userRepository.findFriends(friend.getListFriendsId());
-        for (Utilisateur subFriend: subFriends) {
-            boolean subFriendIsMyFriend = isMyfriend(user.getListFriendsId(), subFriend.getId());
 
+        List<Utilisateur> userFriends = new ArrayList<Utilisateur>();
+        for (Utilisateur subFriend: subFriends) {
             if (!subFriend.getId().equals(userConnected.getId())) {
+                userFriends.add(subFriend);
                 // to know if subfriend has already been added as friend
                 isPending = isInPendingFriend(user, subFriend.getEmail());
-                List<Livre> listeLivre2 = subFriend.getLivres();
-                for (Livre livre : listeLivre2) {
+                List<Livre> subFriendBooks = subFriend.getLivres();
+                boolean subFriendIsMyFriend = isMyfriend(user.getListFriendsId(), subFriend.getId());
+                for (Livre livre : subFriendBooks) {
                     livre.setUserId(subFriend.getId());
                     LivreController.setBookImage(livre);
                     livre.setPreteur(subFriend.getFullName());
@@ -69,10 +69,10 @@ public class UserController extends CommonController {
                     livre.setEmpruntable(subFriendIsMyFriend);
                     livre.setPending(isPending);
                 }
-                result.addAll(listeLivre2);
             }
         }
-        return result;
+        friend.setUserFriends(userFriends);
+        return friend;
     }
 
     // account

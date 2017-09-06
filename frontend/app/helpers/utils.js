@@ -8,4 +8,10 @@ function formatDate(dateToConvert) {
 	return dateStr;
 }
 
+export const loanStatus = {
+	REQUESTED: "REQUESTED",
+	CURRENT: "CURRENT",
+	SENT: "SENT"
+}
+
 export default formatDate

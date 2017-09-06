@@ -18,7 +18,7 @@ public class AvisController extends CommonController {
         newAvis.setNote(avis.getNote());
         newAvis.setLibelle(avis.getLibelle());
         newAvis.setAuteur(auteurAvis.getId());
-        avis.setDateavis(new Date());
+        newAvis.setDateavis(new Date());
         // retrieve book from user
         List<Livre> livres = proprietaire.getLivres();
         Livre bookToSave = null;

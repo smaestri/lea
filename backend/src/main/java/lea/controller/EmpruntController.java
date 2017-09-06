@@ -35,25 +35,34 @@ public class EmpruntController extends CommonController {
     public List<Emprunt> livresHandler() throws ServletException, IOException {
         Utilisateur principal = getPrincipal();
         List<Emprunt> emprunts = empruntRepository.findEmprunts(principal.getId(), true);
-        setEmpruntobjects(emprunts);
+        setListEmpruntobjects(emprunts);
         return emprunts;
+    }
+
+
+    @RequestMapping(value = "/api/prets", method = RequestMethod.GET)
+    public  List<Emprunt> livresHandlerPrets() throws ServletException, IOException {
+        Utilisateur principal = getPrincipal();
+        List<Emprunt> prets = empruntRepository.findPrets(principal.getId(), true);
+        setListEmpruntobjects(prets);
+        return prets;
+    }
+
+    @RequestMapping(value = "/api/emprunts/{empruntId}", method = RequestMethod.GET)
+    public Emprunt empruntDetail(@PathVariable("empruntId") String empruntId) {
+        Emprunt emprunt = empruntRepository.findOne(empruntId);
+        setEmpruntobjects(emprunt);
+        return emprunt;
     }
 
     @RequestMapping(value = "/api/isNewPret", method = RequestMethod.GET)
     public String findNouveauPret() throws ServletException, IOException {
         Utilisateur principal = getPrincipal();
         List<Emprunt> prets = empruntRepository.findPrets(principal.getId(), true);
-        setEmpruntobjects(prets);
+        setListEmpruntobjects(prets);
         return isNewPret(prets)?"1":"0";
     }
 
-    @RequestMapping(value = "/api/prets", method = RequestMethod.GET)
-    public  List<Emprunt> livresHandlerPrets() throws ServletException, IOException {
-        Utilisateur principal = getPrincipal();
-        List<Emprunt> prets = empruntRepository.findPrets(principal.getId(), true);
-        setEmpruntobjects(prets);
-        return prets;
-    }
 
 
 
@@ -190,15 +199,19 @@ public class EmpruntController extends CommonController {
 
     }
 
-    private void setEmpruntobjects(List<Emprunt> listeEmp) {
+    private void setListEmpruntobjects(List<Emprunt> listeEmp) {
         for (Emprunt emp : listeEmp) {
+            setEmpruntobjects(emp);
+        }
+    }
+
+    private void setEmpruntobjects(Emprunt emp) {
             emp.setPreteur(userRepository.findOne(emp.getPreteurId()));
             emp.setEmprunteur(userRepository.findOne(emp.getEmprunteurId()));
             Livre book = userRepository.findBook(emp.getLivreId());
             book.setImage("/webjars/app-react/1.0.0/img/book.png");
             setCommentuser(emp);
             emp.setLivre(book);
-        }
     }
 
     private boolean isNewPret(List<Emprunt> listeEmp) {

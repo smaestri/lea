@@ -27,8 +27,6 @@ public class LivreController extends CommonController {
     @Autowired
     UserRepository userRepository;
 
-
-
     // Recherche generale
     @RequestMapping(value = "/api/searchBook", method = RequestMethod.GET)
     public List<Livre> searchBook(@RequestParam(value = "titreBook", required = false) String titre,

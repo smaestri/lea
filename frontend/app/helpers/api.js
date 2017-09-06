@@ -2,11 +2,6 @@ require('es6-promise').polyfill();
 import axios from 'axios'
 import React from 'react'
 
-// cache for loans, lendings, books
-let _loans = [];
-let _lendings = [];
-let _books = [];
-
 /*
 function getCsrf() {
 	var metas = document.getElementsByTagName('meta');
@@ -36,25 +31,29 @@ export const SVGIcon = React.createClass({
 
 var helpers = {
 	getLoan: function (id) {
-		if (_loans && _loans.length > 0) {
-			return _loans.filter((loan) => loan.id == id)[0]
-		}
+		return axios.get('/api/emprunts/' + id)
+			.then(function (response) {
+				return response.data;
+			})
+			.catch(function (error) {
+				console.log(error);
+			});
 
-		if (_lendings && _lendings.length > 0) {
-			return _lendings.filter((loan) => loan.id == id)[0]
-		}
 	},
 
 	getBook: function (id) {
-		if (_books && _books.length > 0) {
-			return _books.filter((book) => book.id == id)[0]
-		}
+		return axios.get('/api/livres/' + id)
+			.then(function (response) {
+				return response.data;
+			})
+			.catch(function (error) {
+				console.log(error);
+			});
 	},
 
 	getMyBooks: function () {
 		return axios.get('/api/myBooks')
 			.then(function (response) {
-				_books = response.data;
 				return response.data;
 			})
 			.catch(function (error) {
@@ -65,7 +64,6 @@ var helpers = {
 	getAllBooks: function () {
 		return axios.get('/api/searchBook')
 			.then(function (response) {
-				_books = response.data;
 				return response.data;
 			})
 			.catch(function (error) {
@@ -76,8 +74,6 @@ var helpers = {
 	getLoans: () => {
 		return axios.get('/api/emprunts')
 			.then((response) => {
-				_loans = response.data;
-				_lendings = undefined;
 				return response.data;
 			})
 			.catch(function (error) {
@@ -98,8 +94,6 @@ var helpers = {
 	getLendings: function () {
 		return axios.get('/api/prets')
 			.then(function (response) {
-				_loans = undefined;
-				_lendings = response.data;
 				return response.data;
 			})
 			.catch(function (error) {
@@ -116,16 +110,16 @@ var helpers = {
 				console.log(error);
 			});
 	},
-
-	getComments: function () {
-		return axios.get('/api/comments')
-			.then(function (response) {
-				return response.data;
-			})
-			.catch(function (error) {
-				console.log(error);
-			});
-	},
+	//
+	// getComments: function (empruntId) {
+	// 	return axios.get('/api/comments/' + empruntId)
+	// 		.then(function (response) {
+	// 			return response.data;
+	// 		})
+	// 		.catch(function (error) {
+	// 			console.log(error);
+	// 		});
+	// },
 
 	loanBook: function (idBook, intermediaireid) {
 		return axios.post('/api/emprunter', {
@@ -223,7 +217,6 @@ var helpers = {
 	getUserDetail: function (userId) {
 		return axios.get('/api/users/' + userId)
 			.then(function (response) {
-				_books = response.data;
 				return response.data;
 			})
 			.catch(function (error) {

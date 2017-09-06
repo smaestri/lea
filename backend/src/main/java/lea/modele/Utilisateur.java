@@ -212,6 +212,9 @@ public class Utilisateur extends BaseDocumentImpl {
         return userFriends;
     }
 
+    public void setUserFriends(List<Utilisateur> userFriends) {
+        this.userFriends = userFriends;
+    }
 
     //TODO  get direct child with adequate mongoDb query
     public Avis getAvis(String avisId) {

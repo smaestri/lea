@@ -80,7 +80,7 @@ class EditBook extends React.Component {
 			<div className="container">
 				{this.state.book && <div className="contact-form">
 					<h2>Veuillez indiquer les informations du livre</h2>
-					<form horizontal onSubmit={this.handleSubmit}>
+					<form horizontal>
 						<label for="titreBook">titre:</label>
 						<input type="text" name="titreBook" value={this.state.book.titreBook}
 						       onChange={this.handleChange}/>
@@ -101,13 +101,13 @@ class EditBook extends React.Component {
 
 						<label for="note">Noter ce livre</label>
 						{this.state.book && <AddAvis
+							showInput={false}
 							avis={this.state.auteurAvis || null}
 							updateAvis={this.handleAvisChange}
-							allowModification={false}
 					  />}
 
 						<button onClick={this.returnToBooks}>Retour</button>
-						<button type="submit">Valider</button>
+						<button type="submit" onClick={this.onSubmit}>Valider</button>
 					</form>
 				</div>}
 			</div>

@@ -10,7 +10,7 @@ class AddAvis extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = { avis: {}, showInput: false};
+		this.state = { avis: this.props.avis || {}, showInput: this.props.showInput || false};
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleRating = this.handleRating.bind(this);
 		this.handleMessageChange = this.handleMessageChange.bind(this);
@@ -25,7 +25,11 @@ class AddAvis extends React.Component {
 	handleMessageChange(event) {
 		const newAvis = this.state.avis || {};
 		newAvis["libelle"] = event.target.value;
-		this.setState({ avis: newAvis });
+		if(this.props.updateAvis){
+			this.props.updateAvis(newAvis)
+		} else {
+			this.setState({ avis: newAvis });
+		}
 	}
 
 	handleSubmit(event) {
@@ -43,7 +47,7 @@ class AddAvis extends React.Component {
 	render() {
 		return (
 				<div className="add-avis-container">
-					<button  onClick={this.toggleInput.bind(this)}>Ajouter un avis</button>
+					<button onClick={this.toggleInput.bind(this)}>Ajouter un avis</button>
 					{this.state.showInput && <div>
 						<Rating empty={<SVGIcon href='#icon-star-empty' className='icon-rating'/>}
 										full={<SVGIcon href='#icon-star-full' className='icon-rating'/>}
@@ -52,8 +56,10 @@ class AddAvis extends React.Component {
 						<FormControl
 							 name="libelle"
 						 	 componentClass="textarea"
+							 value={(this.state.avis && this.state.avis.libelle) || ""}
 	             onChange={this.handleMessageChange} />
-						<Button onClick={this.handleSubmit} type="submit" bsStyle="primary" bsSize="small">Valider</Button>
+						{!this.props.updateAvis &&
+							 <Button onClick={this.handleSubmit} type="submit" bsStyle="primary" bsSize="small">Valider</Button> }
 					</div>}
 				</div>
 		)

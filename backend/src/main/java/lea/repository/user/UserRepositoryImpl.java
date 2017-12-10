@@ -50,7 +50,7 @@ public class UserRepositoryImpl implements UserRepository {
         Query q = new Query();
         q.addCriteria(Criteria.where("id").is(new ObjectId(userId)).and("livres.id").is(new ObjectId(bookId)));
         Update update = new Update();
-        update.pull("livres", Query.query(Criteria.where("id").is(new ObjectId(bookId))));
+        update.set("livres.$.deleted", true);
         mongoTemplate.updateFirst(q, update, Utilisateur.class);
     }
 

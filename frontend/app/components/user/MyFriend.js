@@ -1,16 +1,12 @@
 import React from 'react'
 import { Link } from 'react-router'
 import { Button } from 'react-bootstrap'
+import style from './MyFriend.scss'
 
 class MyFriend extends React.Component {
-
-	constructor(props) {
-		super(props);
-	}
-
 	render() {
 		return (
-			<div className="friend">
+			<div className="container-myfriend">
 				<div className="imageUser">
 					<Link to={'user-detail/' + this.props.friend.id + '/myFriend'}>
 						<img src={this.props.friend.avatar}/>
@@ -29,5 +25,4 @@ class MyFriend extends React.Component {
 		)
 	}
 }
-
 export default MyFriend

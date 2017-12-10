@@ -51,18 +51,14 @@ public class LoginController extends CommonController {
 
         Utilisateur userSpring = getPrincipal();
 
-
-
-//        if(userSpring == null){
-//            return "redirect:/home";
-//        }
+        //        if(userSpring == null){
+        //            return "redirect:/home";
+        //        }
 
         initGlobalvariables(model, false);
 
         return "index";
     }
-
-
 
     @RequestMapping("/mentions")
     public String mentionslegales() {
@@ -97,8 +93,6 @@ public class LoginController extends CommonController {
         return "redirect:/login?logout";
     }
 
-
-
     // Creer un user : GET
     @RequestMapping(value = "/users/new", method = RequestMethod.GET)
     public String displayFormUser(Model model) {
@@ -129,7 +123,6 @@ public class LoginController extends CommonController {
     public String camarche(Model model) {
         return "camarche";
     }
-
 
     // Editer user : POSt
     @RequestMapping(value = "/users/edit", method = RequestMethod.POST)
@@ -187,6 +180,18 @@ public class LoginController extends CommonController {
         return "redirect:/";
     }
 
+    @RequestMapping("/getPwdEncoded")
+    public String getPassEncoded() {
+        int i = 0;
+        // while (i < 10) {
+        String password = "toto";
+        String hashedPassword = passwordEncoder.encode(password);
+        System.out.println(hashedPassword);
+        i++;
+        // }
+        return "redirect:/";
+    }
+
     private Utilisateur initGlobalvariables(Model model, boolean shouldInitInputSearch) {
         Utilisateur userSpring = getPrincipal();
         if (userSpring != null && userSpring.getEmail() != null) {
@@ -209,10 +214,11 @@ public class LoginController extends CommonController {
         return null;
     }
 
-
     private void authenticateManually(Utilisateur user) {
-        CustomUserDetailsService.UserPrincipal principal = new CustomUserDetailsService.UserPrincipal(user.getFirstName(), user.getPassword(), CustomUserDetailsService.getGrantedAuthorities(user), user);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
+        CustomUserDetailsService.UserPrincipal principal = new CustomUserDetailsService.UserPrincipal(
+                user.getFirstName(), user.getPassword(), CustomUserDetailsService.getGrantedAuthorities(user), user);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, null,
+                principal.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 

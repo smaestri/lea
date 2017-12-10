@@ -47,21 +47,20 @@ class MyBooks extends React.Component {
 	render() {
 		const books = this.state.books.map(book => {
 			return <Book
-			 					key={book.id}
-								id={book.id}
-								book={book}
-								handleDelete={this.handleDelete}
-			          previousPage="myBooks"
- 								userId={this.props.userId}
-							/>
+						key={book.id}
+						id={book.id}
+						book={book}
+						handleDelete={this.handleDelete}
+						previousPage="myBooks"
+						userId={this.props.userId}
+					/>
 		});
 		return (
 			<div className="container">
 				<h1>Ma bibiliothèque</h1>
 				{books.length == 0 && <span>Vous n'avez pas de livres.</span>}
 				{books.length > 0 && <div className="book-container">{books}</div>}
-				<Button bsStyle="primary" bsSize="small" onClick={this.addBook}>Ajouter
-					livre</Button>
+				<Button bsStyle="primary" bsSize="small" onClick={this.addBook}>Ajouter livre</Button>
 				<Modal show={this.state.showModal} onHide={this.close}>
 					<Modal.Header closeButton>
 						<Modal.Title>Livre en cours d'emprunt</Modal.Title>

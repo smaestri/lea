@@ -46,7 +46,10 @@ public class LivreController extends CommonController {
                 continue;
             }
 
-            for (Livre livre : user.getLivres()) {
+            List<Livre> livres = user.getLivres();
+            this.removeDeletedBooks(livres);
+
+            for (Livre livre :livres) {
                 livre.setUserId(user.getId());
                 livre.setPreteur(user.getFullName());
                 livre.setMailPreteur(user.getEmail());
@@ -134,6 +137,7 @@ public class LivreController extends CommonController {
         Utilisateur userDetail = getPrincipal();
         Utilisateur user = this.userRepository.findOne(userDetail.getId());
         List<Livre> livres = user.getLivres();
+        this.removeDeletedBooks(livres);
         if (livres != null && livres.size() > 0) {
             for (Livre livre : livres) {
                 this.setBookImage(livre);
@@ -184,10 +188,10 @@ public class LivreController extends CommonController {
             }
         }
 
-        if (addLivre && livre.getStatut() == StatutEmprunt.FREE) {
+        //if (addLivre && livre.getStatut() == StatutEmprunt.FREE) {
             setBookImage(livre);
             result.add(livre);
-        }
+        //}
     }
 
     public static void setBookImage(Livre livre) {

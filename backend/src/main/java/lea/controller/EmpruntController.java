@@ -63,9 +63,6 @@ public class EmpruntController extends CommonController {
         return isNewPret(prets)?"1":"0";
     }
 
-
-
-
     @RequestMapping(value = "/api/emprunter", method = RequestMethod.POST)
     public String processNewEmpruntForm(@RequestBody EmpruntBean empruntBean) throws ParseException {
         Utilisateur principal = getPrincipal();
@@ -184,6 +181,29 @@ public class EmpruntController extends CommonController {
         String object = "Le preteur a clos l'emprunt.";
         notificationService.sendNotificaition(emprunteur.getEmail(), object, content);
         return "OK";
+    }
+
+    @RequestMapping(value = "/api/historized-loans", method = RequestMethod.GET)
+    public List<Emprunt> empruntsHistories() throws ServletException, IOException {
+        Utilisateur userConnected = getPrincipal();
+        List<Emprunt> emprunts = empruntRepository.findEmprunts(userConnected.getId(), false);
+
+        for (Emprunt emp : emprunts) {
+            this.setEmpruntobjects(emp);
+        }
+        return emprunts;
+    }
+
+    @RequestMapping(value = "/api/historized-lendings", method = RequestMethod.GET)
+    public List<Emprunt> pretHistories() throws ServletException, IOException {
+        Utilisateur userConnected = getPrincipal();
+        List<Emprunt> prets = empruntRepository.findPrets(userConnected.getId(), false);
+
+        for (Emprunt pret : prets) {
+            this.setEmpruntobjects(pret);
+        }
+
+        return prets;
     }
 
     //TODO PERF

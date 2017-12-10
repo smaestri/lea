@@ -51,9 +51,11 @@ class EditBook extends React.Component {
 			// then save avis if state modified
 			if(this.state.avis){
 				helpers.saveAvis(this.state.avis, book.id).then( (newAvisId) => {
+					this.props.router.push('/my-books')
 				});
-			};
-			this.props.router.push('/my-books')
+			} else {
+				this.props.router.push('/my-books')
+			}
 		});
 	}
 
@@ -70,8 +72,6 @@ class EditBook extends React.Component {
 	}
 
 	render() {
-		console.log('render editbook')
-		console.log(this.state.auteurAvis)
 		const catReact = this.state.categories && this.state.categories.map(category => {
 			return <option value={category.id}>{category.name}</option>
 		});
@@ -100,20 +100,18 @@ class EditBook extends React.Component {
 						</select>
 
 						<label for="note">Noter ce livre</label>
-						{this.state.book && <AddAvis
-							showInput={false}
+						<AddAvis
+							showInput={true}
 							avis={this.state.auteurAvis || null}
 							updateAvis={this.handleAvisChange}
-					  />}
-
+					  />
 						<button onClick={this.returnToBooks}>Retour</button>
-						<button type="submit" onClick={this.onSubmit}>Valider</button>
+						<button type="submit" onClick={this.handleSubmit}>Valider</button>
 					</form>
 				</div>}
 			</div>
 		)
 	}
-
 }
 
 export default withRouter(EditBook);

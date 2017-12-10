@@ -2,6 +2,7 @@ import React from 'react'
 import { FormControl } from 'react-bootstrap'
 import { Button } from 'react-bootstrap'
 import helpers from '../../helpers/api'
+import style from './AddComment'
 
 class AddComment extends React.Component {
 

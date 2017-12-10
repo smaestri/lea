@@ -29,6 +29,9 @@ public class UserController extends CommonController {
     public Utilisateur userDetail(@PathVariable("userId") String userDetail) throws ServletException, IOException {
         Utilisateur userConnected = getPrincipal();
         Utilisateur friend = userRepository.findOne(userDetail);
+
+         this.removeDeletedBooks(friend.getLivres());
+
         // Check if user friend of mine
         Utilisateur user = userRepository.findOne(userConnected.getId());
         boolean found = isMyfriend(user.getListFriendsId(), friend.getId());
@@ -59,6 +62,7 @@ public class UserController extends CommonController {
                 // to know if subfriend has already been added as friend
                 isPending = isInPendingFriend(user, subFriend.getEmail());
                 List<Livre> subFriendBooks = subFriend.getLivres();
+                this.removeDeletedBooks(subFriendBooks);
                 boolean subFriendIsMyFriend = isMyfriend(user.getListFriendsId(), subFriend.getId());
                 for (Livre livre : subFriendBooks) {
                     livre.setUserId(subFriend.getId());
@@ -75,34 +79,13 @@ public class UserController extends CommonController {
         return friend;
     }
 
+
     // account
     @RequestMapping(value = "/api/userInfo/{userId}", method = RequestMethod.GET)
     public Utilisateur getUserInfo(@PathVariable("userId") String userId) throws ServletException, IOException {
         Utilisateur user = userRepository.findOne(userId);
+        removeDeletedBooks(user.getLivres());
         return user;
-    }
-
-    @RequestMapping(value = "/api/historized-loans", method = RequestMethod.GET)
-    public List<Emprunt> empruntsHistories() throws ServletException, IOException {
-        Utilisateur userConnected = getPrincipal();
-        List<Emprunt> emprunts = empruntRepository.findEmprunts(userConnected.getId(), false);
-
-        for (Emprunt emp : emprunts) {
-            setEmpruntOjects(emp);
-        }
-        return emprunts;
-    }
-
-    @RequestMapping(value = "/api/historized-lendings", method = RequestMethod.GET)
-    public List<Emprunt> pretHistories() throws ServletException, IOException {
-        Utilisateur userConnected = getPrincipal();
-        List<Emprunt> prets = empruntRepository.findPrets(userConnected.getId(), false);
-
-        for (Emprunt pret : prets) {
-            setEmpruntOjects(pret);
-        }
-
-        return prets;
     }
 
     // account
@@ -115,6 +98,21 @@ public class UserController extends CommonController {
 
     @RequestMapping(value = "/api/saveEditUser", method = RequestMethod.POST)
     public String saveUser(@RequestBody UserBean user) throws ServletException, IOException {
+
+        if(user.getFirstName().length() < 3){
+            return "firstNameLength";
+        }
+
+        if(user.getLastName().length() < 3){
+            return "lastNameLength";
+        }
+
+        if(user.getPassword().length() < 6){
+            return "passwordLength";
+        }
+        if(!user.getPassword().equals(user.getConfirmPassword())){
+            return "passwordNotMatch";
+        }
         Utilisateur userConnected = getPrincipal();
         Utilisateur userDetail = userRepository.findOne(userConnected.getId());
         userDetail.setLastName(user.getLastName());
@@ -135,13 +133,23 @@ public class UserController extends CommonController {
         return "0";
     }
 
-    private void setEmpruntOjects(Emprunt emp){
-        emp.setPreteur(userRepository.findOne(emp.getPreteurId()));
-        emp.setEmprunteur(userRepository.findOne(emp.getEmprunteurId()));
-        Livre book = userRepository.findBook(emp.getLivreId());
-        LivreController.setBookImage(book);
-        emp.setLivre(book);
-    }
+    // reset pwd
+    // @RequestMapping(value = "/user/resetPassword", method = RequestMethod.POST)
+    // @ResponseBody
+    // public GenericResponse resetPassword(HttpServletRequest request, @RequestParam("email") String userEmail) {
+    // User user = userService.findUserByEmail(userEmail);
+    // if (user == null) {
+    // throw new UserNotFoundException();
+    // }
+    // String token = UUID.randomUUID().toString();
+    // userService.createPasswordResetTokenForUser(user, token);
+    // mailSender.send(constructResetTokenEmail(getAppUrl(request), 
+    // request.getLocale(), token, user));
+    // return new GenericResponse(
+    // messages.getMessage("message.resetPasswordEmail", null, 
+    // request.getLocale()));
+    // }
+
 
     private boolean isInPendingFriend(Utilisateur user, String mail){
         List<PendingFriend> listPendingFriends = user.getListPendingFriends();

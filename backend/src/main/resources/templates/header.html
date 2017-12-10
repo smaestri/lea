@@ -1,27 +1,26 @@
 <html xmlns:th="http://www.thymeleaf.org">
-<div class="navbar navbar-default" th:fragment="contentA">
-    <header id="header" class="container">
-        <div id="header-inner"  class="sixteen columns over">
-            <div id="masthead"  class="one-third column alpha">
-                <h1 id="site-title"  class="remove-bottom">
-                   <a href="/"><img src="/webjars/app-react/1.0.0/img/logo.png" /></a></h1>
-            </div>
-            <div class="container-search">
-                <div class="top-header">
-                    <div class="content-search">
-                    </div>
-                    <div class="menu-user">
-                        <div class="dropdown">
-                            <div class="top-menu">
-                                <a href="/login">Connexion</a>
-                                <a href="/users/new">Inscription</a>
-                            </div>
-                        </div>
-                    </div>
+<div th:fragment="contentA">
+    <header>
+        <nav class="navbar navbar-inverse">
+            <div class="container">
+                <div class="navbar-header">
+                    <a href="/" class="navbar-brand">Livres entre amis</a>
                 </div>
-
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li role="presentation" class="">
+                                <a href="/login" role="menuitem" tabindex="-1">Se connecter</a>
+                            </li>
+                            <li role="presentation" class="">
+                                <a href="/users/new" role="menuitem" tabindex="-1">S'inscrire</a>
+                            </li>
+                        </ul>
+                    </ul>
+                </div>
             </div>
-        </div>
+        </nav>
     </header>
 </div>
+
 </html>

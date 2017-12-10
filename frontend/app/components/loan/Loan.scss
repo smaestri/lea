@@ -1,0 +1,38 @@
+.loan-container {
+  display: flex;
+  flex-wrap: wrap;
+
+  .loan {
+    display: flex;
+    align-items: center;
+ 
+    .loan-image {
+      padding: 5px;
+    }
+
+    .loan-main {
+      width: 450px;
+      .loan-header {
+       
+      }
+      .loan-details {
+        margin-right: 15px;
+      }
+    }
+
+    .loan-buttons {
+      button {
+        margin-right: 5px;
+      }
+    }
+
+    .btn[disabled] {
+      background: url("/assets/img/spinner.svg");
+      background-repeat: no-repeat;
+      background-position: center;
+      color: black;
+    }
+
+  }
+
+}

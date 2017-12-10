@@ -10,7 +10,6 @@ import MyRequestedFriends from "./components/user/MyRequestedFriends";
 import MyLendings from "./components/user/MyLendings";
 import ListBooks from "./components/book/ListBooks";
 import EditBook from "./components/user/EditBook";
-import LoanDetail from "./components/loan/LoanDetail";
 import BookDetail from "./components/book/BookDetail";
 import UserDetail from "./components/user/UserDetail";
 import Account from "./components/user/Account";
@@ -28,7 +27,6 @@ class App extends React.Component {
 					<Route path="/edit-book" component={EditBook}/>
 					<Route path="/edit-book/:bookId" component={EditBook}/>
 					<Route path="/my-loans" component={MyLoans}/>
-					<Route path="/loan-detail/:loanId/:isLending" component={LoanDetail}/>
 					<Route path="/book-detail/:bookId/:previousPage" component={BookDetail}/>
 					<Route path="/list-book" component={ListBooks}/>
 					<Route path="/my-lendings" component={MyLendings}/>

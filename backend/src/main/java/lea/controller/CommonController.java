@@ -1,5 +1,6 @@
 package lea.controller;
 
+import lea.modele.Livre;
 import lea.modele.Utilisateur;
 import lea.repository.categorie.CategorieRepository;
 import lea.repository.emprunt.EmpruntRepository;
@@ -7,6 +8,9 @@ import lea.repository.user.UserRepository;
 import lea.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by sylvain on 10/01/16.
@@ -35,5 +39,17 @@ public class CommonController {
             user = ((CustomUserDetailsService.UserPrincipal) principal).getUser();
         }
         return user;
+    }
+
+    void removeDeletedBooks(List<Livre> livres){
+        // remove book deleted
+        Iterator<Livre> i = livres.iterator();
+        while (i.hasNext()) {
+            Livre l = i.next(); // must be called before you can call i.remove()
+            // Do something
+            if(l.isDeleted()){
+                i.remove();
+            }
+        }
     }
 }

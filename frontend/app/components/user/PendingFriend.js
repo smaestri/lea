@@ -2,6 +2,7 @@ import React from 'react'
 import { Button } from 'react-bootstrap'
 import { Link } from 'react-router'
 import formatDate from '../../helpers/utils'
+import style from './PendingFriend.scss'
 
 class PendingFriend extends React.Component {
 
@@ -12,7 +13,7 @@ class PendingFriend extends React.Component {
 
 	render() {
 		return (
-			<div className="friend">
+			<div className="container-pending-friend">
 				<div className="imageUser">
 					<img src="/webjars/app-react/1.0.0/img/add-friend.png"/>
 				</div>

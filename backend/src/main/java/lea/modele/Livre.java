@@ -31,6 +31,8 @@ public class Livre extends BaseDocumentImpl {
 
     private String isbn;
 
+    private boolean deleted;
+
     @Transient
     private boolean isPending;
 
@@ -181,6 +183,14 @@ public class Livre extends BaseDocumentImpl {
 
     public void setPending(boolean pending) {
         isPending = pending;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     @Override

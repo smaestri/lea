@@ -6,7 +6,6 @@ import AddFriend from './AddFriend'
 import MyFriend from './MyFriend'
 import PendingFriend from './PendingFriend'
 
-
 class MyFriends extends React.Component {
 
 	constructor(props) {
@@ -43,7 +42,6 @@ class MyFriends extends React.Component {
 
 	deleteFriend(id) {
 		helpers.deleteFriend(id).then((result) => {
-			//refresh
 			if (result == '0') {
 				this.setState({ showModal: true })
 			}
@@ -54,11 +52,7 @@ class MyFriends extends React.Component {
 	}
 
 	deletePendingFriend(id) {
-
-		//check ig this friend has loan or lending with me
-
 		helpers.deletePendingFriend(id).then(() => {
-			//refresh
 			this.componentDidMount();
 		});
 	}
@@ -83,7 +77,7 @@ class MyFriends extends React.Component {
 		});
 
 		return (
-			<div className="container">
+			<div className="container-myfriends">
 				<h2>Mes amis actifs</h2>
 				{friends.length == 0 && <span>Vous n'avez pas d'amis.</span>}
 				{friends.length > 0 && <div className="friend-container">{friends}</div>}

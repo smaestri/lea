@@ -2,12 +2,12 @@ import React from 'react'
 import { FormControl } from 'react-bootstrap'
 import { Button } from 'react-bootstrap'
 import formatDate from '../../helpers/utils'
+import style from './Comment.scss'
 
 class Comment extends React.Component {
 
 	constructor(props) {
 		super(props);
-		//this.state = {message: this.props.comment.message };
 		this.handleChange = this.handleChange.bind(this);
 	}
 	handleChange(event){
@@ -18,17 +18,14 @@ class Comment extends React.Component {
 		let dateMessage = formatDate(this.props.comment.dateMessage);
 		return (
 			<li>
-				<div className="comment-container">
-				</div>
-				<div>
+				<div className='comment-container'>
 					{this.props.comment.editMode &&
 						 <FormControl
-								name="message"
-								componentClass="textarea"
-                onChange={this.handleChange}
-                value={this.props.comment.message}/>}
-					{!this.props.comment.editMode &&
-						 <span className="txt-comment">{this.props.comment.message}</span>}
+							name="message"
+							componentClass="textarea"
+							onChange={this.handleChange}
+                			value={this.props.comment.message}/>}
+					{!this.props.comment.editMode && <span className="txt-comment">{this.props.comment.message}</span>}
 				</div>
 			</li>
 		)

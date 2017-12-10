@@ -1,0 +1,30 @@
+.home-container {
+ 
+  .container-title {
+    display: flex;
+
+    .title-image {
+
+    }
+
+    .title-txt {
+      
+    }
+
+  }
+
+  .container-marche {
+    width: 100%;
+    display: flex;
+    .step {
+      flex: 1
+    }
+  }
+
+  .container-actu {
+    display: flex;
+    width: 100%
+  }
+
+
+}

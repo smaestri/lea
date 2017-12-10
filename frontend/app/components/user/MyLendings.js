@@ -1,6 +1,7 @@
 import React from 'react';
 import Loan from '../loan/Loan'
 import helpers from '../../helpers/api'
+import style from './MyLoans.scss'
 
 class MyLendings extends React.Component {
 
@@ -26,19 +27,19 @@ class MyLendings extends React.Component {
 	render() {
 		const lendings = this.state.lendings.map(lending => {
 			return <Loan
-			 				  key={lending.id}
-								id={lending.id}
-								loan={lending}
-								isLending="true"
-								isHistory={false}
-			          reloadEmprunt={this.loadPret}
-								onRefreshCount={this.props.onRefreshCount}
-								userId={this.props.userId}
-							/>
+						key={lending.id}
+						id={lending.id}
+						loan={lending}
+						isLending="true"
+						isHistory={false}
+						reloadEmprunt={this.loadPret}
+						onRefreshCount={this.props.onRefreshCount}
+						userId={this.props.userId}
+					/>
 		});
 
 		return (
-			<div className="container">
+			<div className="container-loan">
 				<h1>Mes prêts</h1>
 				{lendings.length == 0 && <span>Vous n'avez pas de prêts en cours.</span>}
 				{lendings.length > 0 && <div className="loan-container">{lendings}</div>}

@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import helpers from '../../helpers/api'
 import formatDate from '../../helpers/utils'
 import { SVGIcon } from '../../helpers/api'
+import style from './Avis.scss'
 
 class Avis extends React.Component {
 
@@ -12,7 +13,6 @@ class Avis extends React.Component {
 		this.state = { avis: {} };
 	}
 
-	// get auteur
 	componentDidMount() {
 		helpers.getUserInfo(this.props.avis.auteur).then((user) => {
 			let avis = this.props.avis;
@@ -24,25 +24,28 @@ class Avis extends React.Component {
 	render() {
 		let dateAvis = formatDate(this.state.avis.dateavis);
 		return (
-			<div>
-				<div className="title-rating">
-					<div className="rating-title">
-						<Link className="title-livre"
-						      to={'/book-detail/'}>{this.state.avis.livre}</Link>
+			<div className='container-avis'>
+				<div className="avis-title">
+					<div className="title-livre">
+						<span>{this.state.avis.livre}</span>
+					</div>
+					<div>
 						<img src={this.state.avis.image}/>
 					</div>
-					<div className="rating-date">Ajouté le <span
-						className="bolded">{dateAvis}</span> par <span
-						className="bolded">{this.state.avis.auteur}</span> :
-					</div>
-					<div className="rating-note">
+				</div>
+				<div className='avis-infos'>
+					<div>Ajouté le <b>{dateAvis}</b> par <b>{this.state.avis.auteur}</b> :</div>
+					<div>
 						<Rating empty={<SVGIcon href='#icon-star-empty' className='icon-rating'/>}
-						        full={<SVGIcon href='#icon-star-full' className='icon-rating'/>}
-						        readonly={true}
-						        initialRate={this.state.avis.note}/>
+								full={<SVGIcon href='#icon-star-full' className='icon-rating'/>}
+								readonly={true}
+								initialRate={this.state.avis.note}/>
+					</div>
+					<div>
+						<blockquote>{this.state.avis.libelle}</blockquote>
 					</div>
 				</div>
-				<blockquote>{this.state.avis.libelle}</blockquote>
+				
 			</div>)
 
 	}

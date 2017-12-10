@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router';
+import style from './Notification.scss'
 
 class Notification extends React.Component {
 	constructor(props) {
@@ -12,11 +13,9 @@ class Notification extends React.Component {
 	}
 
 	render() {
-
-		//nouvel ami
 		let requestFriends = "";
 		if (this.props.requestedFriends.length > 0) {
-			requestFriends = <div className="alert alert-warning" onClick={this.refresh}>
+			requestFriends = <div onClick={this.refresh}>
 				<h6>Nouvelle demande d'amis!</h6>
 				<p><Link to={'/my-requested-friends'}>Vous avez un ou de nouveaux amis!</Link></p>
 			</div>
@@ -27,7 +26,7 @@ class Notification extends React.Component {
 				{requestFriends}
 
 				{this.props.isNewPret && (
-					<div className="alert alert-warning" onClick={this.refresh}>
+					<div onClick={this.refresh}>
 						<h6>Nouveau prêt</h6>
 						<p><Link to={'/my-lendings'}>Vous avez une nouvelle demande de prêt!</Link>
 						</p>

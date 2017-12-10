@@ -1,6 +1,8 @@
 import React from 'react';
-import { withRouter } from 'react-router';
+import { withRouter } from 'react-router'
+import { Navbar, FormGroup, FormControl, Button } from 'react-bootstrap'
 import helpers from '../../helpers/api'
+import style from './SearchBar.scss'
 
 class SearchBar extends React.Component {
 
@@ -15,11 +17,13 @@ class SearchBar extends React.Component {
 
 	render() {
 		return (
-			<div className="searchbar-container">
-				<input className="search-bar" type="text"
-				       placeholder="Indiquez le titre d'un livre, auteur, etc à emprunter"/>
-				<button onClick={this.searchBook}>Rechercher</button>
-			</div>
+			<Navbar.Form pullLeft>
+				<FormGroup>
+					<FormControl type="text" placeholder="Indiquez le titre d'un livre, auteur, etc à emprunter" />
+				</FormGroup>
+				{' '}
+				<Button type="submit" onClick={this.searchBook}>Rechercher</Button>
+			</Navbar.Form>
 		)
 	}
 }

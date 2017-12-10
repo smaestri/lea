@@ -1,0 +1,44 @@
+.icon-rating {
+    height: 22px;
+    width: 22px;
+}
+
+.container-login{
+    display: flex;
+    justify-content: center;
+}
+
+.container-login .container-remember-forgot {
+    display: flex;
+    justify-content: space-between;
+}
+
+.container-adduser{
+    display: flex;
+    justify-content: center;
+}
+
+.container-form-adduser{
+    width: 500px;
+}
+
+.container-contact {
+    display: flex;
+}
+
+.container-camarche {
+    display: flex;
+}
+
+.container-faq {
+    display: flex;
+}
+
+.container-info {
+    display: flex;
+}
+
+.input-group-addon {
+    min-width:50px;
+    text-align:left;
+}

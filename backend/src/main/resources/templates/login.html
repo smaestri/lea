@@ -1,82 +1,55 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="utf-8" />
-    <title>Livres entre amis - Connexion</title>
-    <meta name="description" content="Livres entre amis partage emprunt de vos anciens livres entre amis" />
-    <meta name="author" content="Sylvain Maestri" />
-
-    <!--[if lt IE 9]>
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
-    <!-- Mobile Specific Metas
-      ================================================== -->
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-
-    <!-- CSS
-      ================================================== -->
-    <link rel="stylesheet" href="webjars/app-react/1.0.0/stylesheets/base.css" />
-    <link rel="stylesheet" href="webjars/app-react/1.0.0/stylesheets/skeleton.css" />
-    <link rel="stylesheet" href="webjars/app-react/1.0.0/stylesheets/layout.css" />
-
-    <!-- prettyPhoto plugin -->
-    <link rel="stylesheet" href="webjars/app-react/1.0.0/javascripts/prettyPhoto/css/prettyPhoto.css" type="text/css" media="screen" />
-
-    <!-- FlexSlider plugin -->
-    <link rel="stylesheet" href="webjars/app-react/1.0.0/javascripts/flexslider/flexslider.css" type="text/css" media="screen" />
-
-
-    <!-- Favicons
-    ================================================== -->
-    <link rel="shortcut icon" href="webjars/app-react/1.0.0/images/favicon.ico" />
-    <link rel="apple-touch-icon" href="webjars/app-react/1.0.0/images/apple-touch-icon.png" />
-    <link rel="apple-touch-icon" sizes="72x72" href="webjars/app-react/1.0.0/images/apple-touch-icon-72x72.png" />
-    <link rel="apple-touch-icon" sizes="114x114" href="webjars/app-react/1.0.0/images/apple-touch-icon-114x114.png" />
-
-    <!-- Fonts
-    ================================================== -->
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css' />
-    <link href='http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css' />
-
-
-    <!-- Modernizr -->
-    <script type="text/javascript" src="webjars/app-react/1.0.0/javascripts/modernizr.js"></script>
-
-    <!--[if IE 7]>
-    <link rel="stylesheet" href="webjars/app-react/1.0.0/stylesheets/ie7.css" />
-    <![endif]-->
-
-</head>
-<body class="skin-red bkg-smoky">
-<div id="app" class="wrap">
-    <div th:replace="header:: contentA" />
-    <div class="container">
-        <h2>Connexion</h2>
-        <div th:if="${param.error}" class="form-error">
-            E-mail ou mot de passe incorrect
-        </div>
-        <div th:if="${param.logout}">
-            <b>Vous avez été déconnecté</b>
-        </div>
-        <div class="centerelem">
-            <div class="contact-form">
+    <head>
+        <meta charset="utf-8" />
+        <title>Livres entre amis - Connexion</title>
+        <meta name="description" content="Livres entre amis partage emprunt de vos anciens livres entre amis" />
+        <meta name="author" content="Sylvain Maestri" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="webjars/app-react/1.0.0/css/common.css" />
+    </head>
+    <body>
+        <div th:replace="header:: contentA" />
+        <div class="container-login">
+            <div class="container-form">
+                <h2>Connexion</h2>
+                <div th:if="${param.error}" class="form-error">
+                    E-mail ou mot de passe incorrect
+                </div>
+                <div th:if="${param.logout}">
+                    <b>Vous avez été déconnecté</b>
+                </div>
                 <form th:action="@{/login}" method="post">
-                    <label >Email</label>
-                    <input type="text" name="username" placeholder="Votre e-mail" class="form-control"/>
-                    <label class="col-sm-3 control-label">Password</label>
-                    <input type="password" name="password" placeholder="Password" class="form-control"/>
-                    <div class="centerelem">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">@</span>
+                            <input type="text" name="username" placeholder="Votre e-mail" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                            <input type="password" name="password" placeholder="Password" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group text-center">
                         <button type="submit" class="btn btn-primary">Se connecter</button>
                     </div>
-                    Remember Me:
-                    <div><input type="checkbox" name="remember-me" /></div>
-                    <a href="/"><button type="button" class="btn btn-primary">Retour</button></a>
+                    <div class="container-remember-forgot">
+                        <div>Remember Me: <input type="checkbox" name="remember-me" /></div>
+                        <div>
+                            <div><a href="/resetPwd">Mot de passe oublié?</a></div>
+                        </div>
+                    </div>
+                    <div class="form-group text-center">
+                        <a href="/users/new"><button class="btn btn-primary">S'inscrire</button></a>
+                    </div>
                 </form>
             </div>
         </div>
-    </div>
-</div>
-<nav th:replace="footer:: contentA" />
-</body>
+        <a href="/"><button type="button" class="btn btn-primary">Retour</button></a>
+        <nav th:replace="footer:: contentA" />
+    </body>
 </html>

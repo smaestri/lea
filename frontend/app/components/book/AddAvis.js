@@ -40,14 +40,19 @@ class AddAvis extends React.Component {
 		});
 	}
 
-	toggleInput(){
+	toggleInput(event){
+		event.preventDefault();
 		this.setState({showInput: !this.state.showInput})
+		if(this.props.updateAvis && !this.state.showInput){
+			this.props.updateAvis(undefined)
+		}
 	}
 
 	render() {
 		return (
 				<div className="add-avis-container">
-					<button onClick={this.toggleInput.bind(this)}>Ajouter un avis</button>
+					{!this.props.updateAvis &&
+						<button onClick={this.toggleInput.bind(this)}>Ajouter un avis</button> }
 					{this.state.showInput && <div>
 						<Rating empty={<SVGIcon href='#icon-star-empty' className='icon-rating'/>}
 										full={<SVGIcon href='#icon-star-full' className='icon-rating'/>}

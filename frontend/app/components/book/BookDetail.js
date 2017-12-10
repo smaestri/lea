@@ -25,7 +25,10 @@ class BookDetail extends React.Component {
 		else if (this.props.params.previousPage == 'listBook') {
 			this.props.router.push('/list-book')
 		}
-		else { //user-detail
+		else if (this.props.params.previousPage == 'home') {
+			this.props.router.push('/')
+		}
+		else {
 			this.props.router.push('/user-detail/' + this.state.book.userId + '/userDetail');
 		}
 	}

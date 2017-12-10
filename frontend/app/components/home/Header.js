@@ -5,7 +5,8 @@ import SearchBar from './SearchBar'
 import Notification from './Notification'
 import Footer from './Footer'
 import helpers from '../../helpers/api'
-
+import { DropdownButton, MenuItem, ButtonToolbar, Nav, NavItem, Navbar, NavDropdown }  from 'react-bootstrap'
+import style from './Header.scss'
 
 const { Component } = React;
 
@@ -29,58 +30,54 @@ class Header extends Component {
 	}
 
 	refreshCount() {
-			if (this.state.isConnected){
-				helpers.countEmpruntAndPret().then((countBean) => {
-					this.setState({
-						nbEmprunt: countBean.nbEmprunt,
-						nbPret: countBean.nbPret
-					});
+		if (this.state.isConnected) {
+			helpers.countEmpruntAndPret().then((countBean) => {
+				this.setState({
+					nbEmprunt: countBean.nbEmprunt,
+					nbPret: countBean.nbPret
 				});
-			}
+			});
+		}
 	}
 
 	refreshNotif() {
-		if (this.state.isConnected){
-				helpers.getMyRequestedFriends().then((friends) => {
+		if (this.state.isConnected) {
+			helpers.getMyRequestedFriends().then((friends) => {
+				this.setState({
+					requestedFriends: friends
+				});
+			});
+			helpers.isNewPret().then((isNewPret) => {
+				if (isNewPret === 1) {
 					this.setState({
-						requestedFriends: friends
+						isNewPret: true
 					});
-				});
-				helpers.isNewPret().then((isNewPret) => {
-					if (isNewPret === 1) {
-						this.setState({
-							isNewPret: true
-						});
-					}
-					else {
-						this.setState({
-							isNewPret: false
-						});
-					}
-				});
+				}
+				else {
+					this.setState({
+						isNewPret: false
+					});
+				}
+			});
 		};
 	}
 
-	checkIfConnected(){
-		helpers.isAuthenticated().then( id => {
-			this.setState({isConnected: id != 0, userId: id})
+	checkIfConnected() {
+		helpers.isAuthenticated().then(id => {
+			this.setState({ isConnected: id != 0, userId: id })
 			this.refreshCount();
 			this.refreshNotif();
 			this.refreshName();
 		});
-
 	}
 
 	refreshName() {
-		const res =
-		console.log('toto')
-		console.log(res)
-		if (this.state.isConnected){
-				helpers.getAccount().then((user) => {
-					this.setState({
-						currentUser: user.fullName
-					});
+		if (this.state.isConnected) {
+			helpers.getAccount().then((user) => {
+				this.setState({
+					currentUser: user.firstName
 				});
+			});
 		}
 	}
 
@@ -89,117 +86,56 @@ class Header extends Component {
 	}
 
 	render() {
-		console.log('render home')
+		let menuUserConnected, menuUserNotConnected;
+		let menuGeneral, notif = "";
 
-		let menuUser;
-		let menugeneral, notif = "";
-
-		if (this.state.isConnected){
+		if (this.state.isConnected) {
 			notif = (
 				<Notification
 					isNewPret={this.state.isNewPret}
 					requestedFriends={this.state.requestedFriends}
-					onRefreshNotification={this.refreshNotif}/>);
-
-			const bienvenue = this.state.currentUser;
-
-			menuUser = (<div className="dropdown">
-				<span className="arrow">Bienvenue, {bienvenue}</span>
-				<div className="dropdown-content">
-					<ul>
-						<li>
-							<Link to={'/historized-loans/'}>
-								Mes emprunts historiés
-							</Link>
-						</li>
-						<li>
-							<Link to={'/historized-lendings/'}>
-								Mes prêts historiés
-							</Link>
-						</li>
-						<li>
-							<Link to={'/account/'}>
-								Mon compte
-							</Link>
-						</li>
-						<li>
-							<a href="logout">
-								Me déconnecter
-							</a>
-						</li>
-					</ul>
-				</div>
-			</div>);
-			menugeneral = (<nav id="main-nav" className="two-thirds column omega">
-				<a href="#main-nav-menu" className="mobile-menu-button button">+ Menu</a>
-				<ul id="main-nav-menu" className="nav-menu">
-					<li id="nav-home" className="current">
-						<Link to={'/home/'} activeClassName="current">
-							Accueil
-						</Link>
-					</li>
-					<li id="nav-bib">
-						<Link to={'/my-books/'} activeClassName="current">
-							Ma bibliothèque
-						</Link>
-					</li>
-					<li id="nav-emprunt">
-						<Link to={'/my-loans/'} activeClassName="current">
-							Mes emprunts ({this.state.nbEmprunt})
-						</Link>
-					</li>
-					<li id="nav-portfolio">
-						<Link to={'/my-lendings/'} activeClassName="current">
-							Mes prêts ({this.state.nbPret})
-						</Link>
-					</li>
-					<li id="nav-amis">
-						<Link to={'/my-friends/'} activeClassName="current">
-							Mes amis
-						</Link>
-					</li>
-				</ul>
-			</nav>)
+					onRefreshNotification={this.refreshNotif} />);
 		}
-		else {
-			menuUser = (<div className="dropdown">
-				<div className="top-menu">
-					<a href="/login">Connexion</a>
-					<a href="/users/new">Inscription</a>
-				</div>
-			</div>)
-		}
-
+		const bienvenue = this.state.currentUser;
+		menuGeneral = (<Navbar inverse collapseOnSelect>
+			<Navbar.Header>
+				<Navbar.Brand>
+					<a href="/">Livres entre amis</a>
+				</Navbar.Brand>
+				<Navbar.Toggle />
+			</Navbar.Header>
+			<Navbar.Collapse>
+				<Nav>
+					
+					{this.state.isConnected && <NavItem eventKey={1}><Link to={'/my-books/'} >Ma bibliothèque</Link></NavItem>}
+					{this.state.isConnected && <NavItem eventKey={2}><Link to={'/my-loans/'} >Mes emprunts ({this.state.nbEmprunt})</Link></NavItem>}
+					{this.state.isConnected && <NavItem eventKey={2}><Link to={'/my-lendings/'} >Mes prêts ({this.state.nbPret})</Link></NavItem>}
+					{this.state.isConnected && <NavItem eventKey={2}><Link to={'/my-friends/'} >Mes amis</Link></NavItem>}
+					<SearchBar />
+					{this.state.isConnected && <NavDropdown eventKey={3} title={`Bienvenue, ${bienvenue}`} pullRight>
+						<MenuItem eventKey="3"><Link to={'/historized-loans/'}>Mes emprunts historiés</Link></MenuItem>
+						<MenuItem eventKey="3"><Link to={'/historized-lendings/'}>Mes prêts historiés</Link></MenuItem>
+						<MenuItem eventKey="4"><Link to={'/account/'}>Mon compte</Link></MenuItem>
+						<MenuItem eventKey="4" href="/logout">Me déconnecter</MenuItem>
+					</NavDropdown>}
+					{!this.state.isConnected &&
+						<Nav pullRight>
+							<MenuItem href="/login">Se connecter</MenuItem>
+							<MenuItem href="/users/new">S'inscrire</MenuItem>
+						</Nav>
+					}
+					
+				</Nav>
+			</Navbar.Collapse>
+		</Navbar>
+		)
 		return (
 			<div>
-				<header id="header" className="container">
-
-					<div id="header-inner" className="row">
-
-						<div id="masthead">
-							<h1 id="site-title" className="remove-bottom">
-								<a href="/"><img src="/webjars/app-react/1.0.0/img/logo.png"/></a>
-							</h1>
-						</div>
-
-						<div className="container-search">
-							<div className="top-header">
-								<div className="content-search">
-									<SearchBar />
-								</div>
-								<div className="menu-user">
-									{menuUser}
-
-								</div>
-							</div>
-							<div className="top-menu">
-								{menugeneral}
-							</div>
-						</div>
-					</div>
-
-				</header>
-				<div className="container">
+				<div>
+					{menuGeneral}
+					
+				</div>
+				<div>
 					{notif}
 				</div>
 				{this.props.children && React.cloneElement(this.props.children, {
@@ -209,10 +145,9 @@ class Header extends Component {
 					userId: this.state.userId
 				})}
 				<Footer></Footer>
-
 			</div>
 		)
-		}
+	}
 }
 
 export default withRouter(Header)

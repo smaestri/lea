@@ -2,14 +2,14 @@ import React from 'react'
 import { withRouter } from 'react-router'
 import ButtonsEmprunt from './ButtonsEmprunt'
 import LoanAttributes from './LoanAttributes'
+import style from './Loan.scss'
 
 class Loan extends React.Component {
 
 	render() {
 		const userConnected = this.props.userId;
-		// get avis posted for this book and this user
 		let avis = this.props.loan.livre.avis.find( avisBook => {
-				return (userConnected == avisBook.auteur)
+				return (this.props.loan.emprunteurId == avisBook.auteur)
 		});
 
 		return (
@@ -33,10 +33,10 @@ class Loan extends React.Component {
 				<div className="loan-buttons">
 					{!this.props.isHistory &&
 					<ButtonsEmprunt
-					   loan={this.props.loan}
-						 reloadEmprunt={this.props.reloadEmprunt}
-					   onRefreshCount={this.props.onRefreshCount}
-						 userId={this.props.userId}
+						loan={this.props.loan}
+						reloadEmprunt={this.props.reloadEmprunt}
+						onRefreshCount={this.props.onRefreshCount}
+						userId={this.props.userId}
 					 />}
 				</div>
 			</div>

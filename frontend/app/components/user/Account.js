@@ -29,8 +29,25 @@ class Account extends React.Component {
 			alert('les password ne correspondent pas');
 			return;
 		}
-		helpers.saveEditUser(this.state).then(() => {
+		helpers.saveEditUser(this.state).then((response) => {
 			this.props.onRefreshName();
+			if(response == 'firstNameLength'){
+				alert('Le prénom doit faire plus de deux caractères SVP.')
+				return
+			}
+
+			if(response == 'lastNameLength'){
+				alert('Le nom doit faire plus de deux caractères SVP.')
+				return
+			}
+			if(response == 'passwordLength'){
+				alert('Le mot de passe doit faire plus de six caractères SVP.')
+				return
+			}
+			if(response == 'passwordNotMatch'){
+				alert('Les mots de passe ne correspondent pas.')
+				return
+			}
 			alert('Modifications apportés avec succès')
 		});
 	}
@@ -43,7 +60,7 @@ class Account extends React.Component {
 
 	render() {
 		return (
-			<div className="container">
+			<div className="container-account">
 				<div className="contact-form">
 					<h2>Veuillez indiquer vos informations</h2>
 					<form horizontal onSubmit={this.handleSubmit}>

@@ -26,19 +26,19 @@ class MyLoans extends React.Component {
 	render() {
 		const loans = this.state.loans.map(loan => {
 			return <Loan
-								key={loan.id}
-								id={loan.id}
-								loan={loan}
-								isLending={false}
-								isHistory={false}
-	              onRefreshCount={this.props.onRefreshCount}
-			          reloadEmprunt={this.loadEmprunt}
-								userId={this.props.userId}
-							/>
+						key={loan.id}
+						id={loan.id}
+						loan={loan}
+						isLending={false}
+						isHistory={false}
+						onRefreshCount={this.props.onRefreshCount}
+						reloadEmprunt={this.loadEmprunt}
+						userId={this.props.userId}
+					/>
 		});
 
 		return (
-			<div className="container">
+			<div className="container-loan">
 				<h1>Mes emprunts</h1>
 				{loans.length == 0 && <span>Vous n'avez pas d'emprunts en cours.</span>}
 				{loans.length > 0 && <div className="loan-container">{loans}</div>}

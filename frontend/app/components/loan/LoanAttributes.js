@@ -12,7 +12,8 @@ class LoanAttributes extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {comments: this.props.loan.commentaires, oldAvis: {} }
+		const events = this._initTimeLine(props.avis, props.loan )
+		this.state = {events: events, oldAvis: Object.assign({}, props.avis)}
 		this.displayEvents = this.displayEvents.bind(this);
 		this.displayStep = this.displayStep.bind(this);
 		this.displayComment = this.displayComment.bind(this);
@@ -29,73 +30,61 @@ class LoanAttributes extends React.Component {
 		this._getLoanText = this._getLoanText.bind(this);
 		this._insertSteps = this._insertSteps.bind(this);
 		this._initTimeLine = this._initTimeLine.bind(this);
-
-		// init timeline
-		this._initTimeLine(this.props.avis, this.props.loan.commentaires )
 	}
 
 	componentWillReceiveProps(nextProps){
-		console.log('cwrp')
-		this._initTimeLine(nextProps.avis, nextProps.loan.commentaires )
-	}
-
-	_initTimeLine(avis, comments){
-		if(avis){
-			this._insertIn(comments, Object.assign(avis, {dateMessage: avis.dateavis}) )
-		}
-		let loanText = this._getLoanText(this.props.userId, this.props.loan.emprunteur, this.props.loan.preteur)
-
-		this._insertSteps(comments, loanText)
-
+		const events = this._initTimeLine(nextProps.avis, nextProps.loan )
 		this.setState({
-			comments,
-			oldAvis: avis,
-		});
-
-
+			events: events,
+			oldAvis: Object.assign({}, nextProps.avis)
+		 })
 	}
 
+	_initTimeLine(avis, loan){
+		let events = [].concat(loan.commentaires)
+		if(avis && events) {
+			this._insertIn(events, Object.assign(avis, {dateMessage: avis.dateavis}) )
+		}
+		let loanText = this._getLoanText(this.props.userId, loan.emprunteur, loan.preteur, loan.motifRefus)
+		this._insertSteps(loan, events, loanText)
+		return events;
+	}
 
 	editComment(idComment) {
-		const newComments = this.state.comments.slice(0);
-		const comment = newComments.find( (comment) => {
+		const newEvents = this.state.events.slice(0);
+		const comment = newEvents.find( (comment) => {
 				return comment.id == idComment;
 		})
-		newComments.sort(this._compare)
-			comment.editMode = true;
-			this.setState({
-				comments: newComments
-			});
+		newEvents.sort(this._compare)
+		comment.editMode = true;
+		this.setState({
+			events: newEvents
+		});
 	}
 
 	undoEditComment(idComment) {
-		const newComments = this.state.comments.slice(0);
-		const comment = newComments.find( (comment) => {
+		const newEvents = this.state.events.slice(0);
+		const comment = newEvents.find( (comment) => {
 				return comment.id == idComment;
 		})
-		// set comment in read mode
 		comment.editMode=false;
-		 // set old message if one
-		 if(comment.oldMessage){
-			 comment.message = comment.oldMessage;
-		 }
-		newComments.sort(this._compare)
+		if(comment.oldMessage){
+				comment.message = comment.oldMessage;
+		}
+		newEvents.sort(this._compare)
 		this.setState({
-			comments: newComments
+			events: newEvents
 		});
 	}
 
 	saveEditComment(idComm){
-		const newComments = this.state.comments.slice(0);
-		const comment = newComments.find( (comment) => {
+		const newEvents = this.state.events.slice(0);
+		const comment = newEvents.find( (comment) => {
 				return comment.id == idComm;
 		})
 		comment.editMode=false;
 		helpers.saveComment(comment.message, idComm).then(() => {
-			this.props.reloadEmprunt();
-			this.setState({
-				comments: newComments
-			});
+		this.props.reloadEmprunt();
 		});
 	}
 
@@ -109,79 +98,60 @@ class LoanAttributes extends React.Component {
 		/** To understand : when changing message in state, props 'message' changes too!
 		It should not as we just change the state => need to store old value
 		*/
-		const newComments = this.state.comments.slice(0);
-		const comment = newComments.find( (comment) => {
-				return comment.id == id;
-		})
+		const newEvents = this.state.events.slice(0);
+		const comment = newEvents.find( (comment) => (
+			comment.id == id
+		))
 		if(!comment.oldMessage){
 			comment.oldMessage = comment.message
 		}
 		comment.message = newMessage;
-		newComments.sort(this._compare)
+		newEvents.sort(this._compare)
 		this.setState({
-			comments: newComments
+			events: newEvents
 		});
 	}
 
 	editAvis(avis) {
-		const comms = this.state.comments;
-		//let avisInEvent = comms.find(ev => ev.id == avis.id)
-		//avisInEvent.editMode = true;
+		const comms = this.state.events;
 		avis.editMode = true;
 		comms.sort(this._compare)
 			this.setState({
-				// avis: Object.assign(avis, {editMode: true}),
-				comments: comms
+				events: comms
 			});
 	}
 
 	handleEditAvisChange(avis){
-		// let oldAvis;
-		// if (!this.state.oldAvis.length){
-		// 	oldAvis =this.state.avis;
-		// }
-		// else{
-		// 	oldAvis = this.state.oldAvis;
-		// }
-
 		//change avis directly in events
-
-		const comm = this.state.comments;
+		const comm = this.state.events;
 		const avisInEvent = comm.find(ev => (ev.id == avis.id))
 		avisInEvent.libelle = avis.libelle;
 		avisInEvent.note = avis.note;
 		comm.sort(this._compare)
 		this.setState({
-			//avis,
-			//oldAvis,
-			comments: comm
+			events: comm
 
 		});
 	}
 
 	saveEditAvis(){
-		// FIXME search first avis in events
-		const avis = this.state.comments.find(ev => ev.dateavis != undefined)
+		const avis = this.state.events.find(ev => ev.dateavis != undefined)
 		helpers.saveAvis(avis, this.props.loan.livre.id).then(() => {
 			this.props.reloadEmprunt();
-			this.setState({
-				avis: Object.assign(avis,
-					 {editMode: false})
-			});
 		});
 	}
 
 	undoEditAvis(avis){
-		if(this.state.oldAvis.length){
+		if(this.state.oldAvis){
 			this.setState({
-				comments: this.state.comments.sort(this._compare),
+				events: this.state.events.sort(this._compare),
 				avis: Object.assign(avis,
 					 {editMode: false, note: this.state.oldAvis.note, libelle:this.state.oldAvis.libelle })
 			});
 		}
 		else{
 			this.setState({
-				comments: this.state.comments.sort(this._compare),
+				events: this.state.events.sort(this._compare),
 				avis: Object.assign(avis, {editMode: false})
 			});
 		}
@@ -203,65 +173,63 @@ class LoanAttributes extends React.Component {
 
 	displayComment(comment, userConnected){
 		return (<TimelineEvent
-							title={"Message de " + comment.user.fullName}
-							createdAt={formatDate(comment.dateMessage)}
-							icon={<i className="material-icons md-18">email</i>}
-							iconColor="#6fba1c"
-							buttons={userConnected == comment.auteur && (comment.editMode ?
-								[
-										<i onClick={this.saveEditComment.bind(this, comment.id)} className="material-icons md-18" style={{ color: '#6fba1c' }}>done</i>,
-										<i onClick={this.undoEditComment.bind(this, comment.id)} className="material-icons md-18" style={{ color: '#6fba1c' }}>close</i>
-								] :
-								[
-											<i onClick={this.editComment.bind(this, comment.id)} className="material-icons md-18" style={{ color: '#6fba1c' }}>mode_edit</i>,
-											<i onClick={this.deleteComment.bind(this, comment.id)} className="material-icons md-18" style={{ color: '#6fba1c' }}>delete</i>
-									]
-								)
-								}
+					title={this.props.userId == comment.user.id ? "Vous avez saisi :" : comment.user.fullName + " a saisi le commentaire suivant:"}
+					createdAt={formatDate(comment.dateMessage)}
+					icon={<i className="material-icons md-18">email</i>}
+					iconColor="#6fba1c"
+					buttons={userConnected == comment.auteur && !this.props.isHistory && (comment.editMode ?
+						[
+								<i onClick={this.saveEditComment.bind(this, comment.id)} className="material-icons md-18" style={{ color: '#6fba1c' }}>done</i>,
+								<i onClick={this.undoEditComment.bind(this, comment.id)} className="material-icons md-18" style={{ color: '#6fba1c' }}>close</i>
+						] :
+						[
+									<i onClick={this.editComment.bind(this, comment.id)} className="material-icons md-18" style={{ color: '#6fba1c' }}>mode_edit</i>,
+									<i onClick={this.deleteComment.bind(this, comment.id)} className="material-icons md-18" style={{ color: '#6fba1c' }}>delete</i>
+							]
+						)
+						}
 					 >
-						<Comment comment={comment} handleChange={this.handleChange} />
-					 </TimelineEvent>)
+					<Comment comment={comment} handleChange={this.handleChange} />
+				</TimelineEvent>)
 	}
 
 	displayEvents(events, userConnected){
 		events.reverse();
 		const eventsComp =  events.map( event => {
 			if (event.dateavis){
-				return this.displayAvis(event, userConnected)
+				return this.displayAvis(event, userConnected, this.props.loan.emprunteur)
 			} else if (event.dateMessage && !event.title) {
 					return this.displayComment(event, userConnected )
 			} else {
-				//step
 				return this.displayStep(event.title, event.icon, event.dateMessage )
 			}
 		})
 		return eventsComp;
 	};
 
-	displayAvis(avis, userConnected){
+	displayAvis(avis, userConnected, emprunteur){
 			return (
 			<TimelineEvent
-								title={"Vous avez saisi la note suivante "}
-								createdAt={formatDate(avis.dateavis)}
-								icon={<i className="material-icons md-18">favorite</i>}
-								iconColor="#6fba1c"
-								buttons={userConnected == avis.auteur && (avis.editMode ?
-									[
-											<i onClick={this.saveEditAvis.bind(this)} className="material-icons md-18" style={{ color: '#6fba1c' }}>done</i>,
-											<i onClick={this.undoEditAvis.bind(this, avis)} className="material-icons md-18" style={{ color: '#6fba1c' }}>close</i>
-									] :
-									[
-												<i onClick={this.editAvis.bind(this, avis)} className="material-icons md-18" style={{ color: '#6fba1c' }}>mode_edit</i>,
-												<i onClick={this.deleteAvis.bind(this, avis)} className="material-icons md-18" style={{ color: '#6fba1c' }}>delete</i>
-										]
-									)
-									}
-						 >
-						 <EditAvis
-						 		avis={avis}
-								handleEditAvisChange={this.handleEditAvisChange}
-						/>
-			 </TimelineEvent>)
+				title={emprunteur.fullName + " a saisi la note suivante "}
+				createdAt={formatDate(avis.dateavis)}
+				icon={<i className="material-icons md-18">favorite</i>}
+				iconColor="#6fba1c"
+				buttons={userConnected == avis.auteur && !this.props.isHistory && (avis.editMode ?
+					[
+							<i onClick={this.saveEditAvis.bind(this)} className="material-icons md-18" style={{ color: '#6fba1c' }}>done</i>,
+							<i onClick={this.undoEditAvis.bind(this, avis)} className="material-icons md-18" style={{ color: '#6fba1c' }}>close</i>
+					] :
+					[
+								<i onClick={this.editAvis.bind(this, avis)} className="material-icons md-18" style={{ color: '#6fba1c' }}>mode_edit</i>,
+								<i onClick={this.deleteAvis.bind(this, avis)} className="material-icons md-18" style={{ color: '#6fba1c' }}>delete</i>
+						]
+					)
+					}
+				>
+				<EditAvis
+					avis={avis}
+					handleEditAvisChange={this.handleEditAvisChange} />
+			</TimelineEvent>)
 	};
 
 	handleAddAvisChange(avis){
@@ -283,59 +251,76 @@ class LoanAttributes extends React.Component {
 		list.splice(0, 0, elementToInsert)
 		//reorder the list
 		list.sort(this._compare)
-
 	}
 
-	_insertSteps(comments, loanObj){
-		// insert step requested at the right place
-		this._insertIn(comments,
-			 { dateMessage: this.props.loan.dateDemande,
-				 title: loanObj.titleRequested,
-				 icon: 'present_to_all'
-			 })
-		// insert step current at the right place
-		this._insertIn(comments,
-			 { dateMessage: this.props.loan.dateAccept,
-				 title: loanObj.titleCurrent,
-				 icon: 'thumb_up'
-			 })
-			// insert step sent at the right place
-		this._insertIn(comments,
-			 { dateMessage: this.props.loan.dateEnvoi,
-				 title: loanObj.titleSent,
-				 icon: 'call_made'
-			 })
+	_insertSteps(loan, events, loanText){
+		if(loan.dateDemande){
+			this._insertIn(events,
+				 { dateMessage: loan.dateDemande,
+					 title: loanText.titleRequested,
+					 icon: 'present_to_all'
+				 })
+			 }
+		if(loan.dateAccept){
+			this._insertIn(events,
+				 { dateMessage: loan.dateAccept,
+					 title: loanText.titleCurrent,
+					 icon: 'thumb_up'
+				 })
+		 }
+		if (loan.dateEnvoi){
+			this._insertIn(events,
+				 { dateMessage: loan.dateEnvoi,
+					 title: loanText.titleSent,
+					 icon: 'call_made'
+				 })
+		 }
+
+		 if (loan.dateRefus){
+ 			this._insertIn(events,
+ 				 { dateMessage: loan.dateRefus,
+ 					 title: loanText.titleRefus,
+ 					 icon: 'clear'
+ 				 })
+ 		 }
+
+		 if (loan.dateCloture){
+ 			this._insertIn(events,
+ 				 { dateMessage: loan.dateCloture,
+ 					 title: loanText.titleCloture,
+ 					 icon: 'done'
+ 				 })
+ 		 }
 	}
 
-	_getLoanText(userConnected, emprunteur, preteur){
+	_getLoanText(userConnected, emprunteur, preteur, motif){
 		let returnObj ={}
-		if (!this.props.isHistory && userConnected == emprunteur.id) {
+		returnObj.titleCloture = preteur.fullName + " a cloturé l'emprunt";
+		returnObj.titleRefus = preteur.fullName + " a refusé cette demande avec le motif: " + motif;
+		if (userConnected == emprunteur.id) {
 			returnObj.titleRequested = "Vous avez demandé ce livre à " + preteur.fullName;
-		}
-
-		if (!this.props.isHistory && userConnected == preteur.id) {
-			returnObj.titleRequested =  emprunteur.fullName + " souhaite vous emprunter le livre."  ;
-		}
-
-		if (!this.props.isHistory  && userConnected == emprunteur.id) {
 			returnObj.titleCurrent = preteur.fullName + " a accepté votre demande d'emprunt et vous envoie le livre. ";
-		}
-
-		if (!this.props.isHistory &&  userConnected == preteur.id) {
-			returnObj.titleCurrent = "Vous avez accepté la demande de " + emprunteur.fullName + ".";
-		}
-
-		if (!this.props.isHistory && userConnected == emprunteur.id) {
 			returnObj.titleSent = "Vous avez renvoyé ce livre à " + preteur.fullName;
 		}
 
-		if (!this.props.isHistory && userConnected == preteur.id) {
+		if (userConnected == preteur.id) {
+			returnObj.titleRequested =  emprunteur.fullName + " souhaite vous emprunter le livre."  ;
+			returnObj.titleCurrent = "Vous avez accepté la demande de " + emprunteur.fullName + ".";
 			returnObj.titleSent = emprunteur.fullName + " vous a renvoyé le livre. Merci de clore l'emprunt si vous l'avez bien reçu.";
+			returnObj.titleRefus = "Vous a refusé cette demande avec le motif " + motif;
 		}
+
 		return returnObj;
 	}
 
 	render() {
+		if(!this.props.loan){
+			return
+		}
+		const events = this.state.events;
+
+		if(!events)
+			return
 		let envoyerMessage = "Noter le livre / Echanger avec le prêteur";
 		if (this.props.isLending) {
 			envoyerMessage = "Détails et envoyer message à l'emprunteur"
@@ -352,11 +337,8 @@ class LoanAttributes extends React.Component {
 		const emprunteur = this.props.loan.emprunteur;
 		const preteur = this.props.loan.preteur;
 
-		// retrieve all comments
-		const comments = this.state.comments;
-
 		let displayAddRating = false;
-		if (userConnected == emprunteur.id && !this.props.avis &&
+		if (userConnected == emprunteur.id && !this.props.avis && !this.props.isHistory &&
 			(this.props.loan.livre.statut == loanStatus.CURRENT || this.props.loan.livre.statut == loanStatus.SENT)) {
 			displayAddRating = true;
 		}
@@ -364,12 +346,11 @@ class LoanAttributes extends React.Component {
 		return (
 			<div>
 				<div className="header-timeline">
-					<AddComment
+					 {!this.props.isHistory && <AddComment
 						 idLoan={this.props.loan.id}
-						 saveComment={this.saveComment}
 						 reloadEmprunt={this.props.reloadEmprunt}
 						 destinataire={userConnected == preteur.id?emprunteur.fullName:preteur.fullName}>
-					 </AddComment>
+					 </AddComment>}
 					 {displayAddRating &&
 					<AddAvis
 						 showInput={false}
@@ -380,7 +361,7 @@ class LoanAttributes extends React.Component {
 
 				<div className="timeline">
 					<Timeline>
-					 { this.displayEvents(comments, userConnected) }
+					 { this.displayEvents(events, userConnected) }
 					 </Timeline>
 				 </div>
 			</div>

@@ -1,0 +1,46 @@
+.book-container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 200px;
+  margin-bottom: 25px;
+    
+    .imageBook {
+      display: flex;
+      justify-content: center; 
+      align-items: center; 
+    }
+
+    .avisBook {
+      .moyenneNote {
+        display: flex;
+        justify-content: center; 
+        align-items: center; 
+      }
+      .ratingBook {
+        display: flex;
+        justify-content: center; 
+        align-items: center; 
+      }
+      .icon-rating {
+        height: 22px;
+        width: 22px;
+      }
+    }
+    .linkBook {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .buttonBook {
+      display: flex;
+      justify-content: center;
+    }
+}
+
+
+
+
+
+

@@ -29,8 +29,10 @@ class MyRequestedFriends extends React.Component {
 
 	render() {
 		const requestedFriends = this.state.requestedFriends.map(friend => {
-			return <PendingFriend showAcceptButton={true} friend={friend}
-			                      acceptRequestFriend={this.acceptRequestFriend}/>;
+			return <PendingFriend
+						showAcceptButton={true}
+						friend={friend}
+						acceptRequestFriend={this.acceptRequestFriend}/>;
 		});
 
 		return (

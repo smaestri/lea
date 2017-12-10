@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 
 @Configuration
 @EnableWebSecurity
@@ -36,6 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/info").permitAll()
                 .antMatchers("/camarche").permitAll()
                 .antMatchers("/api/getCategories").permitAll()
+                .antMatchers("/api/livres/**").permitAll()
                 .antMatchers("/api/userInfo/**").permitAll() // To get avis user
                 .antMatchers("/api/isAuthenticated/**").permitAll() // To know if user is connected
                 .anyRequest().authenticated()

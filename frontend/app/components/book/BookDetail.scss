@@ -1,12 +1,26 @@
-.book-information {
-  width: 300px;
-}
-
-.book-rating {
-  width: 300px;
-  .rating-container {
-    display: flex;
-    flex-direction: columns;
+.book-detail-container {
+    .book-title {
+      font-weight: 700;
+    }
+    .book-avis {
+      display: flex;
+      flex-direction: row;
+      .image-container {
+          display: flex;
+          justify-content: center;
+          .image-content {
+              display: flex;
+              align-items: center;
+              height: 180px;
+              .img {
+                  max-width: 100%;
+                  max-height: 100%;
+              }
+          }
+      }
+      .rating-container {
+          display: flex;
+          flex-direction: column;
+      }
   }
 }
-

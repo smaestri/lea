@@ -9,13 +9,15 @@
     <link rel="stylesheet" href="webjars/app-react/1.0.0/css/common.css" />
 </head>
 <body>
-    <nav th:replace="header:: contentA" />
-    <div class="container-faq">
-        <h2>FAQ</h2>
-        <div>
-            Cette rubrique est en cours de construction
+    <div class="container">
+        <nav th:replace="header:: contentA" />
+        <div class="container-faq">
+            <h2>FAQ</h2>
+            <div>
+                Cette rubrique est en cours de construction
+            </div>
         </div>
+        <nav th:replace="footer:: contentA" />
     </div>
-    <nav th:replace="footer:: contentA" />
 </body>
 </html>

@@ -3,21 +3,23 @@
         <link rel="stylesheet" href="webjars/app-react/1.0.0/css/common.css" />
     </head>
     <body>
-        <h1 th:text="#{message.resetPassword}">reset</h1>
-     
-        <div th:replace="header:: contentA" />
+        <div class="container">
+            <h1 th:text="#{message.resetPassword}">reset</h1>
+        
+            <div th:replace="header:: contentA" />
 
-        <form th:action="@{/users/new}" th:object="${utilisateur}" method="POST">
-            <div class="form-error">
-                <ul th:if="${#fields.hasErrors('*')}">
-                    <li th:each="err : ${#fields.errors('*')}" th:text="${err}">Input is incorrect</li>
-                </ul>
-            </div>
-            <label>Email</label>
-            <input type="text" th:field="*{email}" placeholder="Votre e-mail"/>
-            <button type="submit" class="btn btn-primary">Valider</button>
-        </form>
-        <nav th:replace="footer:: contentA" />
+            <form th:action="@{/users/new}" th:object="${utilisateur}" method="POST">
+                <div class="form-error">
+                    <ul th:if="${#fields.hasErrors('*')}">
+                        <li th:each="err : ${#fields.errors('*')}" th:text="${err}">Input is incorrect</li>
+                    </ul>
+                </div>
+                <label>Email</label>
+                <input type="text" th:field="*{email}" placeholder="Votre e-mail"/>
+                <button type="submit" class="btn btn-primary">Valider</button>
+            </form>
+            <nav th:replace="footer:: contentA" />
+        </div>
     </body>
      
     </html>

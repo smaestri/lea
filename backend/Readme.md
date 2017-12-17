@@ -23,7 +23,7 @@ exit;
 and change in MongoAuthenticateConfig.java accordingly
 
 Launch demon:
-dev : mongod --port 27018 --dbpath ~/temp --auth
+dev : ./mongod --port 27018 --dbpath ~/temp --auth
 
 debug BACKEND
 **************
@@ -41,7 +41,6 @@ deploy as a service on prod
 
 Notes :
 APACHE2 frontend set to redirect to 8090
-except /blog for wordpress
 see /etc/apache2/sites-enabled/000-default.conf
 
 launch locally in dev mode

@@ -142,7 +142,7 @@ public class UserRepositoryImpl implements UserRepository {
                 List<Avis> avis = l.getAvis();
                 for(Avis a : avis){
                     a.setLivre(l.getTitreBook());
-                    LivreController.setBookImageLittl(l);
+                    LivreController.setBookImage(l);
                     a.setImage(l.getImage());
 
                 }

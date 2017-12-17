@@ -17,7 +17,6 @@ class Comment extends React.Component {
 	render() {
 		let dateMessage = formatDate(this.props.comment.dateMessage);
 		return (
-			<li>
 				<div className='comment-container'>
 					{this.props.comment.editMode &&
 						 <FormControl
@@ -27,7 +26,6 @@ class Comment extends React.Component {
                 			value={this.props.comment.message}/>}
 					{!this.props.comment.editMode && <span className="txt-comment">{this.props.comment.message}</span>}
 				</div>
-			</li>
 		)
 	}
 }

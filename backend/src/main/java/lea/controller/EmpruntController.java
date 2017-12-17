@@ -229,7 +229,6 @@ public class EmpruntController extends CommonController {
             emp.setPreteur(userRepository.findOne(emp.getPreteurId()));
             emp.setEmprunteur(userRepository.findOne(emp.getEmprunteurId()));
             Livre book = userRepository.findBook(emp.getLivreId());
-            book.setImage("/webjars/app-react/1.0.0/img/book.png");
             setCommentuser(emp);
             emp.setLivre(book);
     }

@@ -18,8 +18,12 @@
     justify-content: center;
 }
 
+.container-form {
+    max-width: 500px;
+}
+
 .container-form-adduser{
-    width: 500px;
+    max-width: 500px;
 }
 
 .container-contact {

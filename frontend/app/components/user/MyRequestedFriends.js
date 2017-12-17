@@ -36,7 +36,7 @@ class MyRequestedFriends extends React.Component {
 		});
 
 		return (
-			<div className="container">
+			<div className="requested-container">
 				<h2>Mes demande d'amis</h2>
 				{requestedFriends.length == 0 && <span>Vous n'avez pas d'amis à confirmer.</span>}
 				{requestedFriends.length > 0 &&

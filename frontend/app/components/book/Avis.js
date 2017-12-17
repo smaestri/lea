@@ -25,27 +25,28 @@ class Avis extends React.Component {
 		let dateAvis = formatDate(this.state.avis.dateavis);
 		return (
 			<div className='container-avis'>
-				<div className="avis-title">
-					<div className="title-livre">
-						<span>{this.state.avis.livre}</span>
+				<div className="title-livre">
+					<span>{this.state.avis.livre}</span>
+				</div>
+				<div className="avis-livre">
+					<div className="image-container">
+						<div className="image-content">
+							<img className="img" src={this.state.avis.image}/>
+						</div>
 					</div>
-					<div>
-						<img src={this.state.avis.image}/>
+					<div className='avis-infos'>
+						<div>Ajouté le <b>{dateAvis}</b> par <b>{this.state.avis.auteur}</b> :</div>
+						<div>
+							<Rating empty={<SVGIcon href='#icon-star-empty' className='icon-rating'/>}
+									full={<SVGIcon href='#icon-star-full' className='icon-rating'/>}
+									readonly={true}
+									initialRate={this.state.avis.note}/>
+						</div>
+						<div>
+							<blockquote>{this.state.avis.libelle}</blockquote>
+						</div>
 					</div>
 				</div>
-				<div className='avis-infos'>
-					<div>Ajouté le <b>{dateAvis}</b> par <b>{this.state.avis.auteur}</b> :</div>
-					<div>
-						<Rating empty={<SVGIcon href='#icon-star-empty' className='icon-rating'/>}
-								full={<SVGIcon href='#icon-star-full' className='icon-rating'/>}
-								readonly={true}
-								initialRate={this.state.avis.note}/>
-					</div>
-					<div>
-						<blockquote>{this.state.avis.libelle}</blockquote>
-					</div>
-				</div>
-				
 			</div>)
 
 	}

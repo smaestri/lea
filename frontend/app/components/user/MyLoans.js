@@ -1,6 +1,7 @@
 import React from 'react';
 import Loan from '../loan/Loan'
 import helpers from '../../helpers/api'
+import style from './MyLoans.scss'
 
 class MyLoans extends React.Component {
 
@@ -38,10 +39,10 @@ class MyLoans extends React.Component {
 		});
 
 		return (
-			<div className="container-loan">
+			<div>
 				<h1>Mes emprunts</h1>
 				{loans.length == 0 && <span>Vous n'avez pas d'emprunts en cours.</span>}
-				{loans.length > 0 && <div className="loan-container">{loans}</div>}
+				{loans.length > 0 && <div className="myloans-container">{loans}</div>}
 			</div>
 		)
 	}

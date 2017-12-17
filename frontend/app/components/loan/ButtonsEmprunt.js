@@ -4,7 +4,7 @@ import { FormControl } from 'react-bootstrap'
 import { withRouter } from 'react-router'
 import { Modal } from 'react-bootstrap'
 import helpers from '../../helpers/api'
-import {loanStatus} from '../../helpers/utils'
+import { loanStatus } from '../../helpers/utils'
 
 class ButtonsEmprunt extends React.Component {
 
@@ -99,16 +99,16 @@ class ButtonsEmprunt extends React.Component {
 		return (
 			<div>
 				{displayAcceptButton &&
-				<Button bsStyle="primary" bsSize="small" onClick={this.acceptLoan}
-				        disabled={this.state.disableAcceptButton}>Accepter</Button>}
-				{displayAcceptButton && <Button bsStyle="primary" bsSize="small"
-				                                onClick={this.showModalRefus}>Refuser</Button>}
+					<Button bsStyle="primary" onClick={this.acceptLoan}
+						disabled={this.state.disableAcceptButton}>Accepter</Button>}
+				{displayAcceptButton && <Button bsStyle="primary"
+					onClick={this.showModalRefus}>Refuser</Button>}
 				{displaySendButton &&
-				<Button bsStyle="primary" bsSize="small" onClick={this.sendLoan}
-				        disabled={this.state.disableSendButton}>Renvoyer</Button>}
+					<Button bsStyle="primary" onClick={this.sendLoan}
+						disabled={this.state.disableSendButton}>Renvoyer</Button>}
 				{displayCloseButton &&
-				<Button bsStyle="primary" bsSize="small" onClick={this.closeLoan}
-				        disabled={this.state.disableCloseButton}>Clore</Button>}
+					<Button bsStyle="primary" onClick={this.closeLoan}
+						disabled={this.state.disableCloseButton}>Clore</Button>}
 				<Modal show={this.state.showModal} onHide={this.closeModalRefus}>
 					<Modal.Header closeButton>
 						<Modal.Title>Motif du refus</Modal.Title>
@@ -116,13 +116,13 @@ class ButtonsEmprunt extends React.Component {
 					<Modal.Body>
 						<span>Veuillez indiquer un motif de refus:</span>
 						<FormControl componentClass="textarea" placeholder="Motif du refus"
-						             onChange={this.handleChange}/>
+							onChange={this.handleChange} />
 					</Modal.Body>
 					<Modal.Footer>
-						<Button onClick={this.closeModalRefus} bsStyle="primary" bsSize="small">Close</Button>
+						<Button onClick={this.closeModalRefus} bsStyle="primary" >Close</Button>
 						{displayAcceptButton &&
-						<Button bsStyle="primary" bsSize="small" onClick={this.refuseLoan}
-						        disabled={this.state.disableAcceptButton}>Valider</Button>}
+							<Button bsStyle="primary" onClick={this.refuseLoan}
+								disabled={this.state.disableAcceptButton}>Valider</Button>}
 					</Modal.Footer>
 				</Modal>
 			</div>

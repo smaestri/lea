@@ -30,7 +30,7 @@ class MyhistorizedLoans extends React.Component {
 		});
 
 		return (
-			<div className="container">
+			<div className="historized-container">
 				<h1>Mes emprunts historiés</h1>
 				{loans.length == 0 && <span>Vous n'avez pas d'emprunts historiés.</span>}
 				{loans.length > 0 && <div className="loan-container">{loans}</div>}

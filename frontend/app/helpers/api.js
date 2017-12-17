@@ -266,7 +266,8 @@ var helpers = {
 				auteur: bookObj.auteur,
 				description: bookObj.description,
 				isbn: bookObj.isbn,
-				categorieId: bookObj.categorieId
+				categorieId: bookObj.categorieId,
+				image: bookObj.image
 			}/*, {
 				headers: { 'X-CSRF-Token': getCsrf() },
 			}*/)
@@ -279,12 +280,12 @@ var helpers = {
 		}
 
 		return axios.post('/api/livres/new', {
-			//TODO SPREAD OPERATOR?
 			titreBook: bookObj.titreBook,
 			auteur: bookObj.auteur,
 			description: bookObj.description,
 			isbn: bookObj.isbn,
-			categorieId: bookObj.categorieId
+			categorieId: bookObj.categorieId,
+			image: bookObj.image
 		}/*, {
 			headers: { 'X-CSRF-Token': getCsrf() },
 		}*/)
@@ -505,6 +506,18 @@ var helpers = {
 				console.log(error);
 			});
 	},
+
+	fetchBookInfoFromAmazon: function (isbn) {
+		return axios.get('/api/getBookInfoFromAmazon/' + isbn)
+		.then(function (response) {
+			return response.data;
+		})
+		.catch(function (error) {
+			console.log(error);
+		});
+
+
+	}
 
 };
 

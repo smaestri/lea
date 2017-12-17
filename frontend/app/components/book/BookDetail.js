@@ -3,6 +3,7 @@ import { withRouter } from 'react-router'
 import helpers from '../../helpers/api'
 import Avis from './Avis.js'
 import { Button } from 'react-bootstrap'
+import style from './BookDetail.scss'
 
 class BookDetail extends React.Component {
 
@@ -39,14 +40,20 @@ class BookDetail extends React.Component {
 		});
 
 		return (
-			<div className="container">
-				<div className="book-information">
+			<div className="book-detail-container">
+				<div className="book-title">
 					<div><h1>Avis du livre <i>{this.state.book.titreBook}</i></h1></div>
 				</div>
-				<div className="book-rating">
-					{avis.length == 0 && <span>Pas d'avis pour ce livre actuellement.</span>}
+				<div className="book-avis">
+					<div className="image-container">
+						<div className="image-content">
+							<img className="img" src={this.state.book.image} />
+						</div>
+					</div>
 					{avis.length > 0 && <div className="rating-container">{avis}</div>}
 				</div>
+				{avis.length == 0 && <span>Pas d'avis pour ce livre actuellement.</span>}
+				
 				<Button bsStyle="primary" onClick={this.returnToBooks}>Retour</Button>
 			</div>
 		)

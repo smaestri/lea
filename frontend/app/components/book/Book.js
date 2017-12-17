@@ -1,5 +1,5 @@
 import React from 'react'
-import Button from 'react-bootstrap/lib/Button'
+import { Button, ButtonToolbar } from 'react-bootstrap'
 import { withRouter } from 'react-router'
 import { Link } from 'react-router'
 import Rating from 'react-rating'
@@ -50,7 +50,7 @@ class Book extends React.Component {
 		let moyenne = sum / this.props.book.avis.length;
 		return (
 			<div className="book-container">
-				<div className="title-livre form-horizontal">{this.props.book.titreBook}</div>
+				<div className="title-book form-horizontal" ><p title={this.props.book.titreBook}>{this.props.book.titreBook}</p></div>
 				{userConnected && (this.props.previousPage == 'listBook' || this.props.previousPage == 'userDetail') &&
 					<div><label className="book-preteur">Prêteur: </label>
 						<Link to={'user-detail/' + this.props.book.userId + '/' + this.props.previousPage}><span>{this.props.book.preteur}</span></Link>
@@ -59,14 +59,13 @@ class Book extends React.Component {
 					<div><label
 						className="book-preteur">Prêteur: </label><span>{this.props.book.preteur}</span>
 					</div>}
-				{userConnected && (!(this.props.previousPage == 'myBooks') && this.props.book.statut == 'FREE' && !this.props.book.empruntable) && !this.props.book.pending &&
-					<div className="buttonBook"><Button
-						title="Ajoutez cette personne comme ami afin d'échanger des livres avec elle!"
-						bsStyle="primary" bsSize="small" onClick={this.savePendingFriend}>Ajouter comme
-					ami</Button></div>}
 				{userConnected && (!(this.props.previousPage == 'myBooks') && this.props.book.statut == 'FREE' && !this.props.book.empruntable) && this.props.book.pending &&
 					<div>Vous avez ajouté cette personne comme ami</div>}
-				<div className="imageBook"><img src={this.props.book.image} /></div>
+				<div className="image-container">
+					<div className="image-content">
+						<img className="img" src={this.props.book.image} />
+					</div>
+				</div>
 				<div className="avisBook">
 					<div className="moyenneNote">Moyenne des avis ({this.props.book.avis.length} avis)
 					</div>
@@ -80,23 +79,31 @@ class Book extends React.Component {
 				<div className="linkBook">
 					<Link to={'book-detail/' + this.props.book.id + '/' + this.props.previousPage}>Voir les avis</Link>
 				</div>
-				<div>
-					<label>Auteur: </label>
+				<div className="content-auteur">
+					<label>Auteur : </label>
 					<span>{this.props.book.auteur}</span>
 				</div>
 				<div>
-					<label>Description: </label>{this.props.book.description}</div>
-				<div>
-				<ButtonToolbar className="buttonBook">
+					<label>Description : </label>{this.props.book.description}</div>
+				<ButtonToolbar className='container-buttons'>
+
+					{userConnected && (!(this.props.previousPage == 'myBooks') && this.props.book.statut == 'FREE' && !this.props.book.empruntable) && !this.props.book.pending &&
+						<div className="buttonBook"><Button
+							title="Ajoutez cette personne comme ami afin d'échanger des livres avec elle!"
+							bsStyle="primary" bsSize="small" onClick={this.savePendingFriend}>Ajouter comme	ami</Button></div>}
+
 					{(this.props.previousPage == 'myBooks') &&
 						<Button bsStyle="primary" bsSize="small"
 							onClick={this.modifyBook}>Modifier</Button>}
+
 					{(this.props.previousPage == 'myBooks') &&
 						<Button bsStyle="primary" bsSize="small"
 							onClick={this.handleClick}>Supprimer</Button>}
+
 					{userConnected && (!(this.props.previousPage == 'myBooks') && this.props.book.statut == 'FREE' && this.props.book.empruntable) && !this.props.book.pending &&
 						<Button bsStyle="primary" bsSize="small"
 							onClick={this.handleLoan}>Emprunter</Button>}
+							
 					{!userConnected && <a href="/users/login">Connectez ou inscrivez-vous!</a>}
 					{(!(this.props.previousPage == 'myBooks') && this.props.book.statut != 'FREE') && userConnected &&
 						<span>Livre déjà emprunté</span>}

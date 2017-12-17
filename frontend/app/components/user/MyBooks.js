@@ -1,9 +1,11 @@
 import React from 'react'
+import { Timeline, TimelineEvent } from 'react-event-timeline'
 import helpers from '../../helpers/api'
 import Book from '../book/Book'
 import { Button } from 'react-bootstrap';
 import { Modal } from 'react-bootstrap';
 import { withRouter } from 'react-router';
+import theme from './MyBooks.scss'
 
 class MyBooks extends React.Component {
 
@@ -56,10 +58,10 @@ class MyBooks extends React.Component {
 					/>
 		});
 		return (
-			<div className="container">
+			<div>
 				<h1>Ma bibiliothèque</h1>
 				{books.length == 0 && <span>Vous n'avez pas de livres.</span>}
-				{books.length > 0 && <div className="book-container">{books}</div>}
+				{books.length > 0 && <div className="mybooks-container">{books}</div>}
 				<Button bsStyle="primary" bsSize="small" onClick={this.addBook}>Ajouter livre</Button>
 				<Modal show={this.state.showModal} onHide={this.close}>
 					<Modal.Header closeButton>

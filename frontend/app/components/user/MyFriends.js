@@ -5,6 +5,7 @@ import helpers from '../../helpers/api'
 import AddFriend from './AddFriend'
 import MyFriend from './MyFriend'
 import PendingFriend from './PendingFriend'
+import style from './MyFriends.scss'
 
 class MyFriends extends React.Component {
 
@@ -77,13 +78,13 @@ class MyFriends extends React.Component {
 		});
 
 		return (
-			<div className="container-myfriends">
+			<div>
 				<h2>Mes amis actifs</h2>
 				{friends.length == 0 && <span>Vous n'avez pas d'amis.</span>}
-				{friends.length > 0 && <div className="friend-container">{friends}</div>}
+				{friends.length > 0 && <div className="friends-container">{friends}</div>}
 				<h2>Mes amis (attente de leur confirmation)</h2>
 				{(pendingFriends.length == 0) && <span>Pas d'amis en attente de confirmation</span>}
-				<div className="friend-container">{pendingFriends}</div>
+				<div className="friends-container">{pendingFriends}</div>
 				<AddFriend savePendingFriend={this.savePendingFriend}/>
 				<Modal show={this.state.showModal} onHide={this.closeModal}>
 					<Modal.Header closeButton>

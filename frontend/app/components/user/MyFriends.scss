@@ -1,7 +1,8 @@
-.container-myfriends {
+.friends-container {
   display: flex;
   flex-wrap: wrap;
   margin-bottom: 15px;
+
   .friend {
     margin: 20px;
     .imageUser {
@@ -25,10 +26,8 @@
 }
 
 .add-friend {
-
   .txt-add-friend {
     width: 250px;
-
   }
 
   button {

@@ -1,38 +1,41 @@
 .loan-container {
-  display: flex;
-  flex-wrap: wrap;
-
-  .loan {
+    width: 100%;
     display: flex;
-    align-items: center;
- 
-    .loan-image {
-      padding: 5px;
+    flex-direction: column;
+
+    button {
+        margin: 5px;
     }
 
-    .loan-main {
-      width: 450px;
-      .loan-header {
-       
-      }
-      .loan-details {
-        margin-right: 15px;
-      }
+    .loan-header {
+        margin-top: 25px;
+        font-size: 18px;
+        font-weight: 700;
+        display: flex;
     }
-
-    .loan-buttons {
-      button {
-        margin-right: 5px;
-      }
+    .loan-content {
+        display: flex;
+        margin-top: 15px;
+        .image-container {
+            display: flex;
+            justify-content: center;
+            .image-content {
+                display: flex;
+                height: 180px;
+                .img {
+                    max-width: 100%;
+                    max-height: 100%;
+                }
+            }
+        }
+        .loan-main {
+            margin-left: 25px;
+        }
+        .btn[disabled] {
+            background: url("/assets/img/spinner.svg");
+            background-repeat: no-repeat;
+            background-position: center;
+            color: black;
+        }
     }
-
-    .btn[disabled] {
-      background: url("/assets/img/spinner.svg");
-      background-repeat: no-repeat;
-      background-position: center;
-      color: black;
-    }
-
-  }
-
 }

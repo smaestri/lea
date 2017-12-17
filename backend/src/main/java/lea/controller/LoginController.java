@@ -17,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -76,6 +77,12 @@ public class LoginController extends CommonController {
         model.addAttribute("livre", new Livre());
         return "login";
     }
+
+        // Formulaire de reset mot de passer
+        @RequestMapping(value = "/resetPwd", method = RequestMethod.GET)
+        public String resetPwd(Model model) {
+            return "forgot-pwd";
+        }
 
     // Echec authentificaiton
     @RequestMapping(value = "/loginfailed", method = RequestMethod.GET)
@@ -181,15 +188,10 @@ public class LoginController extends CommonController {
     }
 
     @RequestMapping("/getPwdEncoded")
-    public String getPassEncoded() {
-        int i = 0;
-        // while (i < 10) {
-        String password = "toto";
-        String hashedPassword = passwordEncoder.encode(password);
-        System.out.println(hashedPassword);
-        i++;
-        // }
-        return "redirect:/";
+    public void getPassEncoded() {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		String hashedPassword = passwordEncoder.encode("toto");
+		System.out.println(hashedPassword);
     }
 
     private Utilisateur initGlobalvariables(Model model, boolean shouldInitInputSearch) {

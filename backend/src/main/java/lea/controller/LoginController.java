@@ -1,14 +1,19 @@
 package lea.controller;
 
 import com.google.gson.Gson;
-import lea.modele.*;
+import lea.modele.Categorie;
+import lea.modele.Livre;
+import lea.modele.UserProfile;
+import lea.modele.Utilisateur;
 import lea.repository.userprofile.UserProfileRepository;
-import lea.service.CustomUserDetailsService;
+import lea.service.NotificationService;
+import lea.service.UserSecurityService;
+import lea.validator.PasswordValidator;
 import lea.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
@@ -17,7 +22,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -26,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * This controller is bound to spring Validation, not a restfull one
@@ -39,6 +45,15 @@ public class LoginController extends CommonController {
     @Autowired
     private UserValidator userValidator;
 
+    @Autowired
+    private PasswordValidator passwordValidator;
+
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private UserSecurityService userSecurityService;
+
     @RequestMapping(value = "/home")
     public String home(Model model) {
         return "home";
@@ -49,15 +64,8 @@ public class LoginController extends CommonController {
 
     @RequestMapping(value = "/")
     public String welcomeHandler(Model model) {
-
         Utilisateur userSpring = getPrincipal();
-
-        //        if(userSpring == null){
-        //            return "redirect:/home";
-        //        }
-
         initGlobalvariables(model, false);
-
         return "index";
     }
 
@@ -77,12 +85,6 @@ public class LoginController extends CommonController {
         model.addAttribute("livre", new Livre());
         return "login";
     }
-
-        // Formulaire de reset mot de passer
-        @RequestMapping(value = "/resetPwd", method = RequestMethod.GET)
-        public String resetPwd(Model model) {
-            return "forgot-pwd";
-        }
 
     // Echec authentificaiton
     @RequestMapping(value = "/loginfailed", method = RequestMethod.GET)
@@ -148,7 +150,7 @@ public class LoginController extends CommonController {
             userDetail.setFirstName(user.getFirstName());
             userDetail.setPassword(passwordEncoder.encode(user.getPassword()));
             userRepository.saveUser(userDetail);
-            authenticateManually(userDetail);
+            userSecurityService.authenticateManually(userDetail);
             return "redirect:/";
         }
     }
@@ -182,7 +184,7 @@ public class LoginController extends CommonController {
         userRepository.saveUser(user);
 
         // Authenticate manually
-        authenticateManually(user);
+        userSecurityService.authenticateManually(user);
 
         return "redirect:/";
     }
@@ -190,8 +192,75 @@ public class LoginController extends CommonController {
     @RequestMapping("/getPwdEncoded")
     public void getPassEncoded() {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		String hashedPassword = passwordEncoder.encode("toto");
-		System.out.println(hashedPassword);
+        String hashedPassword = passwordEncoder.encode("toto");
+        System.out.println(hashedPassword);
+    }
+
+    /**
+     * RESET PASSWORD
+     *
+     * @param model
+     * @return
+     */
+
+    // Formulaire de reset mot de passe
+    @RequestMapping(value = "/users/resetPwd", method = RequestMethod.GET)
+    public String resetPwd(Model model) {
+        model.addAttribute("utilisateur", new Utilisateur());
+        return "forgot-pwd";
+    }
+
+    // reset pwd
+    @RequestMapping(value = "/users/resetPwd", method = RequestMethod.POST)
+    public String resetPassword(HttpServletRequest request, @RequestParam("email") String userEmail) throws InterruptedException {
+        List<Utilisateur> listUsers = this.userRepository.findByEmail(userEmail);
+
+        Utilisateur userFound = listUsers.get(0);
+
+        String token = UUID.randomUUID().toString();
+        userRepository.createPasswordResetTokenForUser(userFound, token);
+        final String body = getAppUrl(request) + "/users/changePassword?id=" + userFound.getId() + "&token=" + token;
+        notificationService.sendNotificaition(userFound.getEmail(), "Reset mot de passe", body);
+        return "confirm-forgot-pwd";
+    }
+
+    @RequestMapping(value = "/users/changePassword", method = RequestMethod.GET)
+    public String showChangePasswordPage(Model model,
+                                         @RequestParam("id") String id, @RequestParam("token") String token) {
+        String result = userSecurityService.validatePasswordResetToken(id, token);
+        if (result != null) {
+            return "redirect:/login";
+        }
+        return "redirect:/users/updatePassword";
+    }
+
+    /**
+     * Show form with only new password to set
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/users/updatePassword", method = RequestMethod.GET)
+    public String updatepassword(Model model) {
+        model.addAttribute("utilisateur", new Utilisateur());
+        return "update-pwd";
+    }
+
+    @RequestMapping(value = "/users/savePassword", method = RequestMethod.POST)
+    public String savePassword(@Valid @ModelAttribute("utilisateur") Utilisateur user, BindingResult result) {
+        Utilisateur userSpring = getPrincipal();
+        passwordValidator.validate(user, result);
+        if (result.hasErrors()) {
+            return "update-pwd";
+        }
+
+        userSpring.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.saveUser(userSpring);
+        return "update-passwd-success";
+    }
+
+    private String getAppUrl(HttpServletRequest request) {
+        return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
     }
 
     private Utilisateur initGlobalvariables(Model model, boolean shouldInitInputSearch) {
@@ -216,14 +285,6 @@ public class LoginController extends CommonController {
         return null;
     }
 
-    private void authenticateManually(Utilisateur user) {
-        CustomUserDetailsService.UserPrincipal principal = new CustomUserDetailsService.UserPrincipal(
-                user.getFirstName(), user.getPassword(), CustomUserDetailsService.getGrantedAuthorities(user), user);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, null,
-                principal.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
-
     public static boolean checkEmail(String email) {
         boolean result = true;
         try {
@@ -234,5 +295,4 @@ public class LoginController extends CommonController {
         }
         return result;
     }
-
 }

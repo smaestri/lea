@@ -32,7 +32,7 @@ class ListBooks extends React.Component {
 					key={book.id}
 					id={book.id}
 					book={book}
-					previousPage="listBook"
+					currentPage="listBook"
 					pendingFriends={this.state.pendingFriends}
 					userId={this.props.userId}
 				/>)

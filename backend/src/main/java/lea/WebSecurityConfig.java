@@ -33,6 +33,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/contact").permitAll()
                 .antMatchers("/faq").permitAll()
                 .antMatchers("/info").permitAll()
+                .antMatchers("/users/resetPwd").permitAll()
+                .antMatchers("/users/changePassword").permitAll()
                 .antMatchers("/getPwdEncoded").permitAll()
                 .antMatchers("/camarche").permitAll()
                 .antMatchers("/api/getCategories").permitAll()
@@ -40,15 +42,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/userInfo/**").permitAll() // To get avis user
                 .antMatchers("/api/isAuthenticated/**").permitAll() // To know if user is connected
                 .anyRequest().authenticated()
+                .antMatchers("/users/updatePassword*",
+                        "/users/savePassword*",
+                        "/users/updatePassword*")
+                .hasAuthority("CHANGE_PASSWORD_PRIVILEGE")
                 .and()
             .formLogin()
                 .loginPage("/login")
                 .permitAll()
                 .and()
             .logout()
-                .permitAll()
-
-        .and().rememberMe().rememberMeParameter("remember-me").key("tutu").tokenValiditySeconds(86400);
+                .permitAll();
     }
 
     @Autowired

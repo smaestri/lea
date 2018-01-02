@@ -15,6 +15,7 @@ class Book extends React.Component {
 		this.handleLoan = this.handleLoan.bind(this);
 		this.modifyBook = this.modifyBook.bind(this);
 		this.savePendingFriend = this.savePendingFriend.bind(this);
+		this.userConnected = props.userId !== 0;
 	}
 
 	handleClick(e) {
@@ -27,6 +28,10 @@ class Book extends React.Component {
 
 	handleLoan(event) {
 		event.preventDefault();
+		if(!this.userConnected){
+			window.location.replace("/login");
+			return;
+		}
 		helpers.loanBook(this.props.book.id, this.props.book.intermediaireid).then(() => {
 			this.props.router.push('/my-loans');
 		})
@@ -40,8 +45,6 @@ class Book extends React.Component {
 
 	render() {
 
-		const userConnected = this.props.userId !== 0;
-
 		//compute book note
 		let sum = 0;
 		this.props.book.avis.forEach((avis) => {
@@ -51,16 +54,14 @@ class Book extends React.Component {
 		return (
 			<div className="book-container">
 				<div className="title-book form-horizontal" ><p title={this.props.book.titreBook}>{this.props.book.titreBook}</p></div>
-				{userConnected && (this.props.previousPage == 'listBook' || this.props.previousPage == 'userDetail') &&
+				{this.userConnected && !(this.props.currentPage == 'myBooks') &&
 					<div><label className="book-preteur">Prêteur: </label>
-						<Link to={'user-detail/' + this.props.book.userId + '/' + this.props.previousPage}><span>{this.props.book.preteur}</span></Link>
+						<Link to={'user-detail/' + this.props.book.userId + '/' + this.props.currentPage}><span>{this.props.book.preteur}</span></Link>
 					</div>}
-				{!userConnected && (this.props.previousPage == 'listBook' || this.props.previousPage == 'userDetail') &&
+				{!this.userConnected && !(this.props.currentPage == 'myBooks') &&
 					<div><label
 						className="book-preteur">Prêteur: </label><span>{this.props.book.preteur}</span>
 					</div>}
-				{userConnected && (!(this.props.previousPage == 'myBooks') && this.props.book.statut == 'FREE' && !this.props.book.empruntable) && this.props.book.pending &&
-					<div>Vous avez ajouté cette personne comme ami</div>}
 				<div className="image-container">
 					<div className="image-content">
 						<img className="img" src={this.props.book.image} />
@@ -77,36 +78,29 @@ class Book extends React.Component {
 					</div>
 				</div>
 				<div className="linkBook">
-					<Link to={'book-detail/' + this.props.book.id + '/' + this.props.previousPage}>Voir les avis</Link>
+					<Link to={'book-detail/' + this.props.book.id + '/' + this.props.currentPage}>Voir les avis</Link>
 				</div>
 				<div className="content-auteur">
 					<label>Auteur : </label>
 					<span>{this.props.book.auteur}</span>
 				</div>
-				<div>
-					<label>Description : </label>{this.props.book.description}</div>
+				
+				{this.props.book.description && <div><label>Description : </label>{this.props.book.description}</div> }
 				<ButtonToolbar className='container-buttons'>
-
-					{userConnected && (!(this.props.previousPage == 'myBooks') && this.props.book.statut == 'FREE' && !this.props.book.empruntable) && !this.props.book.pending &&
-						<div className="buttonBook"><Button
-							title="Ajoutez cette personne comme ami afin d'échanger des livres avec elle!"
-							bsStyle="primary" bsSize="small" onClick={this.savePendingFriend}>Ajouter comme	ami</Button></div>}
-
-					{(this.props.previousPage == 'myBooks') &&
+					{(this.props.currentPage == 'myBooks') &&
 						<Button bsStyle="primary" bsSize="small"
 							onClick={this.modifyBook}>Modifier</Button>}
 
-					{(this.props.previousPage == 'myBooks') &&
+					{(this.props.currentPage == 'myBooks') &&
 						<Button bsStyle="primary" bsSize="small"
 							onClick={this.handleClick}>Supprimer</Button>}
 
-					{userConnected && (!(this.props.previousPage == 'myBooks') && this.props.book.statut == 'FREE' && this.props.book.empruntable) && !this.props.book.pending &&
+					{(!(this.props.currentPage == 'myBooks') && this.props.book.statut == 'FREE') &&
 						<Button bsStyle="primary" bsSize="small"
 							onClick={this.handleLoan}>Emprunter</Button>}
 							
-					{!userConnected && <a href="/users/login">Connectez ou inscrivez-vous!</a>}
-					{(!(this.props.previousPage == 'myBooks') && this.props.book.statut != 'FREE') && userConnected &&
-						<span>Livre déjà emprunté</span>}
+					{(!(this.props.currentPage == 'myBooks') && this.props.book.statut != 'FREE') &&
+						<span>Livre déjà emprunté ou demandé</span>}
 				</ButtonToolbar>
 			</div>
 		)

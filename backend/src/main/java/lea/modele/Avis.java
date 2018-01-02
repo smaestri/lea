@@ -76,9 +76,6 @@ public class Avis extends BaseDocumentImpl {
         Avis avis = (Avis) o;
 
         return this.getId().equals(avis.getId());
-//        if (auteur != null ? !auteur.equals(avis.auteur) : avis.auteur != null) return false;
-//        if (libelle != null ? !libelle.equals(avis.libelle) : avis.libelle != null) return false;
-//        return dateavis != null ? dateavis.equals(avis.dateavis) : avis.dateavis == null;
 
     }
 

@@ -2,7 +2,6 @@ package lea.repository.emprunt;
 
 import lea.modele.Commentaire;
 import lea.modele.Emprunt;
-import lea.modele.Utilisateur;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -12,7 +11,6 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Set;
 
 @Repository
 public class EmpruntRepositoryImpl implements EmpruntRepository {
@@ -100,7 +98,7 @@ public class EmpruntRepositoryImpl implements EmpruntRepository {
         Criteria criteria = Criteria.where("livreId").in(bookId).and("actif").is(true);
         Query query = new Query(criteria);
         List<Emprunt> emprunts = mongoTemplate.find(query, Emprunt.class);
-        if(emprunts != null && emprunts.size()> 0){
+        if (emprunts != null && emprunts.size() > 0) {
             return emprunts.get(0);
         }
         return null;

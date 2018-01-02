@@ -51,10 +51,7 @@ module.exports = {
 			{
 				test: /\.js$/,
 				exclude: /node_modules/,
-				loader: 'babel',
-				query: {
-					presets: ['es2015', 'react']
-				}
+				loader: 'babel-loader',
 			},
 			 {
 			 test: /\.scss$/,
@@ -66,10 +63,4 @@ module.exports = {
 			  },
 		],
 	},
-	/*
-	 sassLoader: {
-	 includePaths: [path.resolve(__dirname, "./assets/css/")]
-	 }
-	 */
-	//plugins: [HTMLWebpackPluginConfig]
 }

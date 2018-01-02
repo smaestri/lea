@@ -1,13 +1,12 @@
 package lea.modele;
 
 import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Transient;
 
 import java.util.Date;
 
 public class PendingFriend extends BaseDocumentImpl {
 
-    private String email; //ID user
+    private String email;
     private Date dateDemande;
 
     public PendingFriend(){

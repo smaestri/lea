@@ -8,6 +8,10 @@ import style from './Avis.scss'
 
 class Avis extends React.Component {
 
+	static defaultProps = {
+		displayImage: true
+	  }
+
 	constructor(props) {
 		super(props);
 		this.state = { avis: {} };
@@ -29,11 +33,11 @@ class Avis extends React.Component {
 					<span>{this.state.avis.livre}</span>
 				</div>
 				<div className="avis-livre">
-					<div className="image-container">
+					{this.props.displayImage && <div className="image-container">
 						<div className="image-content">
 							<img className="img" src={this.state.avis.image}/>
 						</div>
-					</div>
+					</div> }
 					<div className='avis-infos'>
 						<div>Ajouté le <b>{dateAvis}</b> par <b>{this.state.avis.auteur}</b> :</div>
 						<div>

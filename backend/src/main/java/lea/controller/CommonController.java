@@ -1,6 +1,7 @@
 package lea.controller;
 
 import lea.modele.Livre;
+import lea.modele.PendingFriend;
 import lea.modele.Utilisateur;
 import lea.repository.categorie.CategorieRepository;
 import lea.repository.emprunt.EmpruntRepository;
@@ -37,19 +38,31 @@ public class CommonController {
 
         if (principal instanceof CustomUserDetailsService.UserPrincipal) {
             user = ((CustomUserDetailsService.UserPrincipal) principal).getUser();
+        } else if (principal instanceof Utilisateur) {
+            user = (Utilisateur) principal;
         }
         return user;
     }
 
-    void removeDeletedBooks(List<Livre> livres){
+    protected void removeDeletedBooks(List<Livre> livres) {
         // remove book deleted
         Iterator<Livre> i = livres.iterator();
         while (i.hasNext()) {
             Livre l = i.next(); // must be called before you can call i.remove()
-            // Do something
-            if(l.isDeleted()){
+            if (l.isDeleted()) {
                 i.remove();
             }
+        }
+    }
+
+    protected void addRealFriendAndDeletePending(Utilisateur user, Utilisateur friend) {
+        user.getListFriendsId().add(friend.getId());
+        userRepository.saveUser(user);
+
+        // find my pending friend from this user
+        PendingFriend pf = userRepository.findPendingFriend(user, friend.getEmail());
+        if (pf != null) {
+            userRepository.deletePendingFriend(user, pf.getId());
         }
     }
 }

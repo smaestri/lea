@@ -15,7 +15,6 @@ public class BaseDocumentImpl  {
     @Id
     private String id;
 
-
     @CreatedBy
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String createdBy;

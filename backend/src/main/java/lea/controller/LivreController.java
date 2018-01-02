@@ -1,7 +1,10 @@
 package lea.controller;
 
 import lea.commun.StatutEmprunt;
-import lea.modele.*;
+import lea.modele.Categorie;
+import lea.modele.Emprunt;
+import lea.modele.Livre;
+import lea.modele.Utilisateur;
 import lea.repository.user.UserRepository;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
@@ -10,19 +13,14 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.hibernate.validator.internal.util.privilegedactions.GetMethod;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.support.SessionStatus;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -36,17 +34,14 @@ public class LivreController extends CommonController {
     @RequestMapping(value = "/api/searchBook", method = RequestMethod.GET)
     public List<Livre> searchBook(@RequestParam(value = "titreBook", required = false) String titre,
                                   @RequestParam(value = "categorie", required = false) String categorieId) throws ServletException, IOException {
-        List<Livre> result = new ArrayList<Livre>();
+        List<Livre> res = null;
         List<Utilisateur> allUsers = userRepository.findAll();
-
         Utilisateur principal = this.getPrincipal();
         Utilisateur userConnected = null;
         if (principal != null) {
             userConnected = this.userRepository.findOne(principal.getId());
         }
-
         for (Utilisateur user : allUsers) {
-
             if (userConnected != null && userConnected.getId().equals(user.getId())) {
                 continue;
             }
@@ -58,32 +53,11 @@ public class LivreController extends CommonController {
                 livre.setUserId(user.getId());
                 livre.setPreteur(user.getFullName());
                 livre.setMailPreteur(user.getEmail());
-
-                //If I'm connected, check if the user fetched is my friend and display :
-                // - loan button
-                // - pending : " user added as friend"
-                if (userConnected != null && livre.getStatut().equals(StatutEmprunt.FREE)) {
-                    //si ami
-                    List<Utilisateur> friends = userRepository.findFriends(userConnected.getListFriendsId());
-                    for (Utilisateur u : friends) {
-                        if (user.getId().equals(u.getId())) {
-                            livre.setEmpruntable(true);
-                        }
-                    }
-                    List<PendingFriend> listPendingFriends = userConnected.getListPendingFriends();
-                    for (PendingFriend pf : listPendingFriends) {
-                        if (pf.getEmail().equals(user.getEmail())) {
-                            livre.setPending(true);
-                        }
-                    }
-                }
-                // Add book if it matches search criteria (category, title) + set image
-                addBookinlist(result, livre, categorieId, titre);
+                res = addBookinlist(livre, categorieId, titre);
             }
         }
-        return result;
+        return res;
     }
-
 
     @RequestMapping(value = "/api/livres/{livre}", method = RequestMethod.GET)
     public Livre detailLivreHandler(@PathVariable("livre") String idLivre) {
@@ -96,17 +70,6 @@ public class LivreController extends CommonController {
         return livreDetail;
     }
 
-	/*
-    @RequestMapping(value = "/getDetailFromAmazon/{isbn}", method = RequestMethod.GET)
-	@ResponseBody
-	public HashMap getDetailFromAmazon(@PathVariable("isbn") String isbn){
-
-		HashMap bookinformation = Aws.getBookinformation(isbn);
-		return bookinformation;
-	}
-	*/
-
-    // Creer un livre : POST
     @RequestMapping(value = "/api/livres/new", method = RequestMethod.POST)
     public Livre addLivre(@RequestBody Livre livre) {
         Utilisateur principal = getPrincipal();
@@ -164,16 +127,14 @@ public class LivreController extends CommonController {
         exitingBook.setTitreBook(newLivre.getTitreBook());
         exitingBook.setIsbn(newLivre.getIsbn());
         exitingBook.setImage(newLivre.getImage());
-
     }
-
 
     @RequestMapping(value = "/api/getBookInfoFromAmazon/{isbn}", method = RequestMethod.GET)
     public HashMap crawlFromIsbn(@PathVariable("isbn") String isbn) throws IOException {
         String urlFrench = "https://www.amazon.fr/gp/search/ref=sr_adv_b/?search-alias=stripbooks&__mk_fr_FR=%C3%85M%C3%85Z%C3%95%C3%91&unfiltered=1&field-keywords=&field-author=&field-title=&field-isbn=" + isbn + "&field-publisher=&field-collection=&node=&field-binding_browse-bin=&field-dateop=&field-datemod=&field-dateyear=&sort=relevancerank&Adv-Srch-Books-Submit.x=37&Adv-Srch-Books-Submit.y=2";
 
         String urlproduct = this.getProductPageFromFrenchIsbn(urlFrench);
-        if(urlproduct == "") {
+        if (urlproduct == "") {
             String urlEnglish = "https://www.amazon.fr/gp/search/ref=sr_adv_english_books/?search-alias=english-books&__mk_fr_FR=%C3%85M%C3%85Z%C3%95%C3%91&unfiltered=1&field-keywords=&field-author=&field-title=&field-isbn=" + isbn + "&field-publisher=&node=&field-binding_browse-bin=&field-dateop=&field-datemod=&field-dateyear=&sort=relevancerank&Adv-Srch-English-Books-Submit.x=31&Adv-Srch-English-Books-Submit.y=6";
             urlproduct = this.getProductPageFromEnglishIsbn(urlEnglish);
         }
@@ -208,35 +169,35 @@ public class LivreController extends CommonController {
     }
 
     private String getProductPageFromEnglishIsbn(String url) throws IOException {
-                String productUrl = "";
-                CloseableHttpClient httpclient = HttpClients.createDefault();
-                System.out.println(url);
-                HttpGet httpGet = new HttpGet(url);
-                httpGet.setHeader(HttpHeaders.USER_AGENT, "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0");
-                CloseableHttpResponse response = httpclient.execute(httpGet);
-              
-                try {
-                    System.out.println(response.getStatusLine());
-                    HttpEntity entity = response.getEntity();
-                    String responseStr = (EntityUtils.toString(entity));
-                    int index = responseStr.indexOf("a-link-normal s-access-detail-page");
-                    if (index != -1) {
-                        String newString = responseStr.substring(index, index + 1000);
-                        System.out.println(newString);
-                        int indexLink = newString.indexOf("href=");
-                        int lastindex = newString.indexOf("\">");
-                        productUrl = newString.substring(indexLink + 6, lastindex);
-                    }
+        String productUrl = "";
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        System.out.println(url);
+        HttpGet httpGet = new HttpGet(url);
+        httpGet.setHeader(HttpHeaders.USER_AGENT, "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0");
+        CloseableHttpResponse response = httpclient.execute(httpGet);
 
-                    EntityUtils.consume(entity);
-                } finally {
-                    response.close();
-                }
-                return productUrl;
+        try {
+            System.out.println(response.getStatusLine());
+            HttpEntity entity = response.getEntity();
+            String responseStr = (EntityUtils.toString(entity));
+            int index = responseStr.indexOf("a-link-normal s-access-detail-page");
+            if (index != -1) {
+                String newString = responseStr.substring(index, index + 1000);
+                System.out.println(newString);
+                int indexLink = newString.indexOf("href=");
+                int lastindex = newString.indexOf("\">");
+                productUrl = newString.substring(indexLink + 6, lastindex);
             }
 
+            EntityUtils.consume(entity);
+        } finally {
+            response.close();
+        }
+        return productUrl;
+    }
 
-    private HashMap getInfosFomProductPage(String url) throws IOException{
+
+    private HashMap getInfosFomProductPage(String url) throws IOException {
         System.out.println("********************GET INFO FROM AMAZON*************************************");
         System.out.println("*********************************************************");
 
@@ -274,9 +235,8 @@ public class LivreController extends CommonController {
                 auteur = newString.substring(indexbeginAuteur, indexlastAuteur);
                 System.out.println("auteur");
                 System.out.println(auteur);
-            }
-            else{
-                auteur =  this.searchAuteurEnglish(responseStr);
+            } else {
+                auteur = this.searchAuteurEnglish(responseStr);
             }
 
             /** NOM DU LIVRE */
@@ -308,29 +268,30 @@ public class LivreController extends CommonController {
 
     }
 
-    private String searchAuteurEnglish(String responseStr){
+    private String searchAuteurEnglish(String responseStr) {
           /* AUTEUR */
-          int indexblocAuteur = responseStr.indexOf("<span class=\"author notFaded\"");
-          String blocAuteur = responseStr.substring(indexblocAuteur, indexblocAuteur+300);
-          int indexauteurEng = blocAuteur.indexOf("a-link-normal");
-         // System.out.println("blocAuteur");
-         // System.out.println(blocAuteur);
-          String auteur ="";
-          //System.out.println(indexauteur);
-          if (indexauteurEng != -1) {
-              String blockNameAuteur = blocAuteur.substring(indexauteurEng);
+        int indexblocAuteur = responseStr.indexOf("<span class=\"author notFaded\"");
+        String blocAuteur = responseStr.substring(indexblocAuteur, indexblocAuteur + 300);
+        int indexauteurEng = blocAuteur.indexOf("a-link-normal");
+        // System.out.println("blocAuteur");
+        // System.out.println(blocAuteur);
+        String auteur = "";
+        //System.out.println(indexauteur);
+        if (indexauteurEng != -1) {
+            String blockNameAuteur = blocAuteur.substring(indexauteurEng);
 
-              int indexbeginAuteur = blockNameAuteur.indexOf(">") + 1;
-              int indexlastAuteur = blockNameAuteur.indexOf("</a>");
-              auteur = blockNameAuteur.substring(indexbeginAuteur, indexlastAuteur);
-              System.out.println("auteur");
-              System.out.println(auteur);
-          }
-          return auteur;
+            int indexbeginAuteur = blockNameAuteur.indexOf(">") + 1;
+            int indexlastAuteur = blockNameAuteur.indexOf("</a>");
+            auteur = blockNameAuteur.substring(indexbeginAuteur, indexlastAuteur);
+            System.out.println("auteur");
+            System.out.println(auteur);
+        }
+        return auteur;
 
     }
 
-    private void addBookinlist(List<Livre> result, Livre livre, String categorieId, String titre) throws IOException {
+    private List<Livre> addBookinlist(Livre livre, String categorieId, String titre) throws IOException {
+        List<Livre> res = new ArrayList<Livre>();
         boolean addLivre = true;
         if (categorieId != null && StringUtils.hasText(categorieId)) {
             if (livre.getCategorieId().equals(categorieId)) {
@@ -346,11 +307,16 @@ public class LivreController extends CommonController {
         }
 
         setBookImage(livre);
-        result.add(livre);
+        if (addLivre) {
+            res.add(livre);
+        }
+
+        return res;
+
     }
 
     public static void setBookImage(Livre livre) {
-        if(livre.getImage() == null || livre.getImage().isEmpty()) {
+        if (livre.getImage() == null || livre.getImage().isEmpty()) {
             livre.setImage("/webjars/app-react/1.0.0/img/book.png");
         }
     }

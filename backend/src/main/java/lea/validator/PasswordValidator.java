@@ -7,10 +7,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import java.util.List;
-
 @Component
-public class UserValidator implements Validator {
+public class PasswordValidator implements Validator {
 
     @Autowired
     private UserRepository userRepository;
@@ -22,17 +20,6 @@ public class UserValidator implements Validator {
 
     @Override
     public void validate(Object target, Errors errors) {
-        Utilisateur user = (Utilisateur) target;
-        List<Utilisateur> byEmail = userRepository.findByEmail(user.getEmail());
-        if (!user.isEdit() && byEmail != null && !byEmail.isEmpty()) {
-            errors.rejectValue("email", "email_already_existing");
-        }
-        if (!user.getPassword().equals(user.getConfirmPassword())) {
-            errors.rejectValue("password", "error_password");
-        }
-    }
-
-    public void validatePassword(Object target, Errors errors) {
         Utilisateur user = (Utilisateur) target;
         if (!user.getPassword().equals(user.getConfirmPassword())) {
             errors.rejectValue("password", "error_password");

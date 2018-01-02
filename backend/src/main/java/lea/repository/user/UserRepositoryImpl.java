@@ -3,12 +3,14 @@ package lea.repository.user;
 import lea.commun.StatutEmprunt;
 import lea.controller.LivreController;
 import lea.modele.*;
+import lea.repository.password.PasswordResetTokenRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -18,10 +20,17 @@ import java.util.List;
 public class UserRepositoryImpl implements UserRepository {
 
     @Autowired
+    private PasswordResetTokenRepository passwordTokenRepository = null;
+
+    @Autowired
     private MongoUserRepository mongoUserRepository = null;
 
     @Autowired
     private MongoTemplate mongoTemplate = null;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     @Override
     public List<Utilisateur> findByEmail(String email) {
@@ -105,7 +114,6 @@ public class UserRepositoryImpl implements UserRepository {
             livre.setUserId(user.getId());
             return livre;
         }
-
         return null;
     }
 
@@ -216,19 +224,10 @@ public class UserRepositoryImpl implements UserRepository {
         return null;
     }
 
-//    private boolean avisExist(Livre livre, Avis avis) {
-//
-//        if(avis.getId() == null){
-//            return false;
-//        }
-//
-//        for(Avis avisExiting: livre.getAvis()) {
-//            if (avisExiting.getId().equals(avis.getId())) {
-//                return true;
-//            }
-//        }
-//
-//        return false;
-//    }
+    @Override
+    public void createPasswordResetTokenForUser(final Utilisateur user, final String token) {
+        final PasswordResetToken myToken = new PasswordResetToken(token, user.getId());
+        passwordTokenRepository.save(myToken);
+    }
 
 }

@@ -1,13 +1,11 @@
 package lea.modele;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lea.commun.StatutEmprunt;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Transient;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class Livre extends BaseDocumentImpl {
 
@@ -33,9 +31,6 @@ public class Livre extends BaseDocumentImpl {
 
     private boolean deleted;
 
-    @Transient
-    private boolean isPending;
-
     private StatutEmprunt statut;
 
     @Transient
@@ -49,9 +44,6 @@ public class Livre extends BaseDocumentImpl {
 
     @Transient
     private String preteur;
-
-    @Transient
-    private boolean empruntable;
 
     @Transient
     private String mailPreteur;
@@ -161,28 +153,12 @@ public class Livre extends BaseDocumentImpl {
         this.userId = userId;
     }
 
-    public void setEmpruntable(boolean empruntable) {
-        this.empruntable = empruntable;
-    }
-
-    public boolean isEmpruntable() {
-        return empruntable;
-    }
-
     public String getIntermediaireid() {
         return intermediaireid;
     }
 
     public void setIntermediaireid(String intermediaireid) {
         this.intermediaireid = intermediaireid;
-    }
-
-    public boolean isPending() {
-        return isPending;
-    }
-
-    public void setPending(boolean pending) {
-        isPending = pending;
     }
 
     public boolean isDeleted() {

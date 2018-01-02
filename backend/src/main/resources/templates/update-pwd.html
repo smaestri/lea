@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <title>Livres entre amis - Inscription</title>
+    <meta name="description" content="Livres entre amis partage emprunt de vos anciens livres entre amis" />
+    <meta name="author" content="Sylvain Maestri" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/webjars/app-react/1.0.0/css/common.css" />
+    <script type="text/javascript">
+      function checkForm(form)
+      {
+        form.validForm.disabled = true;
+        return true;
+      }
+    </script>
+</head>
+<body>
+<div class="container">
+    <div th:replace="header:: contentA" />
+            <h1>Mettre à jour mon mot de passe</h1>
+            <form th:action="@{/users/savePassword}" th:object="${utilisateur}" method="POST" onsubmit="return checkForm(this);">
+                <div class="form-error">
+                    <ul th:if="${#fields.hasErrors('*')}">
+                        <li th:each="err : ${#fields.errors('*')}" th:text="${err}">Input is incorrect</li>
+                    </ul>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Password</label>
+                    <input type="password" th:field="*{password}" placeholder="Password"  class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Confirmer Password</label>
+                    <input type="password" th:field="*{confirmPassword}" placeholder="Password"  class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <button name="validForm" type="submit" class="btn btn-primary">Valider</button>
+                </div>
+            </form>
+            <nav th:replace="footer:: contentA" />
+        </div>
+    </body>
+</html>

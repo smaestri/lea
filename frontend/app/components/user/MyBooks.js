@@ -53,14 +53,14 @@ class MyBooks extends React.Component {
 						id={book.id}
 						book={book}
 						handleDelete={this.handleDelete}
-						previousPage="myBooks"
+						currentPage="myBooks"
 						userId={this.props.userId}
 					/>
 		});
 		return (
 			<div>
 				<h1>Ma bibiliothèque</h1>
-				{books.length == 0 && <span>Vous n'avez pas de livres.</span>}
+				{books.length == 0 && <div><p>Vous n'avez pas de livres.</p></div>}
 				{books.length > 0 && <div className="mybooks-container">{books}</div>}
 				<Button bsStyle="primary" bsSize="small" onClick={this.addBook}>Ajouter livre</Button>
 				<Modal show={this.state.showModal} onHide={this.close}>

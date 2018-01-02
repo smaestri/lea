@@ -1,6 +1,5 @@
 package lea.repository.categorie;
 
-
 import lea.modele.Categorie;
 
 import java.util.List;

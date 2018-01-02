@@ -36,7 +36,7 @@ class BookDetail extends React.Component {
 
 	render() {
 		const avis = this.state.book.avis.map(avis => {
-			return <Avis key={avis.id} id={avis.id} avis={avis}/>
+			return <Avis key={avis.id} id={avis.id} avis={avis} displayImage={false}/>
 		});
 
 		return (

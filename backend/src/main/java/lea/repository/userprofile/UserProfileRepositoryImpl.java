@@ -1,7 +1,6 @@
 package lea.repository.userprofile;
 
 import lea.modele.UserProfile;
-import lea.modele.Utilisateur;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;

@@ -1,6 +1,8 @@
 package lea.controller;
 
-import lea.modele.*;
+import lea.modele.Avis;
+import lea.modele.Livre;
+import lea.modele.Utilisateur;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -22,13 +24,13 @@ public class AvisController extends CommonController {
         // retrieve book from user
         List<Livre> livres = proprietaire.getLivres();
         Livre bookToSave = null;
-        for(Livre livre : livres){
-            if (livre.getId().equals(livreId)){
+        for (Livre livre : livres) {
+            if (livre.getId().equals(livreId)) {
                 bookToSave = livre;
                 break;
             }
         }
-        if(bookToSave != null){
+        if (bookToSave != null) {
             bookToSave.getAvis().add(newAvis);
         }
         userRepository.saveUser(proprietaire);
@@ -43,9 +45,9 @@ public class AvisController extends CommonController {
                            @RequestBody Avis avis) {
         //retrieve owner of the book
         Utilisateur owner = userRepository.findproprietaire(bookId);
-        for(Livre livre : owner.getLivres()){
-            for(Avis oldAvis : livre.getAvis()){
-                if (oldAvis.getId().equals(avisId)){
+        for (Livre livre : owner.getLivres()) {
+            for (Avis oldAvis : livre.getAvis()) {
+                if (oldAvis.getId().equals(avisId)) {
                     oldAvis.setLibelle(avis.getLibelle());
                     oldAvis.setNote(avis.getNote());
                     oldAvis.setDateavis(new Date());
@@ -67,7 +69,7 @@ public class AvisController extends CommonController {
     @RequestMapping(value = "/api/getLastAvis", method = RequestMethod.GET)
     @ResponseBody
     public List<Avis> getLast() throws Exception {
-       return userRepository.findlastAvis();
+        return userRepository.findlastAvis();
     }
 
 }

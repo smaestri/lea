@@ -4,6 +4,5 @@ import lea.modele.UserProfile;
 
 public interface UserProfileRepository {
 
-
     UserProfile getProfileUser();
 }

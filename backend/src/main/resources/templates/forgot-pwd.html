@@ -1,14 +1,25 @@
-<html>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
     <head>
-        <link rel="stylesheet" href="webjars/app-react/1.0.0/css/common.css" />
+        <meta charset="utf-8" />
+        <title>Livres entre amis - Inscription</title>
+        <meta name="description" content="Livres entre amis partage emprunt de vos anciens livres entre amis" />
+        <meta name="author" content="Sylvain Maestri" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="/webjars/app-react/1.0.0/css/common.css" />
+        <script type="text/javascript">
+          function checkForm(form)
+          {
+            form.validForm.disabled = true;
+            return true;
+          }
+        </script>
     </head>
     <body>
         <div class="container">
-            <h1 th:text="#{message.resetPassword}">reset</h1>
-        
             <div th:replace="header:: contentA" />
-
-            <form th:action="@{/users/new}" th:object="${utilisateur}" method="POST">
+            <h1>Reset password</h1>
+            <form th:action="@{/users/resetPwd}" th:object="${utilisateur}" method="POST" onsubmit="return checkForm(this);">
                 <div class="form-error">
                     <ul th:if="${#fields.hasErrors('*')}">
                         <li th:each="err : ${#fields.errors('*')}" th:text="${err}">Input is incorrect</li>
@@ -16,10 +27,9 @@
                 </div>
                 <label>Email</label>
                 <input type="text" th:field="*{email}" placeholder="Votre e-mail"/>
-                <button type="submit" class="btn btn-primary">Valider</button>
+                <button name="validForm" type="submit" class="btn btn-primary">Valider</button>
             </form>
             <nav th:replace="footer:: contentA" />
         </div>
     </body>
-     
-    </html>
+</html>

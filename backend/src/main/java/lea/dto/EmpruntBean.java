@@ -7,8 +7,6 @@ public class EmpruntBean {
 
     private String idLivre;
 
-    //private String idProprietaire;
-    private String txtRencontre;
     private String mode;
     private String idIntermediaire;
 
@@ -18,7 +16,6 @@ public class EmpruntBean {
 
     public void setIdLivre(String idLivre) {
         this.idLivre = idLivre;
-
     }
 
     public String getIdIntermediaire() {
@@ -27,14 +24,6 @@ public class EmpruntBean {
 
     public void setIdIntermediaire(String idIntermediaire) {
         this.idIntermediaire = idIntermediaire;
-    }
-
-    public String getTxtRencontre() {
-        return txtRencontre;
-    }
-
-    public void setTxtRencontre(String txtRencontre) {
-        this.txtRencontre = txtRencontre;
     }
 
     public String getMode() {

@@ -4,7 +4,6 @@ import lea.modele.Commentaire;
 import lea.modele.Emprunt;
 
 import java.util.List;
-import java.util.Set;
 
 public interface EmpruntRepository {
 

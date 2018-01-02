@@ -54,7 +54,7 @@ class UserDetail extends React.Component {
 						key={book.id}
 						id={book.id}
 						book={book}
-						previousPage="userDetail"
+						currentPage="userDetail"
 						userId={this.props.userId}
 					/>
 		});
@@ -66,7 +66,7 @@ class UserDetail extends React.Component {
 							key={book.id}
 							id={book.id}
 							book={book}
-							previousPage="userDetail"
+							currentPage="userDetail"
 							userId={this.props.userId}
 						/>
 			});

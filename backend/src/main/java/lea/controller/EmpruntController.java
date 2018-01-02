@@ -12,7 +12,6 @@ import lea.repository.emprunt.EmpruntRepository;
 import lea.repository.user.UserRepository;
 import lea.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletException;
@@ -39,9 +38,8 @@ public class EmpruntController extends CommonController {
         return emprunts;
     }
 
-
     @RequestMapping(value = "/api/prets", method = RequestMethod.GET)
-    public  List<Emprunt> livresHandlerPrets() throws ServletException, IOException {
+    public List<Emprunt> livresHandlerPrets() throws ServletException, IOException {
         Utilisateur principal = getPrincipal();
         List<Emprunt> prets = empruntRepository.findPrets(principal.getId(), true);
         setListEmpruntobjects(prets);
@@ -60,7 +58,7 @@ public class EmpruntController extends CommonController {
         Utilisateur principal = getPrincipal();
         List<Emprunt> prets = empruntRepository.findPrets(principal.getId(), true);
         setListEmpruntobjects(prets);
-        return isNewPret(prets)?"1":"0";
+        return isNewPret(prets) ? "1" : "0";
     }
 
     @RequestMapping(value = "/api/emprunter", method = RequestMethod.POST)
@@ -73,30 +71,15 @@ public class EmpruntController extends CommonController {
         emprunt.setEmprunteurId(principal.getId());
         emprunt.setPreteurId(proprietaire.getId());
         emprunt.setLivreId(empruntBean.getIdLivre());
-        if (!StringUtils.isEmpty(empruntBean.getTxtRencontre())) {
-            Commentaire comm = new Commentaire();
-            comm.setMessage(empruntBean.getTxtRencontre());
-            comm.setAuteur(principal.getId());
-            emprunt.getCommentaires().add(comm);
-        }
         this.empruntRepository.saveEmprunt(emprunt);
         this.userRepository.updateBookStatus(proprietaire, emprunt.getLivreId(), StatutEmprunt.REQUESTED);
-
-
-        // Not implemented : you have to add as friend to loan book
-
-        //        String txtIntermediaire ="";
-        //        if(empruntBean.getIdIntermediaire() != null){
-        //            Utilisateur one = userRepository.findOne(empruntBean.getIdIntermediaire());
-        //            txtIntermediaire = txtIntermediaire + " par l'intermédiaire de " + one.getFullName();
-        //        }
 
         try {
             Livre livre = proprietaire.getLivre(empruntBean.getIdLivre());
             String content = "Livres entre Amis - nouvelle demande d'emprunt de la part de " + principal.getFullName() /*+  txtIntermediaire*/ + " pour le livre '" + livre.getTitreBook() + "'. Connectez-vous au site pour consulter et accepter cet emprunt!";
             String object = "Nouvelle demande d'emprunt";
-            notificationService.sendNotificaition(proprietaire.getEmail(),object, content );
-        }catch( Exception e ){
+            notificationService.sendNotificaition(proprietaire.getEmail(), object, content);
+        } catch (Exception e) {
             // catch error
             System.out.println("Error Sending Email: " + e.getMessage());
         }
@@ -108,15 +91,21 @@ public class EmpruntController extends CommonController {
     public String accepterEmprunt(@PathVariable("empruntId") String empruntId) throws Exception {
         Utilisateur principal = getPrincipal();
         Emprunt emprunt = empruntRepository.findOne(empruntId);
-        if (!principal.getId().equals(emprunt.getPreteurId())) {
-            throw new Exception("Probleme de securite");
-        }
+
         this.userRepository.updateBookStatus(principal, emprunt.getLivreId(), StatutEmprunt.CURRENT);
         emprunt.setActif(true);
         emprunt.setDateAccept(new Date());
         empruntRepository.saveEmprunt(emprunt);
+
+
         String emprunteurId = emprunt.getEmprunteurId();
+        Utilisateur userConnected = userRepository.findOne(principal.getId());
         Utilisateur emprunteur = userRepository.findOne(emprunteurId);
+        // if not friend add it in both ways
+        if (!(principal.getListFriendsId().contains(emprunt.getEmprunteurId()))) {
+            addRealFriendAndDeletePending(userConnected, emprunteur);
+            addRealFriendAndDeletePending(emprunteur, userConnected);
+        }
         Utilisateur preteur = userRepository.findOne(emprunt.getPreteurId());
         String content = preteur.getFullName() + " a accepté votre demande d'emprunt pour le livre " + preteur.getLivre(emprunt.getLivreId()).getTitreBook() + ". Connectez-vous au site pour retourner le livre une fois que vous l'avez lu!";
         String object = "Le prêteur a accepté votre demande d'emprunt!";
@@ -138,7 +127,7 @@ public class EmpruntController extends CommonController {
         empruntRepository.saveEmprunt(emprunt);
         Utilisateur emprunteur = userRepository.findOne(emprunt.getEmprunteurId());
         String content = principal.getFullName() + " a refusé votre demande d'emprunt avec le motif :" + refusBean.getRefus() + ". Le livre est à nouveau empruntable.";
-        String object =  "Refus de la demande d'emprunt";
+        String object = "Refus de la demande d'emprunt";
         notificationService.sendNotificaition(emprunteur.getEmail(), object, content);
 
         return "OK";
@@ -158,8 +147,8 @@ public class EmpruntController extends CommonController {
         empruntRepository.saveEmprunt(emprunt);
         Livre livre = userRepository.findBook(emprunt.getLivreId());
         Utilisateur emprunteur = userRepository.findOne(emprunt.getEmprunteurId());
-        String object =  "L'emprunteur vous a renvoyé le livre";
-        String content = emprunteur.getFullName() + " vous a renvoyé le livre " + livre.getTitreBook() +". Vous pouvez donc clore l'emprunt en vous connectant au site!";
+        String object = "L'emprunteur vous a renvoyé le livre";
+        String content = emprunteur.getFullName() + " vous a renvoyé le livre " + livre.getTitreBook() + ". Vous pouvez donc clore l'emprunt en vous connectant au site!";
         notificationService.sendNotificaition(preteur.getEmail(), object, content);
 
         return "OK";
@@ -208,7 +197,7 @@ public class EmpruntController extends CommonController {
 
     //TODO PERF
     @RequestMapping(value = "/api/countEmpruntAndPret", method = RequestMethod.GET)
-    public CountBean countEmpruntAndPret(){
+    public CountBean countEmpruntAndPret() {
         Utilisateur principal = getPrincipal();
         CountBean cbean = new CountBean();
         List<Emprunt> emprunts = empruntRepository.findEmprunts(principal.getId(), true);
@@ -226,26 +215,25 @@ public class EmpruntController extends CommonController {
     }
 
     private void setEmpruntobjects(Emprunt emp) {
-            emp.setPreteur(userRepository.findOne(emp.getPreteurId()));
-            emp.setEmprunteur(userRepository.findOne(emp.getEmprunteurId()));
-            Livre book = userRepository.findBook(emp.getLivreId());
-            setCommentuser(emp);
-            emp.setLivre(book);
+        emp.setPreteur(userRepository.findOne(emp.getPreteurId()));
+        emp.setEmprunteur(userRepository.findOne(emp.getEmprunteurId()));
+        Livre book = userRepository.findBook(emp.getLivreId());
+        setCommentuser(emp);
+        emp.setLivre(book);
     }
 
     private boolean isNewPret(List<Emprunt> listeEmp) {
         for (Emprunt emp : listeEmp) {
             Livre book = userRepository.findBook(emp.getLivreId());
-            if(book.getStatut().equals(StatutEmprunt.REQUESTED)){
+            if (book.getStatut().equals(StatutEmprunt.REQUESTED)) {
                 return true;
             }
         }
         return false;
     }
 
-
-    private void setCommentuser(Emprunt emp){
-        for(Commentaire comm : emp.getCommentaires()){
+    private void setCommentuser(Emprunt emp) {
+        for (Commentaire comm : emp.getCommentaires()) {
             Utilisateur auteurComm = userRepository.findOne(comm.getAuteur());
             comm.setUser(auteurComm);
         }

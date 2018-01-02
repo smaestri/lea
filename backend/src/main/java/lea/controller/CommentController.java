@@ -2,7 +2,6 @@ package lea.controller;
 
 import lea.modele.Commentaire;
 import lea.modele.Emprunt;
-import lea.modele.Livre;
 import lea.modele.Utilisateur;
 import lea.repository.emprunt.EmpruntRepository;
 import lea.repository.user.UserRepository;
@@ -30,7 +29,7 @@ public class CommentController extends CommonController {
     public List<Commentaire> getEchanges(Model model, @PathVariable(value = "empruntId", required = true) String empruntId) throws ServletException, IOException {
         List<Commentaire> comments = empruntRepository.getCommentaires(empruntId);
         //set user author
-        for(Commentaire com : comments){
+        for (Commentaire com : comments) {
             com.setUser(this.userRepository.findOne(com.getAuteur()));
         }
         return comments;

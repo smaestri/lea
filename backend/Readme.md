@@ -28,7 +28,10 @@ dev : ./mongod --port 27018 --dbpath ~/temp --auth
 debug BACKEND
 **************
 
-Simply launch debug on main class Application.java
+Simply launch debug on main class Application.java with profile "dev"
+ -Dspring.profiles.active=dev in Vm options
+
+ In Production, no prodile => default one
 
 
 deploy as a service on prod

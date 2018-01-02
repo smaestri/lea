@@ -15,7 +15,7 @@ public class Utilisateur extends BaseDocumentImpl {
     private List<String> listUserProfilesId = new ArrayList<String>();
     private List<String> listFriendsId = new ArrayList<String>();
     // probleme with array of email : containing .
-    private List<PendingFriend> listPendingFriends= new ArrayList<PendingFriend>();
+    private List<PendingFriend> listPendingFriends = new ArrayList<PendingFriend>();
 
     @Transient
     private List<Utilisateur> userFriends = new ArrayList<Utilisateur>();
@@ -34,7 +34,7 @@ public class Utilisateur extends BaseDocumentImpl {
     @Size(min = 2, max = 14, message = "Le nom doit comprendre entre 2 et 14 caractères")
     private String lastName;
 
-    @Size(min = 2, max = 25, message = "L'email doit comprendre entre 2 et 25 caractères")
+    @Size(min = 2, max = 50, message = "L'email doit comprendre entre 2 et 50 caractères")
     private String email;
 
     private String avatar;
@@ -147,11 +147,11 @@ public class Utilisateur extends BaseDocumentImpl {
         this.avatar = avatar;
     }
 
-    public Livre getLivre(String id){
-        for(Livre livre : this.livres){
-             if(livre.getId().equals(id)){
-                 return livre;
-             }
+    public Livre getLivre(String id) {
+        for (Livre livre : this.livres) {
+            if (livre.getId().equals(id)) {
+                return livre;
+            }
         }
         return null;
     }
@@ -200,8 +200,8 @@ public class Utilisateur extends BaseDocumentImpl {
 
     public void updateLivre(String id, Livre livreUpdated) {
 
-        for(Livre livre : this.livres){
-            if(livre.getId().equals(id)){
+        for (Livre livre : this.livres) {
+            if (livre.getId().equals(id)) {
                 livre.setTitreBook(livreUpdated.getTitreBook());
                 livre.setAuteur(livreUpdated.getAuteur());
             }
@@ -218,7 +218,7 @@ public class Utilisateur extends BaseDocumentImpl {
 
     //TODO  get direct child with adequate mongoDb query
     public Avis getAvis(String avisId) {
-        for(Livre livre : this.livres) {
+        for (Livre livre : this.livres) {
             for (Avis avis : livre.getAvis()) {
                 if (avis.getId().equals(avisId)) {
                     return avis;

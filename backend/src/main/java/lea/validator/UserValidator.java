@@ -24,16 +24,9 @@ public class UserValidator implements Validator {
     public void validate(Object target, Errors errors) {
         Utilisateur user = (Utilisateur) target;
         List<Utilisateur> byEmail = userRepository.findByEmail(user.getEmail());
-        if (!user.isEdit() && byEmail != null && !byEmail.isEmpty()) {
+        if (byEmail != null && !byEmail.isEmpty()) {
             errors.rejectValue("email", "email_already_existing");
         }
-        if (!user.getPassword().equals(user.getConfirmPassword())) {
-            errors.rejectValue("password", "error_password");
-        }
-    }
-
-    public void validatePassword(Object target, Errors errors) {
-        Utilisateur user = (Utilisateur) target;
         if (!user.getPassword().equals(user.getConfirmPassword())) {
             errors.rejectValue("password", "error_password");
         }

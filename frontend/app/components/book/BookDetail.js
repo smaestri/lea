@@ -54,7 +54,7 @@ class BookDetail extends React.Component {
 				</div>
 				{avis.length == 0 && <span>Pas d'avis pour ce livre actuellement.</span>}
 				
-				<Button bsStyle="primary" onClick={this.returnToBooks}>Retour</Button>
+				<Button onClick={this.returnToBooks}>Retour</Button>
 			</div>
 		)
 	}

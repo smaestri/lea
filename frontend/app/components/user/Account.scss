@@ -1,8 +1,9 @@
 .container-account {
-
-    .contact-form {
-
-        
+    .form-content {
+        display: flex; 
+        button {
+            float: none;
+        }
     }
 
 }

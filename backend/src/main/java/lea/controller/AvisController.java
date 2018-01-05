@@ -3,6 +3,8 @@ package lea.controller;
 import lea.modele.Avis;
 import lea.modele.Livre;
 import lea.modele.Utilisateur;
+import lea.repository.user.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -10,6 +12,9 @@ import java.util.List;
 
 @RestController
 public class AvisController extends CommonController {
+
+    @Autowired
+    private UserRepository userRepository;
 
     @RequestMapping(value = "/api/avis/{bookId}", method = RequestMethod.POST)
     @ResponseBody

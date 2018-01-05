@@ -11,8 +11,12 @@ class ListBooks extends React.Component {
 		this._getBooks = this._getBooks.bind(this);
 	}
 
-	_getBooks() {
-		helpers.getAllBooks().then((books) => {
+	_getBooks(nextProps) {
+		let category = this.props.params.category;
+		if(nextProps && nextProps.params){
+			category = nextProps.params.category
+		}
+		helpers.getAllBooks(category).then((books) => {
 			this.setState({ books });
 		});
 	}
@@ -21,8 +25,8 @@ class ListBooks extends React.Component {
 		this._getBooks();
 	}
 
-	componentWillReceiveProps() {
-		this._getBooks();
+	componentWillReceiveProps(nextProps) {
+		this._getBooks(nextProps);
 	}
 
 	render() {

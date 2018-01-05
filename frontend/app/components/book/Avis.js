@@ -29,8 +29,8 @@ class Avis extends React.Component {
 		let dateAvis = formatDate(this.state.avis.dateavis);
 		return (
 			<div className='container-avis'>
-				<div className="title-livre">
-					<span>{this.state.avis.livre}</span>
+				<div className="title-book">
+					<p>{this.state.avis.livre}</p>
 				</div>
 				<div className="avis-livre">
 					{this.props.displayImage && <div className="image-container">

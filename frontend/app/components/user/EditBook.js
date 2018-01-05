@@ -24,7 +24,7 @@ class EditBook extends React.Component {
 
 	componentDidMount() {
 		helpers.getCategories().then((categories) => {
-			this.setState({ categories });
+			this.setState({ categories, book: {...this.state.book, categorieId: categories[0].id } });
 		});
 
 		if (this.props.params && this.props.params.bookId) {
@@ -109,7 +109,8 @@ class EditBook extends React.Component {
 		
 			<div className="editbook-container">
 			{this.state.displaySpinner && <div id ="overlay"><div className="spinner-bg"/></div>}
-				<h2>Ajouter un livre</h2>
+				{this.props.params && this.props.params.bookId && <h2>Modifier livre</h2>}
+				{!this.props.params || !this.props.params.bookId && <h2>Ajouter un livre</h2>}
 				{this.state.book && 
 				<div className="main-content">
 					<Col className="content-image">
@@ -119,7 +120,7 @@ class EditBook extends React.Component {
 					</Col>
 					<Col className="content-form">
 						<Form horizontal>
-							<span>Remplissez l'ISBN sur 10 ou 13 caractères afin de remplir automaituqment les informations du livre!</span>
+							<span>Remplissez l'ISBN sur 10 ou 13 caractères afin de remplir automatiquement les informations du livre!</span>
 							<FormGroup>
 								<Col for="isbn" sm={2}>isbn:</Col>
 								<Col sm={10}>
@@ -166,10 +167,12 @@ class EditBook extends React.Component {
 							<ButtonToolbar className="text-center">
 								<Button  bsStyle="primary" type="submit" onClick={this.handleSubmit}>Valider</Button>
 							</ButtonToolbar>
-							<Button onClick={this.returnToBooks}>Retour</Button>
+							
 						</Form>
 					</Col>
+					
 				</div>}
+				<Button onClick={this.returnToBooks}>Retour</Button>
 			</div>
 		)
 	}

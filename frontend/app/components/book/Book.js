@@ -16,6 +16,9 @@ class Book extends React.Component {
 		this.modifyBook = this.modifyBook.bind(this);
 		this.savePendingFriend = this.savePendingFriend.bind(this);
 		this.userConnected = props.userId !== 0;
+		this.state = {
+			disableEmprunterButton: false,
+		};
 	}
 
 	handleClick(e) {
@@ -27,6 +30,7 @@ class Book extends React.Component {
 	}
 
 	handleLoan(event) {
+		this.setState({ disableEmprunterButton: true });
 		event.preventDefault();
 		if(!this.userConnected){
 			window.location.replace("/login");
@@ -55,12 +59,12 @@ class Book extends React.Component {
 			<div className="book-container">
 				<div className="title-book form-horizontal" ><p title={this.props.book.titreBook}>{this.props.book.titreBook}</p></div>
 				{this.userConnected && !(this.props.currentPage == 'myBooks') &&
-					<div><label className="book-preteur">Prêteur: </label>
+					<div><label className="book-preteur">Prêteur : </label>
 						<Link to={'user-detail/' + this.props.book.userId + '/' + this.props.currentPage}><span>{this.props.book.preteur}</span></Link>
 					</div>}
 				{!this.userConnected && !(this.props.currentPage == 'myBooks') &&
 					<div><label
-						className="book-preteur">Prêteur: </label><span>{this.props.book.preteur}</span>
+						className="book-preteur">Prêteur : </label><span>{this.props.book.preteur}</span>
 					</div>}
 				<div className="image-container">
 					<div className="image-content">
@@ -84,7 +88,6 @@ class Book extends React.Component {
 					<label>Auteur : </label>
 					<span>{this.props.book.auteur}</span>
 				</div>
-				
 				{this.props.book.description && <div><label>Description : </label>{this.props.book.description}</div> }
 				<ButtonToolbar className='container-buttons'>
 					{(this.props.currentPage == 'myBooks') &&
@@ -96,7 +99,7 @@ class Book extends React.Component {
 							onClick={this.handleClick}>Supprimer</Button>}
 
 					{(!(this.props.currentPage == 'myBooks') && this.props.book.statut == 'FREE') &&
-						<Button bsStyle="primary" bsSize="small"
+						<Button bsStyle="primary" bsSize="small" disabled={this.state.disableEmprunterButton}
 							onClick={this.handleLoan}>Emprunter</Button>}
 							
 					{(!(this.props.currentPage == 'myBooks') && this.props.book.statut != 'FREE') &&

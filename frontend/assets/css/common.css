@@ -1,3 +1,9 @@
+/* NEEDED FOR REACT TIMELINEEVENT */
+.md-18 {
+    font-size: 18px;
+}
+
+/* NEEDED FOR REACT RATING */
 .icon-rating {
     height: 22px;
     width: 22px;
@@ -26,23 +32,27 @@
     max-width: 500px;
 }
 
-.container-contact {
-    display: flex;
-}
-
-.container-camarche {
-    display: flex;
-}
-
-.container-faq {
-    display: flex;
-}
-
-.container-info {
-    display: flex;
-}
-
 .input-group-addon {
     min-width:50px;
     text-align:left;
+}
+
+.btn[disabled] {
+    background: url("/webjars/app-react/1.0.0/img/spinner.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    color: black;
+}
+
+.title-book {
+    display: flex;
+    justify-content: center;
+}
+
+.title-book p {
+    font-weight: 700;
+    font-size: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }

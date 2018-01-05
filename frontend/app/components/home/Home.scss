@@ -1,23 +1,26 @@
 .home-container {
  
-  .container-title {
+  .container-header-step {
     display: flex;
-
-    .title-image {
-
-    }
-
-    .title-txt {
-      
-    }
-
   }
 
-  .container-marche {
+  .container-content-step {
     width: 100%;
     display: flex;
     .step {
-      flex: 1
+      flex: 1;
+      .step-image {
+        height: 200px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .step-txt {
+        padding: 10px;
+        font-weight: 700;
+        font-size: 18px;
+        
+      }
     }
   }
 

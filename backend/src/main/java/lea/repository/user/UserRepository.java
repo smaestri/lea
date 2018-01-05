@@ -24,6 +24,4 @@ public interface UserRepository {
     public Utilisateur findproprietaire(String bookId);
     PendingFriend findPendingFriend(Utilisateur user, String email);
     List<Avis> findlastAvis();
-    void createPasswordResetTokenForUser(Utilisateur user, String token);
-
 }

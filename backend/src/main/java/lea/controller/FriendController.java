@@ -5,6 +5,9 @@ import lea.modele.Categorie;
 import lea.modele.Emprunt;
 import lea.modele.PendingFriend;
 import lea.modele.Utilisateur;
+import lea.repository.categorie.CategorieRepository;
+import lea.repository.emprunt.EmpruntRepository;
+import lea.repository.user.UserRepository;
 import lea.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -21,6 +24,16 @@ public class FriendController extends CommonController {
 
     @Autowired
     private NotificationService mailService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private EmpruntRepository empruntRepository;
+
+    @Autowired
+    private CategorieRepository categorieRepository;
+
 
     @RequestMapping(value = "/api/myFriends", method = RequestMethod.GET)
     public List<Utilisateur> myFriends() {
@@ -152,6 +165,18 @@ public class FriendController extends CommonController {
             return "KO email incorrect";
         }
         return "OK";
+    }
+
+    // TODO to merge see EmpruntController
+    private void addRealFriendAndDeletePending(Utilisateur user, Utilisateur friend) {
+        user.getListFriendsId().add(friend.getId());
+        userRepository.saveUser(user);
+
+        // find my pending friend from this user
+        PendingFriend pf = userRepository.findPendingFriend(user, friend.getEmail());
+        if (pf != null) {
+            userRepository.deletePendingFriend(user, pf.getId());
+        }
     }
 
 }

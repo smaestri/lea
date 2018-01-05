@@ -1,28 +1,19 @@
 .book-container {
   display: flex;
   flex-direction: column;
-  width: 200px;
+  width: 300px;
   margin-bottom: 25px;
+  margin-right: 25px;
+
+  .book-preteur {
+    white-space: pre;
+  }
 
   .container-buttons{
     display:flex;
     justify-content: center;
   }
   
-  .title-book{
-    display: flex;
-    justify-content: center;
-    
-
-    p {
-      font-weight: 700;
-      font-size: 15px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-  }
-
   .image-container {
     display: flex;
     justify-content: center; 
@@ -59,6 +50,16 @@
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+  .content-auteur {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 15px;
+    label  {
+      display: inline;
+    }
+
   }
 
   .buttonBook {

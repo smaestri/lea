@@ -9,7 +9,12 @@ class Loan extends React.Component {
 	render() {
 		const userConnected = this.props.userId;
 		let avis = this.props.loan.livre.avis.find( avisBook => {
-				return (this.props.loan.emprunteurId == avisBook.auteur && avisBook.dateavis >= this.props.loan.dateDemande)
+				let dateFin = this.props.loan.dateCloture;
+				if(this.props.loan.dateRefus){
+					dateFin = this.props.loan.dateRefus;
+				}
+				return (this.props.loan.emprunteurId == avisBook.auteur && avisBook.dateavis >= this.props.loan.dateDemande &&
+					 (dateFin == undefined || avisBook.dateavis <= dateFin))
 		});
 
 		return (

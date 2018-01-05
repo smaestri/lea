@@ -41,16 +41,6 @@ public class Utilisateur extends BaseDocumentImpl {
 
     private Boolean enabled;
 
-    private boolean isEdit = false;
-
-    public boolean isEdit() {
-        return isEdit;
-    }
-
-    public void setEdit(boolean edit) {
-        isEdit = edit;
-    }
-
     public String getPassword() {
         return password;
     }

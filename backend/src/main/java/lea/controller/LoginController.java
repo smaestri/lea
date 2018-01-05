@@ -5,6 +5,8 @@ import lea.modele.Categorie;
 import lea.modele.Livre;
 import lea.modele.UserProfile;
 import lea.modele.Utilisateur;
+import lea.repository.categorie.CategorieRepository;
+import lea.repository.user.UserRepository;
 import lea.repository.userprofile.UserProfileRepository;
 import lea.service.NotificationService;
 import lea.service.UserSecurityService;
@@ -38,6 +40,12 @@ import java.util.UUID;
  */
 @Controller
 public class LoginController extends CommonController {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private CategorieRepository categorieRepository;
 
     @Autowired
     private UserProfileRepository userProfileRepository;
@@ -137,7 +145,6 @@ public class LoginController extends CommonController {
     @RequestMapping(value = "/users/edit", method = RequestMethod.POST)
     public String editUser(@Valid @ModelAttribute("utilisateur") Utilisateur user, BindingResult result, Model model) {
         if (!result.hasErrors()) {
-            user.setEdit(true);
             userValidator.validate(user, result);
         }
 
@@ -158,7 +165,6 @@ public class LoginController extends CommonController {
     @RequestMapping(value = "/users/new", method = RequestMethod.POST)
     public String addUser(@Valid @ModelAttribute("utilisateur") Utilisateur user, BindingResult result, Model model) {
 
-        user.setEdit(false);
         //Check email
         boolean b = this.checkEmail(user.getEmail());
         if (!b) {
@@ -212,14 +218,33 @@ public class LoginController extends CommonController {
 
     // reset pwd
     @RequestMapping(value = "/users/resetPwd", method = RequestMethod.POST)
-    public String resetPassword(HttpServletRequest request, @RequestParam("email") String userEmail) throws InterruptedException {
-        List<Utilisateur> listUsers = this.userRepository.findByEmail(userEmail);
+    public String resetPassword(HttpServletRequest request, @Valid @ModelAttribute("utilisateur") Utilisateur user, BindingResult result, Model model) throws InterruptedException {
+
+        boolean b = this.checkEmail(user.getEmail());
+        if (!b) {
+            result.rejectValue("email", "error_email");
+        }
+
+        if (result.hasErrors()) {
+            model.addAttribute("utilisateur", user);
+            return "forgot-pwd";
+        }
+
+        List<Utilisateur> listUsers = this.userRepository.findByEmail(user.getEmail());
+
+        if(listUsers == null || listUsers.isEmpty()){
+            result.rejectValue("email", "error_email_not_found");
+            model.addAttribute("utilisateur", user);
+            return "forgot-pwd";
+        }
+
 
         Utilisateur userFound = listUsers.get(0);
 
         String token = UUID.randomUUID().toString();
-        userRepository.createPasswordResetTokenForUser(userFound, token);
-        final String body = getAppUrl(request) + "/users/changePassword?id=" + userFound.getId() + "&token=" + token;
+        userSecurityService.createPasswordResetTokenForUser(userFound, token);
+        final String body = "Bonjour, une demande de nouveau mot de passe a été effectuée. Veuillez cliquer sur le lien suivant pour enregistrer un nouveau mot de passe : " +
+                getAppUrl(request) + "/users/changePassword?id=" + userFound.getId() + "&token=" + token;
         notificationService.sendNotificaition(userFound.getEmail(), "Reset mot de passe", body);
         return "confirm-forgot-pwd";
     }
@@ -275,7 +300,7 @@ public class LoginController extends CommonController {
             model.addAttribute("hasFriend", !user.getListFriendsId().isEmpty());
 
             // categories
-            List<Categorie> all = categorieRepository.findAll();
+            List<Categorie> all = this.categorieRepository.findAll();
             Gson gson = new Gson();
             String json = gson.toJson(all);
             model.addAttribute("categories", json);

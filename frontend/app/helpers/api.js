@@ -61,8 +61,9 @@ var helpers = {
 			});
 	},
 
-	getAllBooks: function () {
-		return axios.get('/api/searchBook')
+	getAllBooks: function (category) {
+		const url = '/api/searchBook' + (category ? "?categorie=" + category :'');
+		return axios.get(url)
 			.then(function (response) {
 				return response.data;
 			})

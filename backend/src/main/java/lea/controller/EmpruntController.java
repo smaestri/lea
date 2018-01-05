@@ -4,10 +4,7 @@ import lea.commun.StatutEmprunt;
 import lea.dto.CountBean;
 import lea.dto.EmpruntBean;
 import lea.dto.RefusBean;
-import lea.modele.Commentaire;
-import lea.modele.Emprunt;
-import lea.modele.Livre;
-import lea.modele.Utilisateur;
+import lea.modele.*;
 import lea.repository.emprunt.EmpruntRepository;
 import lea.repository.user.UserRepository;
 import lea.service.NotificationService;
@@ -25,8 +22,10 @@ public class EmpruntController extends CommonController {
 
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private EmpruntRepository empruntRepository;
+
     @Autowired
     private NotificationService notificationService;
 
@@ -238,5 +237,14 @@ public class EmpruntController extends CommonController {
             comm.setUser(auteurComm);
         }
     }
+    private void addRealFriendAndDeletePending(Utilisateur user, Utilisateur friend) {
+        user.getListFriendsId().add(friend.getId());
+        userRepository.saveUser(user);
 
+        // find my pending friend from this user
+        PendingFriend pf = userRepository.findPendingFriend(user, friend.getEmail());
+        if (pf != null) {
+            userRepository.deletePendingFriend(user, pf.getId());
+        }
+    }
 }

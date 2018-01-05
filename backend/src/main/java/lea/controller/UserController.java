@@ -6,6 +6,7 @@ import lea.modele.Livre;
 import lea.modele.PendingFriend;
 import lea.modele.Utilisateur;
 import lea.repository.emprunt.EmpruntRepository;
+import lea.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,9 @@ public class UserController extends CommonController {
 
     @Autowired
     private EmpruntRepository empruntRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;

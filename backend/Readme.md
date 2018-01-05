@@ -36,7 +36,7 @@ Simply launch debug on main class Application.java with profile "dev"
 
 deploy as a service on prod
 **************************
-- COpy file on VPS : scp backend-1.0-SNAPSHOT.jar root@<password>:/opt/
+- COpy file on VPS : scp target/backend-1.0-SNAPSHOT.jar root@51.255.38.85:/opt/
 - Set permission : chmod a+x backend-1.0-SNAPSHOT.jar
 - Create shortcut : sudo ln -s /opt/backend-1.0-SNAPSHOT.jar /etc/init.d/lea
 - launch app : /etc/init.d/lea start

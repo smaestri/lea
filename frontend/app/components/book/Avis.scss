@@ -1,33 +1,30 @@
 .container-avis {
-	display:flex;
-	flex-direction: column;
-	.title-livre {
-		display: flex;
-		justify-content: center; 
-		font-weight: 700;
-	}
-	.avis-livre {
-		display: flex;
-		align-items: center;
-		.image-container {
-			display: flex;
-			justify-content: center; 
-			align-items: center;
-		
-			.image-content {
-			  display: flex;
-			  align-items: center;
-			  height: 180px;
-			  .img {
-				max-width: 100%;
-				max-height: 100%;
-			  }
-			}
-		}
-		.avis-infos {
-		display: flex;
-		flex-direction: column;
-		padding: 10px;
-		}
-	}
+    display: flex;
+    flex-direction: column;
+    .avis-livre {
+        display: flex;
+        align-items: center;
+        .image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            .image-content {
+                display: flex;
+                align-items: center;
+                height: 180px;
+                .img {
+                    max-width: 100%;
+                    max-height: 100%;
+                }
+            }
+        }
+        .avis-infos {
+            display: flex;
+            flex-direction: column;
+						padding: 10px;
+						blockquote{
+							font-style: italic;
+						}
+        }
+    }
 }

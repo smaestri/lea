@@ -7,6 +7,7 @@
         <meta name="author" content="Sylvain Maestri" />
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />
         <link rel="stylesheet" href="/webjars/app-react/1.0.0/css/common.css" />
+        <link href="https://fonts.googleapis.com/css?family=Amaranth" rel="stylesheet" />
         <script type="text/javascript">
           function checkForm(form)
           {
@@ -15,17 +16,17 @@
           }
         </script>
     </head>
-    <body>
+    <body style="font-family: 'Amaranth', sans-serif;">
         <div class="container">
             <div th:replace="header:: contentA" />
-            <h1>Reset password</h1>
+            <h1>Réinitilaiser le mot de passe</h1>
             <form th:action="@{/users/resetPwd}" th:object="${utilisateur}" method="POST" onsubmit="return checkForm(this);">
                 <div class="form-error">
                     <ul th:if="${#fields.hasErrors('*')}">
                         <li th:each="err : ${#fields.errors('*')}" th:text="${err}">Input is incorrect</li>
                     </ul>
                 </div>
-                <label>Email</label>
+                <label>Veuillez saisir votre e-mail afin de vous envoyer un lien pour mettre à jour votre mot de passe</label>
                 <input type="text" th:field="*{email}" placeholder="Votre e-mail"/>
                 <button name="validForm" type="submit" class="btn btn-primary">Valider</button>
             </form>

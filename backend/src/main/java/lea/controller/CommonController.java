@@ -1,13 +1,8 @@
 package lea.controller;
 
 import lea.modele.Livre;
-import lea.modele.PendingFriend;
 import lea.modele.Utilisateur;
-import lea.repository.categorie.CategorieRepository;
-import lea.repository.emprunt.EmpruntRepository;
-import lea.repository.user.UserRepository;
 import lea.service.CustomUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Iterator;
@@ -17,15 +12,6 @@ import java.util.List;
  * Created by sylvain on 10/01/16.
  */
 public class CommonController {
-
-    @Autowired
-    CategorieRepository categorieRepository;
-
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    EmpruntRepository empruntRepository;
 
     protected Utilisateur getPrincipal() {
 
@@ -55,14 +41,5 @@ public class CommonController {
         }
     }
 
-    protected void addRealFriendAndDeletePending(Utilisateur user, Utilisateur friend) {
-        user.getListFriendsId().add(friend.getId());
-        userRepository.saveUser(user);
 
-        // find my pending friend from this user
-        PendingFriend pf = userRepository.findPendingFriend(user, friend.getEmail());
-        if (pf != null) {
-            userRepository.deletePendingFriend(user, pf.getId());
-        }
-    }
 }

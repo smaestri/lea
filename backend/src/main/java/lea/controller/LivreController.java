@@ -5,6 +5,8 @@ import lea.modele.Categorie;
 import lea.modele.Emprunt;
 import lea.modele.Livre;
 import lea.modele.Utilisateur;
+import lea.repository.categorie.CategorieRepository;
+import lea.repository.emprunt.EmpruntRepository;
 import lea.repository.user.UserRepository;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
@@ -30,11 +32,17 @@ public class LivreController extends CommonController {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    private EmpruntRepository empruntRepository;
+
+    @Autowired
+    private CategorieRepository categorieRepository;
+
     // Recherche generale
     @RequestMapping(value = "/api/searchBook", method = RequestMethod.GET)
     public List<Livre> searchBook(@RequestParam(value = "titreBook", required = false) String titre,
                                   @RequestParam(value = "categorie", required = false) String categorieId) throws ServletException, IOException {
-        List<Livre> res = null;
+        List<Livre> res = new ArrayList<Livre>();
         List<Utilisateur> allUsers = userRepository.findAll();
         Utilisateur principal = this.getPrincipal();
         Utilisateur userConnected = null;
@@ -53,7 +61,7 @@ public class LivreController extends CommonController {
                 livre.setUserId(user.getId());
                 livre.setPreteur(user.getFullName());
                 livre.setMailPreteur(user.getEmail());
-                res = addBookinlist(livre, categorieId, titre);
+                addBookinlist(livre, categorieId, titre, res);
             }
         }
         return res;
@@ -271,7 +279,7 @@ public class LivreController extends CommonController {
     private String searchAuteurEnglish(String responseStr) {
           /* AUTEUR */
         int indexblocAuteur = responseStr.indexOf("<span class=\"author notFaded\"");
-        String blocAuteur = responseStr.substring(indexblocAuteur, indexblocAuteur + 300);
+        String blocAuteur = responseStr.substring(indexblocAuteur, indexblocAuteur + 1500);
         int indexauteurEng = blocAuteur.indexOf("a-link-normal");
         // System.out.println("blocAuteur");
         // System.out.println(blocAuteur);
@@ -290,11 +298,10 @@ public class LivreController extends CommonController {
 
     }
 
-    private List<Livre> addBookinlist(Livre livre, String categorieId, String titre) throws IOException {
-        List<Livre> res = new ArrayList<Livre>();
+    private void addBookinlist(Livre livre, String categorieId, String titre, List<Livre> res) throws IOException {
         boolean addLivre = true;
         if (categorieId != null && StringUtils.hasText(categorieId)) {
-            if (livre.getCategorieId().equals(categorieId)) {
+            if (livre.getCategorieId() == null || !livre.getCategorieId().equals(categorieId)) {
                 addLivre = false;
             }
         }
@@ -310,8 +317,6 @@ public class LivreController extends CommonController {
         if (addLivre) {
             res.add(livre);
         }
-
-        return res;
 
     }
 

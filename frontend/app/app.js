@@ -29,6 +29,7 @@ class App extends React.Component {
 					<Route path="/my-loans" component={MyLoans}/>
 					<Route path="/book-detail/:bookId/:previousPage" component={BookDetail}/>
 					<Route path="/list-book" component={ListBooks}/>
+					<Route path="/list-book/:category" component={ListBooks}/>
 					<Route path="/my-lendings" component={MyLendings}/>
 					<Route path="/my-friends" component={MyFriends}/>
 					<Route path="/my-requested-friends" component={MyRequestedFriends}/>

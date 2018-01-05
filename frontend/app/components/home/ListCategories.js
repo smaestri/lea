@@ -20,7 +20,7 @@ class ListCategories extends React.Component {
 
 	render() {
 		const categories = this.state.categories.map(cat => {
-			return <div><Link to={'/list-book'}>{cat.name}</Link></div>
+			return <div><Link to={'/list-book/' + cat.id}>{cat.name}</Link></div>
 		});
 
 		return (

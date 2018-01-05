@@ -13,24 +13,30 @@ class Home extends React.Component {
 	render() {
 		return (
 			<div className='home-container'>
-				<div className='container-title'>
-					<div className='title-image'>
-					Image
-					</div>
+				<div className='container-header-step'>
 					<div className='title-txt'>
-						Bienvenue sur <strong>Livres entre amis</strong>, partagez vos livres ... entre
-						amis!<br />
+						<h1>Bienvenue sur Livres entre amis, partagez vos livres ... entre	amis!</h1>
 					</div>
 				</div>
-				<div className='container-marche'>
+				<div className='container-content-step'>
 					<div className='step'>
-						Recherchez un livre qui vous intéressé et ajouter son propriétaire comme ami
+						<div className='step-image'>
+							<img src="/webjars/app-react/1.0.0/img/2-askbook.jpg" />
+						</div>
+						<div className='step-txt'>1 - Recherchez un livre qui vous intéresse et faites une demande d'emprunt</div>
+						
 					</div>
 					<div className='step'>
-						Effectuer une demande d'emprunt
+						<div className='step-image'>
+							<img src="/webjars/app-react/1.0.0/img/4-readbook.jpg" />
+						</div>
+						<div className='step-txt'>2 - Le propriétaire valide l'emprunt et il devient votre ami. Savourez votre livre!</div>
 					</div>
 					<div className='step'>
-						Lisez le livre et retournez le à son propriétaire une fois lu!
+						<div className='step-image'>
+							<img src="/webjars/app-react/1.0.0/img/3-accept-book.jpg" />
+						</div>
+						<div className='step-txt'>3 - Retournez le livre à son propriétaire une fois lu!</div>
 					</div>
 				</div>
 				<div className='container-actu'>

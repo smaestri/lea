@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Service("customUserDetailsService")
+@Service
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
@@ -43,9 +43,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         return new UserPrincipal(user.getFirstName(), user.getPassword(), getGrantedAuthorities(user), user);
 
-        //return new org
-        //			.springframework.security.core.userdetails.User(user.getFirstName(), user.getPassword(),
-        //		 true, true, true, true, getGrantedAuthorities(null));
     }
 
     public static class UserPrincipal extends org.springframework.security.core.userdetails.User {

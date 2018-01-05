@@ -195,13 +195,10 @@ class LoanAttributes extends React.Component {
 	}
 
 	displayEvents(events, userConnected) {
-		const dateDemande = events[0].dateMessage;
 		events.reverse();
 		const eventsComp = events.map(event => {
 			if (event.dateavis) {
-				if(event.dateavis > dateDemande){
 					return this.displayAvis(event, userConnected, this.props.loan.emprunteur)
-				}
 			} else if (event.dateMessage && !event.title) {
 				return this.displayComment(event, userConnected)
 			} else {

@@ -5,7 +5,7 @@ import SearchBar from './SearchBar'
 import Notification from './Notification'
 import Footer from './Footer'
 import helpers from '../../helpers/api'
-import { DropdownButton, MenuItem, ButtonToolbar, Nav, NavItem, Navbar, NavDropdown }  from 'react-bootstrap'
+import { DropdownButton, MenuItem, ButtonToolbar, Nav, NavItem, Navbar, NavDropdown } from 'react-bootstrap'
 import style from './Header.scss'
 
 const { Component } = React;
@@ -97,7 +97,7 @@ class Header extends Component {
 					onRefreshNotification={this.refreshNotif} />);
 		}
 		const bienvenue = this.state.currentUser;
-		menuGeneral = (<Navbar inverse collapseOnSelect>
+		menuGeneral = (<Navbar collapseOnSelect>
 			<Navbar.Header>
 				<Navbar.Brand>
 					<a href="/">Livres entre amis</a>
@@ -106,7 +106,6 @@ class Header extends Component {
 			</Navbar.Header>
 			<Navbar.Collapse>
 				<Nav>
-					
 					{this.state.isConnected && <NavItem eventKey={1}><Link to={'/my-books/'} >Ma bibliothèque</Link></NavItem>}
 					{this.state.isConnected && <NavItem eventKey={2}><Link to={'/my-loans/'} >Mes emprunts ({this.state.nbEmprunt})</Link></NavItem>}
 					{this.state.isConnected && <NavItem eventKey={2}><Link to={'/my-lendings/'} >Mes prêts ({this.state.nbPret})</Link></NavItem>}
@@ -124,7 +123,7 @@ class Header extends Component {
 							<MenuItem href="/users/new">S'inscrire</MenuItem>
 						</Nav>
 					}
-					
+
 				</Nav>
 			</Navbar.Collapse>
 		</Navbar>
@@ -133,7 +132,7 @@ class Header extends Component {
 			<div>
 				<div>
 					{menuGeneral}
-					
+
 				</div>
 				<div>
 					{notif}

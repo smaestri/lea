@@ -60,4 +60,10 @@ public class UserSecurityServiceImpl implements UserSecurityService {
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
 
+    @Override
+    public void createPasswordResetTokenForUser(final Utilisateur user, final String token) {
+        final PasswordResetToken myToken = new PasswordResetToken(token, user.getId());
+        passwordTokenRepository.save(myToken);
+    }
+
 }

@@ -2,7 +2,10 @@ package lea.repository.user;
 
 import lea.commun.StatutEmprunt;
 import lea.controller.LivreController;
-import lea.modele.*;
+import lea.modele.Avis;
+import lea.modele.Livre;
+import lea.modele.PendingFriend;
+import lea.modele.Utilisateur;
 import lea.repository.password.PasswordResetTokenRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +13,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -27,10 +29,6 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Autowired
     private MongoTemplate mongoTemplate = null;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
 
     @Override
     public List<Utilisateur> findByEmail(String email) {
@@ -109,7 +107,7 @@ public class UserRepositoryImpl implements UserRepository {
         q.addCriteria(Criteria.where("livres.id").is(new ObjectId(bookId)));
         Utilisateur user = mongoTemplate.findOne(q, Utilisateur.class);
 
-        if(user != null){
+        if (user != null) {
             Livre livre = user.getLivre(bookId);
             livre.setUserId(user.getId());
             return livre;
@@ -130,8 +128,8 @@ public class UserRepositoryImpl implements UserRepository {
         Query q = new Query();
         q.addCriteria(Criteria.where("id").in(new ObjectId(user.getId())));
         Utilisateur userRequested = mongoTemplate.findOne(q, Utilisateur.class);
-        for(PendingFriend pf : userRequested.getListPendingFriends()){
-            if(pf.getEmail().equals(email)){
+        for (PendingFriend pf : userRequested.getListPendingFriends()) {
+            if (pf.getEmail().equals(email)) {
                 return pf;
             }
         }
@@ -144,11 +142,11 @@ public class UserRepositoryImpl implements UserRepository {
         Query q = new Query();
         List<Utilisateur> utilisateurs = mongoTemplate.find(q, Utilisateur.class);
 
-        for(Utilisateur u : utilisateurs){
+        for (Utilisateur u : utilisateurs) {
             List<Livre> livres = u.getLivres();
-            for(Livre l : livres){
+            for (Livre l : livres) {
                 List<Avis> avis = l.getAvis();
-                for(Avis a : avis){
+                for (Avis a : avis) {
                     a.setLivre(l.getTitreBook());
                     LivreController.setBookImage(l);
                     a.setImage(l.getImage());
@@ -223,11 +221,4 @@ public class UserRepositoryImpl implements UserRepository {
         }
         return null;
     }
-
-    @Override
-    public void createPasswordResetTokenForUser(final Utilisateur user, final String token) {
-        final PasswordResetToken myToken = new PasswordResetToken(token, user.getId());
-        passwordTokenRepository.save(myToken);
-    }
-
 }

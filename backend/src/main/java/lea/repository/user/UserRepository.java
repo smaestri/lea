@@ -4,6 +4,7 @@ import lea.commun.StatutEmprunt;
 import lea.modele.*;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository {
 
@@ -18,7 +19,7 @@ public interface UserRepository {
     List<Utilisateur> findRequestedFriends(String email);
     void deleteFriend(String idUserConnected, String pendingEmail);
     void deletePendingFriend(Utilisateur userDetail, String pendingEmail);
-    Livre findBook(String id);
+    Optional<Livre> findBook(String id);
     void updateBookStatus(Utilisateur proprietaire, String livreId, StatutEmprunt status);
     public void deleteAvis(String idAvis);
     public Utilisateur findproprietaire(String bookId);

@@ -46,7 +46,7 @@ public class UserSecurityServiceImpl implements UserSecurityService {
     @Override
     public void authenticateManually(Utilisateur user) {
         CustomUserDetailsService.UserPrincipal principal = new CustomUserDetailsService.UserPrincipal(
-                user.getFirstName(), user.getPassword(), CustomUserDetailsService.getGrantedAuthorities(user), user);
+                user.getFirstName(), user.getPassword(), CustomUserDetailsService.getGrantedAuthorities(), user);
         Authentication authentication = new UsernamePasswordAuthenticationToken(principal, null,
                 principal.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);

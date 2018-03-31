@@ -97,7 +97,8 @@ class Header extends Component {
 					onRefreshNotification={this.refreshNotif} />);
 		}
 		const bienvenue = this.state.currentUser;
-		menuGeneral = (<Navbar collapseOnSelect>
+		menuGeneral = (
+		<Navbar collapseOnSelect>
 			<Navbar.Header>
 				<Navbar.Brand>
 					<a href="/">Livres entre amis</a>
@@ -111,19 +112,20 @@ class Header extends Component {
 					{this.state.isConnected && <NavItem eventKey={2}><Link to={'/my-lendings/'} >Mes prêts ({this.state.nbPret})</Link></NavItem>}
 					{this.state.isConnected && <NavItem eventKey={2}><Link to={'/my-friends/'} >Mes amis</Link></NavItem>}
 					<SearchBar />
-					{this.state.isConnected && <NavDropdown eventKey={3} title={`Bienvenue, ${bienvenue}`} pullRight>
-						<MenuItem eventKey="3"><Link to={'/historized-loans/'}>Mes emprunts historiés</Link></MenuItem>
-						<MenuItem eventKey="3"><Link to={'/historized-lendings/'}>Mes prêts historiés</Link></MenuItem>
-						<MenuItem eventKey="4"><Link to={'/account/'}>Mon compte</Link></MenuItem>
-						<MenuItem eventKey="4" href="/logout">Me déconnecter</MenuItem>
-					</NavDropdown>}
+					{this.state.isConnected &&
+						<NavDropdown eventKey={3} title={`Bienvenue, ${bienvenue}`} pullRight>
+							<MenuItem eventKey="3"><Link to={'/historized-loans/'}>Mes emprunts historiés</Link></MenuItem>
+							<MenuItem eventKey="3"><Link to={'/historized-lendings/'}>Mes prêts historiés</Link></MenuItem>
+							<MenuItem eventKey="4"><Link to={'/account/'}>Mon compte</Link></MenuItem>
+							<MenuItem eventKey="4" href="/logout">Me déconnecter</MenuItem>
+						</NavDropdown>
+					}
 					{!this.state.isConnected &&
 						<Nav pullRight>
 							<MenuItem href="/login">Se connecter</MenuItem>
 							<MenuItem href="/users/new">S'inscrire</MenuItem>
 						</Nav>
 					}
-
 				</Nav>
 			</Navbar.Collapse>
 		</Navbar>

@@ -359,7 +359,7 @@ class LoanAttributes extends React.Component {
 					</AddComment>}
 					{displayAddRating &&
 						<AddAvis
-							showInput={false}
+							visibleByDefault={false}
 							bookId={this.props.loan.livre.id}
 							reloadEmprunt={this.props.reloadEmprunt}
 						/>}

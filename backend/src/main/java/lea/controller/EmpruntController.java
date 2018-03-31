@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class EmpruntController extends CommonController {
@@ -74,8 +75,8 @@ public class EmpruntController extends CommonController {
         this.userRepository.updateBookStatus(proprietaire, emprunt.getLivreId(), StatutEmprunt.REQUESTED);
 
         try {
-            Livre livre = proprietaire.getLivre(empruntBean.getIdLivre());
-            String content = "Livres entre Amis - nouvelle demande d'emprunt de la part de " + principal.getFullName() /*+  txtIntermediaire*/ + " pour le livre '" + livre.getTitreBook() + "'. Connectez-vous au site pour consulter et accepter cet emprunt!";
+            Optional<Livre> livre = proprietaire.getLivre(empruntBean.getIdLivre());
+            String content = "Livres entre Amis - nouvelle demande d'emprunt de la part de " + principal.getFullName() /*+  txtIntermediaire*/ + " pour le livre '" + ((livre.isPresent())?livre.get().getTitreBook():"") + "'. Connectez-vous au site pour consulter et accepter cet emprunt!";
             String object = "Nouvelle demande d'emprunt";
             notificationService.sendNotificaition(proprietaire.getEmail(), object, content);
         } catch (Exception e) {
@@ -106,7 +107,7 @@ public class EmpruntController extends CommonController {
             addRealFriendAndDeletePending(emprunteur, userConnected);
         }
         Utilisateur preteur = userRepository.findOne(emprunt.getPreteurId());
-        String content = preteur.getFullName() + " a accepté votre demande d'emprunt pour le livre " + preteur.getLivre(emprunt.getLivreId()).getTitreBook() + ". Connectez-vous au site pour retourner le livre une fois que vous l'avez lu!";
+        String content = preteur.getFullName() + " a accepté votre demande d'emprunt pour le livre " + preteur.getLivre(emprunt.getLivreId()).get().getTitreBook() + ". Connectez-vous au site pour retourner le livre une fois que vous l'avez lu!";
         String object = "Le prêteur a accepté votre demande d'emprunt!";
         notificationService.sendNotificaition(emprunteur.getEmail(), object, content);
         return "OK";
@@ -144,10 +145,10 @@ public class EmpruntController extends CommonController {
         emprunt.setActif(true);
         emprunt.setDateEnvoi(new Date());
         empruntRepository.saveEmprunt(emprunt);
-        Livre livre = userRepository.findBook(emprunt.getLivreId());
+        Optional<Livre> livre = userRepository.findBook(emprunt.getLivreId());
         Utilisateur emprunteur = userRepository.findOne(emprunt.getEmprunteurId());
         String object = "L'emprunteur vous a renvoyé le livre";
-        String content = emprunteur.getFullName() + " vous a renvoyé le livre " + livre.getTitreBook() + ". Vous pouvez donc clore l'emprunt en vous connectant au site!";
+        String content = emprunteur.getFullName() + " vous a renvoyé le livre " + (livre.isPresent()?livre.get().getTitreBook():"") + ". Vous pouvez donc clore l'emprunt en vous connectant au site!";
         notificationService.sendNotificaition(preteur.getEmail(), object, content);
 
         return "OK";
@@ -216,15 +217,15 @@ public class EmpruntController extends CommonController {
     private void setEmpruntobjects(Emprunt emp) {
         emp.setPreteur(userRepository.findOne(emp.getPreteurId()));
         emp.setEmprunteur(userRepository.findOne(emp.getEmprunteurId()));
-        Livre book = userRepository.findBook(emp.getLivreId());
+        Optional<Livre> book = userRepository.findBook(emp.getLivreId());
         setCommentuser(emp);
-        emp.setLivre(book);
+        emp.setLivre(book.get());
     }
 
     private boolean isNewPret(List<Emprunt> listeEmp) {
         for (Emprunt emp : listeEmp) {
-            Livre book = userRepository.findBook(emp.getLivreId());
-            if (book.getStatut().equals(StatutEmprunt.REQUESTED)) {
+            Optional<Livre> book = userRepository.findBook(emp.getLivreId());
+            if (book.isPresent() && book.get().getStatut().equals(StatutEmprunt.REQUESTED)) {
                 return true;
             }
         }

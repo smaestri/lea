@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class LivreController extends CommonController {
@@ -69,13 +70,15 @@ public class LivreController extends CommonController {
 
     @RequestMapping(value = "/api/livres/{livre}", method = RequestMethod.GET)
     public Livre detailLivreHandler(@PathVariable("livre") String idLivre) {
-        Livre livreDetail = userRepository.findBook(idLivre);
+        Optional<Livre> livreDetail = userRepository.findBook(idLivre);
 
-        if (livreDetail.getCategorieId() != null) {
-            Categorie cat = this.categorieRepository.findOne(livreDetail.getCategorieId());
-            livreDetail.setCategorie(cat);
+        if (livreDetail.isPresent() && livreDetail.get().getCategorieId() != null) {
+            Categorie cat = this.categorieRepository.findOne(livreDetail.get().getCategorieId());
+            livreDetail.get().setCategorie(cat);
+            return livreDetail.get();
         }
-        return livreDetail;
+        return null;
+
     }
 
     @RequestMapping(value = "/api/livres/new", method = RequestMethod.POST)
@@ -92,10 +95,15 @@ public class LivreController extends CommonController {
     public Livre addLivre(@PathVariable("livre") String livreId, @RequestBody Livre newLivre) {
         Utilisateur principal = getPrincipal();
         Utilisateur user = this.userRepository.findOne(principal.getId());
-        Livre livre = user.getLivre(livreId);
+        Optional<Livre> livre = user.getLivre(livreId);
         updateBook(livre, newLivre);
-        userRepository.saveLivre(user, livre);
-        return livre;
+        if(livre.isPresent()){
+            userRepository.saveLivre(user, livre.get());
+            return livre.get();
+        }
+        return null;
+
+
     }
 
     // My books
@@ -128,13 +136,16 @@ public class LivreController extends CommonController {
         return "0";
     }
 
-    private void updateBook(Livre exitingBook, Livre newLivre) {
-        exitingBook.setAuteur(newLivre.getAuteur());
-        exitingBook.setDescription(newLivre.getDescription());
-        exitingBook.setCategorieId(newLivre.getCategorieId());
-        exitingBook.setTitreBook(newLivre.getTitreBook());
-        exitingBook.setIsbn(newLivre.getIsbn());
-        exitingBook.setImage(newLivre.getImage());
+    private void updateBook(Optional<Livre> optexitingBook, Livre newLivre) {
+        if(optexitingBook.isPresent()){
+            Livre exitingBook = optexitingBook.get();
+            exitingBook.setAuteur(newLivre.getAuteur());
+            exitingBook.setDescription(newLivre.getDescription());
+            exitingBook.setCategorieId(newLivre.getCategorieId());
+            exitingBook.setTitreBook(newLivre.getTitreBook());
+            exitingBook.setIsbn(newLivre.getIsbn());
+            exitingBook.setImage(newLivre.getImage());
+        }
     }
 
     @RequestMapping(value = "/api/getBookInfoFromAmazon/{isbn}", method = RequestMethod.GET)

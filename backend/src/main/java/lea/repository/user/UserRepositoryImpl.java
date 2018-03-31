@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
@@ -102,17 +103,19 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Livre findBook(String bookId) {
+    public Optional<Livre> findBook(String bookId) {
         Query q = new Query();
         q.addCriteria(Criteria.where("livres.id").is(new ObjectId(bookId)));
         Utilisateur user = mongoTemplate.findOne(q, Utilisateur.class);
 
         if (user != null) {
-            Livre livre = user.getLivre(bookId);
-            livre.setUserId(user.getId());
+            Optional<Livre> livre = user.getLivre(bookId);
+            if(livre.isPresent()){
+                livre.get().setUserId(user.getId());
+            }
             return livre;
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override

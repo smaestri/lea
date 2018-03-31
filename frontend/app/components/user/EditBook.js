@@ -159,9 +159,11 @@ class EditBook extends React.Component {
 								<Col for="note" sm={2}>Noter ce livre</Col>
 								<Col sm={10}>
 									<AddAvis
-										showInput={true}
-										avis={this.state.auteurAvis || null}
-										updateAvis={this.handleAvisChange} />
+										visibleByDefault={true}
+										showRating={true}
+										avis={this.state.auteurAvis}
+										handleAvisChange={this.handleAvisChange}
+									/>
 								</Col>
 							</FormGroup>
 							<ButtonToolbar className="text-center">

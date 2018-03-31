@@ -10,17 +10,26 @@ class AddAvis extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = { avis: this.props.avis || {}, showInput: this.props.showInput || false };
+		this.state = {
+			avis: this.props.avis || {},
+			visibleByDefault: this.props.visibleByDefault,
+			displayToggle: this.props.displayToggle || false,
+			showRating: this.props.showRating || false
+		};
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleRating = this.handleRating.bind(this);
 		this.handleMessageChange = this.handleMessageChange.bind(this);
 	}
 
+	componentWillReceiveProps(nextProps) {
+		this.setState({ avis: nextProps.avis || {} })
+	}
+
 	handleRating(event) {
 		const newAvis = this.state.avis || {};
 		newAvis["note"] = event;
-		if (this.props.updateAvis) {
-			this.props.updateAvis(newAvis)
+		if (this.props.handleAvisChange) {
+			this.props.handleAvisChange(newAvis)
 		} else {
 			this.setState({ avis: newAvis });
 		}
@@ -29,8 +38,8 @@ class AddAvis extends React.Component {
 	handleMessageChange(event) {
 		const newAvis = this.state.avis || {};
 		newAvis["libelle"] = event.target.value;
-		if (this.props.updateAvis) {
-			this.props.updateAvis(newAvis)
+		if (this.props.handleAvisChange) {
+			this.props.handleAvisChange(newAvis)
 		} else {
 			this.setState({ avis: newAvis });
 		}
@@ -39,25 +48,25 @@ class AddAvis extends React.Component {
 	handleSubmit(event) {
 		event.preventDefault();
 		helpers.saveAvis(this.state.avis, this.props.bookId).then(() => {
-			this.setState({ avis: '' });
+			this.setState({ avis: {} });
 			this.props.reloadEmprunt();
 		});
 	}
 
 	toggleInput(event) {
 		event.preventDefault();
-		this.setState({ showInput: !this.state.showInput })
-		if (this.props.updateAvis && !this.state.showInput) {
-			this.props.updateAvis(undefined)
-		}
+		this.setState({
+			showRating: !this.state.showRating,
+		})
 	}
 
 	render() {
 		return (
 			<div className="add-avis-container">
-				{!this.props.updateAvis &&
-					<Button bsStyle="primary" onClick={this.toggleInput.bind(this)}>Ajouter un avis</Button>}
-				{this.state.showInput && <div>
+				{!this.state.visibleByDefault &&
+					<Button bsStyle="primary" onClick={this.toggleInput.bind(this)}>Ajouter un avis</Button>
+				}
+				{this.state.showRating && <div>
 					<Rating empty={<SVGIcon href='#icon-star-empty' className='icon-rating' />}
 						full={<SVGIcon href='#icon-star-full' className='icon-rating' />}
 						initialRate={this.state.avis.note}
@@ -67,9 +76,10 @@ class AddAvis extends React.Component {
 						componentClass="textarea"
 						value={(this.state.avis && this.state.avis.libelle) || ""}
 						onChange={this.handleMessageChange} />
-					{!this.props.updateAvis &&
-						<Button onClick={this.handleSubmit} type="submit" bsStyle="primary">Valider</Button>}
 				</div>}
+				{!this.props.visibleByDefault && this.state.showRating &&
+					<Button onClick={this.handleSubmit} type="submit" bsStyle="primary">Valider</Button>
+				}
 			</div>
 		)
 	}

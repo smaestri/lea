@@ -20,7 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
-    public static List<GrantedAuthority> getGrantedAuthorities(Utilisateur user) {
+    public static List<GrantedAuthority> getGrantedAuthorities(/*Utilisateur user*/) {
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
         //TODO uncomment and refactor if several roles
         //for (UserProfile userProfile : user.getUserProfiles()) {
@@ -41,7 +41,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         Utilisateur user = allUsers.get(0);
 
-        return new UserPrincipal(user.getFirstName(), user.getPassword(), getGrantedAuthorities(user), user);
+        return new UserPrincipal(user.getFirstName(), user.getPassword(), getGrantedAuthorities(), user);
 
     }
 

@@ -6,6 +6,7 @@ import org.springframework.util.StringUtils;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Utilisateur extends BaseDocumentImpl {
 
@@ -137,13 +138,13 @@ public class Utilisateur extends BaseDocumentImpl {
         this.avatar = avatar;
     }
 
-    public Livre getLivre(String id) {
+    public Optional<Livre> getLivre(String id) {
         for (Livre livre : this.livres) {
             if (livre.getId().equals(id)) {
-                return livre;
+                return Optional.of(livre);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override

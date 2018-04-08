@@ -1,26 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
-<head>
-    <meta charset="utf-8" />
-    <title>Livres entre amis - Informations légales</title>
-    <meta name="description" content="Livres entre amis partage emprunt de vos anciens livres entre amis" />
-    <meta name="author" content="Sylvain Maestri" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="webjars/app-react/1.0.0/css/common.css" />
-    <link href="https://fonts.googleapis.com/css?family=Amaranth" rel="stylesheet" />
-</head>
-
+<head th:replace="includes/common-head:: contentHead" />
 <body style="font-family: 'Amaranth', sans-serif;">
     <div class="container">
-        <nav th:replace="header:: contentA" />
+        <nav th:replace="includes/header:: contentA" />
         <div class="container-info">
             <h2>INFO</h2>
             <div>
                 Réalisé par Sylvain Maestri. http://effectivecoding.fr
             </div>
         </div>
-        <nav th:replace="footer:: contentA" />
+        <nav th:replace="includes/footer:: contentA" />
     </div>
 </body>
 

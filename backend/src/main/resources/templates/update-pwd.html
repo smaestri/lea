@@ -1,24 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="utf-8" />
-    <title>Livres entre amis - Inscription</title>
-    <meta name="description" content="Livres entre amis partage emprunt de vos anciens livres entre amis" />
-    <meta name="author" content="Sylvain Maestri" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/webjars/app-react/1.0.0/css/common.css" />
-    <link href="https://fonts.googleapis.com/css?family=Amaranth" rel="stylesheet" />
-    <script type="text/javascript">
-      function checkForm(form)
-      {
-        form.validForm.disabled = true;
-        return true;
-      }
-    </script>
-</head>
+<head th:replace="includes/common-head:: contentHead" />
 <body style="font-family: 'Amaranth', sans-serif;">
 <div class="container">
-    <div th:replace="header:: contentA" />
+    <div th:replace="includes/header:: contentA" />
             <h1>Mettre à jour mon mot de passe</h1>
             <form th:action="@{/users/savePassword}" th:object="${utilisateur}" method="POST" onsubmit="return checkForm(this);">
                 <div class="form-error">
@@ -40,7 +25,7 @@
                     <button name="validForm" type="submit" class="btn btn-primary">Valider</button>
                 </div>
             </form>
-            <nav th:replace="footer:: contentA" />
+            <nav th:replace="includes/footer:: contentA" />
         </div>
     </body>
 </html>

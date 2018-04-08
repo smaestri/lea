@@ -1,19 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="utf-8" />
-        <title>Livres entre amis - Connexion</title>
-        <meta name="description" content="Livres entre amis partage emprunt de vos anciens livres entre amis" />
-        <meta name="author" content="Sylvain Maestri" />
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="webjars/app-react/1.0.0/css/common.css" />
-        <link href="//fonts.googleapis.com/css?family=Roboto:400,300,100" rel="stylesheet" />
-        <link href="//fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css?family=Amaranth" rel="stylesheet" />
-    </head>
+    <head th:replace="includes/common-head:: contentHead" />
     <body style="font-family: 'Amaranth', sans-serif;">
         <div class="container">
-            <div th:replace="header:: contentA" />
+            <div th:replace="includes/header:: contentA" />
             <div class="container-login">
                 <div class="container-form">
                     <h2>Connexion</h2>
@@ -34,7 +24,9 @@
                         <div class="form-group">
                             <label>Password</label>
                             <div class="input-group">
-                                <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                                <span class="input-group-addon">
+                                    <i class="glyphicon glyphicon-lock"></i>
+                                </span>
                                 <input type="password" name="password" placeholder="Password" class="form-control"/>
                             </div>
                         </div>
@@ -51,7 +43,7 @@
                 </div>
             </div>
             <a href="/"><button type="button" class="btn btn-primary">Retour</button></a>
-            <nav th:replace="footer:: contentA" />
+            <nav th:replace="includes/footer:: contentA" />
         </div>
     </body>
 </html>

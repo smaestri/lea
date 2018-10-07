@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 var helpers = {
     getUserDetail: function (userId) {
         return axios.get('/api/users/' + userId)

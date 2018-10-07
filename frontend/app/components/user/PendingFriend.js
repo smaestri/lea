@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button } from 'react-bootstrap'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 import formatDate from '../../helpers/utils'
 import style from './PendingFriend.scss'
 
@@ -40,8 +40,7 @@ class PendingFriend extends React.Component {
 				}
 				{this.props.showAcceptButton &&
 				<div className="linkUser">
-					<Link to={'user-detail/' + this.props.friend.id + '/requestedFriend'}>Voir ses
-						livres</Link></div>
+					<Link to={'/user-detail/' + this.props.friend.id}>Voir ses livres</Link></div>
 				}
 				{this.props.showAcceptButton &&
 				<div className="accept-button">

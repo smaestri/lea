@@ -21,6 +21,6 @@ public class MongoAuthenticationConfig extends AbstractMongoConfiguration {
     @Bean
     public Mongo mongo() throws Exception {
         return new MongoClient(singletonList(new ServerAddress("127.0.0.1", 27018)),
-                singletonList(MongoCredential.createCredential("admin", "admin", "admin".toCharArray())));
+                singletonList(MongoCredential.createCredential("admin", "admin", "password".toCharArray())));
     }
 }

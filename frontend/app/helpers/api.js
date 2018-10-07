@@ -1,4 +1,3 @@
-require('es6-promise').polyfill();
 import axios from 'axios'
 import React from 'react'
 
@@ -14,20 +13,6 @@ function getCsrf() {
 };
 */
 
-export const SVGIcon = React.createClass({
-	render: function () {
-		// Namespaced attributes are not supported in JSX. As a workaround
-		// we can use the dangerouslySetInnerHTML to set the innerHTML property.
-		// See https://github.com/facebook/react/issues/2250
-		var svg =
-			'<svg class="' + this.props.className + '">' +
-			'<use xlink:href="' + this.props.href + '"></use>' +
-			'</svg>';
-		return React.createElement('div', {
-			dangerouslySetInnerHTML: { __html: svg }
-		});
-	}
-});
 
 var helpers = {
 	

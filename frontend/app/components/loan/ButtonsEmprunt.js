@@ -3,7 +3,8 @@ import { Button } from 'react-bootstrap'
 import { FormControl } from 'react-bootstrap'
 import { withRouter } from 'react-router'
 import { Modal } from 'react-bootstrap'
-import helpers from '../../helpers/api'
+import { Redirect } from 'react-router-dom'
+import helpers from '../../helpers/loan-actions/api'
 import { loanStatus } from '../../helpers/utils'
 
 class ButtonsEmprunt extends React.Component {
@@ -22,7 +23,8 @@ class ButtonsEmprunt extends React.Component {
 			disableAcceptButton: false,
 			disableSendButton: false,
 			disableCloseButton: false,
-			showModal: false
+			showModal: false,
+			redirectToHistorizedLendingd: false
 		};
 	}
 
@@ -41,7 +43,7 @@ class ButtonsEmprunt extends React.Component {
 		this.setState({ disableAcceptButton: true });
 		helpers.refuseLoan(this.props.loan.id, this.state.motifRefus).then(() => {
 			this.props.onRefreshCount();
-			this.props.router.push('/historized-lendings')
+			this.setState({ redirectToHistorizedLendingd: true });
 		});
 	}
 
@@ -55,9 +57,8 @@ class ButtonsEmprunt extends React.Component {
 	closeLoan() {
 		this.setState({ disableCloseButton: true });
 		helpers.closeLoan(this.props.loan.id).then(() => {
-			// update home to get new number of lendings
 			this.props.onRefreshCount();
-			this.props.router.push('/historized-lendings')
+			this.setState({ redirectToHistorizedLendingd: true });
 		});
 	}
 
@@ -74,6 +75,10 @@ class ButtonsEmprunt extends React.Component {
 	}
 
 	render() {
+
+		if(this.state.redirectToHistorizedLendingd) {
+			return <Redirect to='/historized-lendings'/>;
+		}
 		let displayAcceptButton, displayCloseButton, displaySendButton = false;
 		const loan = this.props.loan;
 		const userConnected = this.props.userId;

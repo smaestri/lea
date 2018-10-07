@@ -1,5 +1,5 @@
 import React from 'react'
-import helpers from '../../helpers/api'
+import helpers from '../../helpers/book/api'
 import Avis from '../book/Avis.js'
 import style from './LastAvis.scss'
 

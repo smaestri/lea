@@ -1,6 +1,7 @@
 import React from 'react'
-import helpers from '../../helpers/api'
+import helpers from '../../helpers/book/api'
 import Book from './Book'
+import { Button } from 'react-bootstrap'
 import style from './ListBooks.scss'
 
 class ListBooks extends React.Component {
@@ -12,7 +13,7 @@ class ListBooks extends React.Component {
 	}
 
 	_getBooks(nextProps) {
-		let category = this.props.params.category;
+		let category = this.props.match.params.category;
 		if(nextProps && nextProps.params){
 			category = nextProps.params.category
 		}
@@ -47,6 +48,7 @@ class ListBooks extends React.Component {
 				<h1>Livres empruntables</h1>
 				{books.length == 0 && <span>Pas de livres empruntables.</span>}
 				{books.length > 0 && <div className="list-book">{books}</div>}
+				<Button bsStyle="primary" onClick={this.props.history.goBack}>Retour</Button>
 			</div>
 		)
 	}

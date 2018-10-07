@@ -1,7 +1,7 @@
 import React from 'react'
 import { FormControl } from 'react-bootstrap'
 import { Button } from 'react-bootstrap'
-import helpers from '../../helpers/api'
+import helpers from '../../helpers/loan-actions/api'
 import style from './AddComment.scss'
 
 class AddComment extends React.Component {

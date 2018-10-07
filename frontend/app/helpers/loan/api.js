@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 var helpers = {
     getLoan: function (id) {
         return axios.get('/api/emprunts/' + id)

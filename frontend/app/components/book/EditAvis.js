@@ -2,7 +2,7 @@ import React from 'react'
 import Rating from 'react-rating'
 import { Button } from 'react-bootstrap'
 import { FormControl } from 'react-bootstrap'
-import { SVGIcon } from '../../helpers/api'
+import { SVGIcon } from '../common/SVGIcon'
 
 /**
  * Dumb component that display rating + txt

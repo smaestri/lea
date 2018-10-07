@@ -1,7 +1,8 @@
 import React from 'react'
 import { withRouter } from 'react-router'
-import { Link, ControlLabel, Col, FormGroup, FormControl, Button, Form, ButtonToolbar } from 'react-bootstrap'
-import helpers from '../../helpers/api'
+import { Link, Redirect } from 'react-router-dom'
+import { Col, FormGroup, FormControl, Button, Form, ButtonToolbar } from 'react-bootstrap'
+import helpers from '../../helpers/book/api'
 import AddAvis from '../book/AddAvis'
 import theme from './EditBook.scss'
 
@@ -14,12 +15,12 @@ class EditBook extends React.Component {
 			avis: null,
 			categories: null,
 			auteurAvis: null,
-			displaySpinner: false
+			displaySpinner: false,
+			redirect: false
 		}
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.handleAvisChange = this.handleAvisChange.bind(this);
-		this.returnToBooks = this.returnToBooks.bind(this);
 	}
 
 	componentDidMount() {
@@ -27,8 +28,8 @@ class EditBook extends React.Component {
 			this.setState({ categories, book: {...this.state.book, categorieId: categories[0].id } });
 		});
 
-		if (this.props.params && this.props.params.bookId) {
-			helpers.getBookDetail(this.props.params.bookId).then((book) => {
+		if (this.props.match.params && this.props.match.params.bookId) {
+			helpers.getBookDetail(this.props.match.params.bookId).then((book) => {
 				// if user post avis on his book
 				const auteurAvis = book.avis.find((avis) => {
 					if (this.props.userId == avis.auteur) {
@@ -40,10 +41,6 @@ class EditBook extends React.Component {
 		} else {
 			this.setState({ book: { titreBook: '', auteur: '', description: '', isbn: '' } });
 		}
-	}
-
-	returnToBooks() {
-		this.props.router.push('/my-books')
 	}
 
 	handleSubmit(event) {
@@ -59,10 +56,11 @@ class EditBook extends React.Component {
 			// then save avis if state modified
 			if (this.state.avis) {
 				helpers.saveAvis(this.state.avis, book.id).then((newAvisId) => {
-					this.props.router.push('/my-books')
+					this.setState({ redirect: true });
+					
 				});
 			} else {
-				this.props.router.push('/my-books')
+				this.setState({ redirect: true });
 			}
 		});
 	}
@@ -101,6 +99,10 @@ class EditBook extends React.Component {
 	}
 
 	render() {
+		if (this.state.redirect) {
+			return <Redirect to='/my-books'/>;
+		}
+
 		const catReact = this.state.categories && this.state.categories.map(category => {
 			return <option value={category.id} selected={this.state.book.categorieId === category.id}>{category.name}</option>
 		});
@@ -109,8 +111,8 @@ class EditBook extends React.Component {
 		
 			<div className="editbook-container">
 			{this.state.displaySpinner && <div id ="overlay"><div className="spinner-bg"/></div>}
-				{this.props.params && this.props.params.bookId && <h2>Modifier livre</h2>}
-				{!this.props.params || !this.props.params.bookId && <h2>Ajouter un livre</h2>}
+				{this.props.match.params && this.props.match.params.bookId && <h2>Modifier livre</h2>}
+				{!this.props.match.params || !this.props.match.params.bookId && <h2>Ajouter un livre</h2>}
 				{this.state.book && 
 				<div className="main-content">
 					<Col className="content-image">
@@ -174,7 +176,7 @@ class EditBook extends React.Component {
 					</Col>
 					
 				</div>}
-				<Button onClick={this.returnToBooks}>Retour</Button>
+				<Button bsStyle="primary" onClick={this.props.history.goBack}>Retour</Button>
 			</div>
 		)
 	}

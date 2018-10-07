@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 var helpers = {
     loanBook: function (idBook, intermediaireid) {
         return axios.post('/api/emprunter', {

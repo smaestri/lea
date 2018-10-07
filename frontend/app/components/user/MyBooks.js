@@ -1,10 +1,10 @@
 import React from 'react'
-import { Timeline, TimelineEvent } from 'react-event-timeline'
-import helpers from '../../helpers/api'
+import helpers from '../../helpers/book/api'
 import Book from '../book/Book'
 import { Button } from 'react-bootstrap';
 import { Modal } from 'react-bootstrap';
 import { withRouter } from 'react-router';
+import { Link } from 'react-router-dom';
 import theme from './MyBooks.scss'
 
 class MyBooks extends React.Component {
@@ -13,7 +13,6 @@ class MyBooks extends React.Component {
 		super(props);
 		this.state = { books: [] };
 		this.handleDelete = this.handleDelete.bind(this);
-		this.addBook = this.addBook.bind(this);
 		this.close = this.close.bind(this);
 	}
 
@@ -24,10 +23,6 @@ class MyBooks extends React.Component {
 				showModal: false
 			});
 		});
-	}
-
-	addBook() {
-		this.props.router.push('/edit-book')
 	}
 
 	handleDelete(event, idBook) {
@@ -62,7 +57,7 @@ class MyBooks extends React.Component {
 				<h1>Ma bibiliothèque</h1>
 				{books.length == 0 && <div><p>Vous n'avez pas de livres.</p></div>}
 				{books.length > 0 && <div className="mybooks-container">{books}</div>}
-				<Button bsStyle="primary" bsSize="small" onClick={this.addBook}>Ajouter livre</Button>
+				<Link bsStyle="primary" bsSize="small" to='/edit-book'>Ajouter livre</Link>
 				<Modal show={this.state.showModal} onHide={this.close}>
 					<Modal.Header closeButton>
 						<Modal.Title>Livre en cours d'emprunt</Modal.Title>

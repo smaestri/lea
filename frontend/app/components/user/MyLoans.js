@@ -1,6 +1,7 @@
 import React from 'react';
 import Loan from '../loan/Loan'
-import helpers from '../../helpers/api'
+import helpers from '../../helpers/loan/api'
+import { Button } from 'react-bootstrap'
 import style from './MyLoans.scss'
 
 class MyLoans extends React.Component {
@@ -43,6 +44,7 @@ class MyLoans extends React.Component {
 				<h1>Mes emprunts</h1>
 				{loans.length == 0 && <span>Vous n'avez pas d'emprunts en cours.</span>}
 				{loans.length > 0 && <div className="myloans-container">{loans}</div>}
+				<Button bsStyle="primary" onClick={this.props.history.goBack}>Retour</Button>
 			</div>
 		)
 	}

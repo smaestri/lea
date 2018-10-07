@@ -7,7 +7,7 @@ class MyRequestedFriends extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = { requestedFriends: [] };
+		this.state = { requestedFriends: [], redirectToMyFriends: false };
 		this.acceptRequestFriend = this.acceptRequestFriend.bind(this);
 	}
 
@@ -23,11 +23,14 @@ class MyRequestedFriends extends React.Component {
 		helpers.acceptFriend(id).then(() => {
 			this.props.onRefreshNotification();
 			this.componentDidMount();
-			this.props.router.push('/my-friends')
+			this.setState({ redirectToMyFriends: true });
 		})
 	}
 
 	render() {
+		if(this.state.redirectToMyFriends) {
+			return <Redirect to='/my-friends'/>;
+		}
 		const requestedFriends = this.state.requestedFriends.map(friend => {
 			return <PendingFriend
 						showAcceptButton={true}

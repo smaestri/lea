@@ -1,9 +1,9 @@
 import React from 'react'
 import Rating from 'react-rating'
 import { Link } from 'react-router'
-import helpers from '../../helpers/api'
+import helpers from '../../helpers/user/api'
 import formatDate from '../../helpers/utils'
-import { SVGIcon } from '../../helpers/api'
+import { SVGIcon } from '../common/SVGIcon'
 import style from './Avis.scss'
 
 class Avis extends React.Component {

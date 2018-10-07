@@ -1,7 +1,8 @@
 import React from 'react'
-import { Link, ControlLabel, Col, FormGroup, FormControl, Button, Form, ButtonToolbar } from 'react-bootstrap'
+import { Col, FormGroup, FormControl, Button, Form, ButtonToolbar } from 'react-bootstrap'
 import { withRouter } from 'react-router'
-import helpers from '../../helpers/api'
+import { Link } from 'react-router-dom'
+import helpers from '../../helpers/user/api'
 import style from './Account.scss'
 
 class Account extends React.Component {
@@ -14,7 +15,7 @@ class Account extends React.Component {
 	}
 
 	componentDidMount() {
-		helpers.getAccount(this.props.params.bookId).then((user) => {
+		helpers.getAccount(this.props.match.params.bookId).then((user) => {
 			this.setState(Object.assign({}, user, {password: ''}, {confirmPassword: ''}));
 		})
 	}
@@ -95,7 +96,7 @@ class Account extends React.Component {
 						</ButtonToolbar>
 					</Form>
 				</div>
-				<Button onClick={() => this.props.router.push('/home')}>Retour</Button>
+				<Button bsStyle="primary" onClick={this.props.history.goBack}>Retour</Button>
 			</div>
 		)
 	}

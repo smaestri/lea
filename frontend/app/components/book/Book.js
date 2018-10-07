@@ -1,10 +1,12 @@
 import React from 'react'
 import { Button, ButtonToolbar } from 'react-bootstrap'
+import { LinkContainer } from 'react-router-bootstrap'
 import { withRouter } from 'react-router'
-import { Link } from 'react-router'
+import { Link, Redirect } from 'react-router-dom'
 import Rating from 'react-rating'
-import helpers from '../../helpers/api'
-import { SVGIcon } from '../../helpers/api'
+import helpersLoan from '../../helpers/loan-actions/api'
+import helpersFriend from '../../helpers/friend/api'
+import { SVGIcon } from '../common/SVGIcon'
 import style from './Book.scss'
 
 class Book extends React.Component {
@@ -13,11 +15,12 @@ class Book extends React.Component {
 		super(props);
 		this.handleClick = this.handleClick.bind(this);
 		this.handleLoan = this.handleLoan.bind(this);
-		this.modifyBook = this.modifyBook.bind(this);
 		this.savePendingFriend = this.savePendingFriend.bind(this);
 		this.userConnected = props.userId !== 0;
 		this.state = {
 			disableEmprunterButton: false,
+			redirectToMyLoans: false,
+			redirectToMyFriends: false
 		};
 	}
 
@@ -25,9 +28,6 @@ class Book extends React.Component {
 		this.props.handleDelete(e, this.props.book.id);
 	}
 
-	modifyBook() {
-		this.props.router.push('/edit-book/' + this.props.book.id)
-	}
 
 	handleLoan(event) {
 		this.setState({ disableEmprunterButton: true });
@@ -36,18 +36,26 @@ class Book extends React.Component {
 			window.location.replace("/login");
 			return;
 		}
-		helpers.loanBook(this.props.book.id, this.props.book.intermediaireid).then(() => {
-			this.props.router.push('/my-loans');
+		helpersLoan.loanBook(this.props.book.id, this.props.book.intermediaireid).then(() => {
+			this.setState({ redirectToMyloans: true });
 		})
 	}
 
 	savePendingFriend() {
-		helpers.savePendingFriend(this.props.book.mailPreteur).then(() => {
-			this.props.router.push('/my-friends');
+		helpersFriend.savePendingFriend(this.props.book.mailPreteur).then(() => {
+			this.setState({ redirectToMyFriends: true });
 		})
 	}
 
 	render() {
+
+		if(this.state.redirectToMyloans) {
+			return <Redirect to='/my-loans'/>;
+		}
+
+		if(this.state.redirectToMyFriends) {
+			return <Redirect to='/my-friends'/>;
+		}
 
 		//compute book note
 		let sum = 0;
@@ -55,12 +63,13 @@ class Book extends React.Component {
 			sum = sum + avis.note;
 		});
 		let moyenne = sum / this.props.book.avis.length;
+		const url = '/edit-book/' + this.props.book.id
 		return (
 			<div className="book-container">
 				<div className="title-book form-horizontal" ><p title={this.props.book.titreBook}>{this.props.book.titreBook}</p></div>
 				{this.userConnected && !(this.props.currentPage == 'myBooks') &&
 					<div><label className="book-preteur">Prêteur : </label>
-						<Link to={'user-detail/' + this.props.book.userId + '/' + this.props.currentPage}><span>{this.props.book.preteur}</span></Link>
+						<Link to={'/user-detail/' + this.props.book.userId }><span>{this.props.book.preteur}</span></Link>
 					</div>}
 				{!this.userConnected && !(this.props.currentPage == 'myBooks') &&
 					<div><label
@@ -82,7 +91,7 @@ class Book extends React.Component {
 					</div>
 				</div>
 				<div className="linkBook">
-					<Link to={'book-detail/' + this.props.book.id + '/' + this.props.currentPage}>Voir les avis</Link>
+					<Link to={'/book-detail/' + this.props.book.id}>Voir les avis</Link>
 				</div>
 				<div className="content-auteur">
 					<label>Auteur : </label>
@@ -91,12 +100,10 @@ class Book extends React.Component {
 				{this.props.book.description && <div><label>Description : </label>{this.props.book.description}</div> }
 				<ButtonToolbar className='container-buttons'>
 					{(this.props.currentPage == 'myBooks') &&
-						<Button bsStyle="primary" bsSize="small"
-							onClick={this.modifyBook}>Modifier</Button>}
+						<LinkContainer to={url}><Button bsStyle="primary" bsSize="small">Modifier</Button></LinkContainer>}
 
 					{(this.props.currentPage == 'myBooks') &&
-						<Button bsStyle="primary" bsSize="small"
-							onClick={this.handleClick}>Supprimer</Button>}
+						<Button bsStyle="primary" bsSize="small" onClick={this.handleClick}>Supprimer</Button>}
 
 					{(!(this.props.currentPage == 'myBooks') && this.props.book.statut == 'FREE') &&
 						<Button bsStyle="primary" bsSize="small" disabled={this.state.disableEmprunterButton}

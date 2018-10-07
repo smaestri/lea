@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 var helpers = {
 
     getCategories: function () {

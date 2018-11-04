@@ -14,8 +14,10 @@ import lea.validator.PasswordValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,6 +28,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
+@Controller
 public class PasswordRetrieverController extends CommonController{
 
     @Autowired
@@ -50,7 +53,6 @@ public class PasswordRetrieverController extends CommonController{
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
     @RequestMapping("/getPwdEncoded")
     public void getPassEncoded() {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -74,7 +76,7 @@ public class PasswordRetrieverController extends CommonController{
 
     // reset pwd
     @RequestMapping(value = "/users/resetPwd", method = RequestMethod.POST)
-    public String resetPassword(HttpServletRequest request, @Valid @ModelAttribute("utilisateur") Utilisateur user, BindingResult result, Model model) throws InterruptedException {
+    public String resetPassword(HttpServletRequest request, @ModelAttribute("utilisateur") Utilisateur user, BindingResult result, Model model) throws InterruptedException {
 
         boolean b = Utils.checkEmail(user.getEmail());
         if (!b) {
@@ -128,14 +130,18 @@ public class PasswordRetrieverController extends CommonController{
     }
 
     @RequestMapping(value = "/users/savePassword", method = RequestMethod.POST)
-    public String savePassword(@Valid @ModelAttribute("utilisateur") Utilisateur user, BindingResult result) {
-        Utilisateur userSpring = getPrincipal();
-        // TODO
-        //passwordValidator.validate(user, result);
-        if (result.hasErrors()) {
+    public String savePassword(@ModelAttribute("utilisateur") Utilisateur user, BindingResult result) {
+        // we just need to validate password, not while Utilisateur object via @Contraint annotation
+        PasswordValidator validator = new PasswordValidator();
+        boolean valid = validator.isValid(user, null);
+
+        if (!valid) {
+            ObjectError err = new ObjectError("user", "password do not match");
+            result.addError(err);
             return "update-pwd";
         }
 
+        Utilisateur userSpring = getPrincipal();
         userSpring.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.saveUser(userSpring);
         return "update-passwd-success";
@@ -145,25 +151,4 @@ public class PasswordRetrieverController extends CommonController{
         return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
     }
 
-    private Utilisateur initGlobalvariables(Model model, boolean shouldInitInputSearch) {
-        Utilisateur userSpring = getPrincipal();
-        if (userSpring != null && userSpring.getEmail() != null) {
-            String userId = userSpring.getId();
-            Utilisateur user = this.mongoUserRepository.findById(userId).get();
-            model.addAttribute("userName", user.getFullName());
-            if (!shouldInitInputSearch) {
-                model.addAttribute("command", new Livre());
-            }
-            model.addAttribute("hasFriend", !user.getListFriendsId().isEmpty());
-
-            // categories
-            List<Categorie> all = this.categorieRepository.findAll();
-            Gson gson = new Gson();
-            String json = gson.toJson(all);
-            model.addAttribute("categories", json);
-
-            return user;
-        }
-        return null;
-    }
 }

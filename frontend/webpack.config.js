@@ -45,6 +45,9 @@ module.exports = {
 			},
 			'/logout': {
 				target: 'http://localhost:8090',
+			},
+			'/users/resetPwd' : {
+				target: 'http://localhost:8090',	
 			}
 		}
 

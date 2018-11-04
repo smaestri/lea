@@ -49,7 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .authorizeRequests()
             .antMatchers("/webjars/**").permitAll()
-            .antMatchers("favicon.ico").permitAll()
+            .antMatchers("/favicon.ico").permitAll()
             .antMatchers("/home").permitAll()
             .antMatchers("/").permitAll()
             .antMatchers("/users/new/**").permitAll()

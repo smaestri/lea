@@ -22,7 +22,7 @@ import java.util.List;
 
 
 @RestController
-public class LoginController extends CommonController {
+public class LoginController {
 
     @Autowired
     private UserRepository userRepository;
@@ -38,11 +38,6 @@ public class LoginController extends CommonController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @RequestMapping(value = "/home")
-    public String home(Model model) {
-        return "home";
-    }
 
 
     // Editer user

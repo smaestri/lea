@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile({"default"})
+@Profile({"default", "dev"})
 public class NotificationServiceImpl implements NotificationService {
 
     private JavaMailSender javaMailSender;

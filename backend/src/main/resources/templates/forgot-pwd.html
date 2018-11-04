@@ -5,7 +5,7 @@
         <div class="container">
             <div th:replace="includes/header:: contentA" />
             <h1>Réinitilaiser le mot de passe</h1>
-            <form th:action="@{/users/resetPwd}" th:object="${utilisateur}" method="POST" onsubmit="return checkForm(this);">
+            <form th:action="@{/users/resetPwd}" th:object="${utilisateur}" method="POST">
                 <div class="form-error">
                     <ul th:if="${#fields.hasErrors('*')}">
                         <li th:each="err : ${#fields.errors('*')}" th:text="${err}">Input is incorrect</li>

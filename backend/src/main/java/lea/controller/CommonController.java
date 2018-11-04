@@ -2,7 +2,7 @@ package lea.controller;
 
 import lea.modele.Livre;
 import lea.modele.Utilisateur;
-import lea.service.CustomUserDetailsService;
+import lea.configuration.security.CustomUserDetailsService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 

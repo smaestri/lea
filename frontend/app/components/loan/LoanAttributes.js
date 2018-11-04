@@ -166,7 +166,7 @@ class LoanAttributes extends React.Component {
 
 	displayStep(title, icon, date) {
 		return <TimelineEvent
-			key="step"
+			key={title + date}
 			title={title}
 			createdAt={formatDate(date)}
 			icon={<i className="material-icons md-18">{icon}</i>}

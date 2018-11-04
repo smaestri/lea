@@ -9,7 +9,6 @@ import java.util.Optional;
 public interface UserRepository {
 
     List<Utilisateur> findByEmail(String login);
-    Utilisateur findOne(String id);
     List<Utilisateur> findAll();
     Utilisateur saveUser(Utilisateur userDetail);
     void saveLivre(Utilisateur user, Livre livre);

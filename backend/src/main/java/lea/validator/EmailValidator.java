@@ -1,5 +1,6 @@
 package lea.validator;
 
+import lea.commun.EmailConstraint;
 import lea.modele.Utilisateur;
 import lea.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,28 +8,27 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 import java.util.List;
 
 @Component
-public class UserValidator implements Validator {
+public class EmailValidator implements ConstraintValidator<EmailConstraint, Utilisateur> {
 
     @Autowired
     private UserRepository userRepository;
 
     @Override
-    public boolean supports(Class clazz) {
-        return Utilisateur.class.equals(clazz);
-    }
+    public boolean isValid(Utilisateur user, ConstraintValidatorContext constraintValidatorContext) {
 
-    @Override
-    public void validate(Object target, Errors errors) {
-        Utilisateur user = (Utilisateur) target;
+        if(!user.isCreation()){
+            return true;
+        }
+
         List<Utilisateur> byEmail = userRepository.findByEmail(user.getEmail());
         if (byEmail != null && !byEmail.isEmpty()) {
-            errors.rejectValue("email", "email_already_existing");
+            return false;
         }
-        if (!user.getPassword().equals(user.getConfirmPassword())) {
-            errors.rejectValue("password", "error_password");
-        }
+        return true;
     }
 }

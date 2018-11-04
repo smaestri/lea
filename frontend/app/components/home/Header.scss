@@ -4,4 +4,18 @@
 	.header-logo{
         width: 200px;
     }
+
+    .btn {
+
+        .active{
+            box-shadow: none;
+            outline: 0px;
+        }
+        &:focus {
+            box-shadow: none;
+            outline: 0px;
+        }
+
+    }
+    
 }

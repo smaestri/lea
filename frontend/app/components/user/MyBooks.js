@@ -57,7 +57,7 @@ class MyBooks extends React.Component {
 				<h1>Ma bibiliothèque</h1>
 				{books.length == 0 && <div><p>Vous n'avez pas de livres.</p></div>}
 				{books.length > 0 && <div className="mybooks-container">{books}</div>}
-				<Link bsStyle="primary" bsSize="small" to='/edit-book'>Ajouter livre</Link>
+				<Link bsstyle="primary" bssize="small" to='/edit-book'>Ajouter livre</Link>
 				<Modal show={this.state.showModal} onHide={this.close}>
 					<Modal.Header closeButton>
 						<Modal.Title>Livre en cours d'emprunt</Modal.Title>

@@ -67,41 +67,13 @@ var helpers = {
 
     saveBook: function (bookObj) {
         if (bookObj.id) {
-            return axios.put('/api/livres/' + bookObj.id, {
-                titreBook: bookObj.titreBook,
-                auteur: bookObj.auteur,
-                description: bookObj.description,
-                isbn: bookObj.isbn,
-                categorieId: bookObj.categorieId,
-                image: bookObj.image
-            }/*, {
-				headers: { 'X-CSRF-Token': getCsrf() },
-			}*/)
-                .then(function (response) {
-                    return response.data;
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-        }
-
-        return axios.post('/api/livres/new', {
-            titreBook: bookObj.titreBook,
-            auteur: bookObj.auteur,
-            description: bookObj.description,
-            isbn: bookObj.isbn,
-            categorieId: bookObj.categorieId,
-            image: bookObj.image
-        }/*, {
-			headers: { 'X-CSRF-Token': getCsrf() },
-		}*/)
-            .then(function (response) {
-                return response.data;
+            return axios.put('/api/livres/', {
+               ...bookObj
             })
-            .catch(function (error) {
-                console.log(error);
-            });
-
+        }
+        return axios.post('/api/livres/', {
+           ...bookObj
+        })
     },
 
     saveAvis: function (avisObj, idBook) {
@@ -109,9 +81,7 @@ var helpers = {
             return axios.put('/api/avis/' + avisObj.id + '/' + idBook, {
                 note: avisObj.note,
                 libelle: avisObj.libelle,
-            }/*, {
-				headers: { 'X-CSRF-Token': getCsrf() },
-			}*/)
+            })
                 .then(function (response) {
                     return response.data;
                 })

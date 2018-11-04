@@ -1,8 +1,9 @@
 import React from 'react'
 import { withRouter } from 'react-router'
-import { Link, Redirect } from 'react-router-dom'
+import {  Redirect } from 'react-router-dom'
 import { Col, FormGroup, FormControl, Button, Form, ButtonToolbar } from 'react-bootstrap'
-import helpers from '../../helpers/book/api'
+import helpersBook from '../../helpers/book/api'
+import helpers from '../../helpers/api'
 import AddAvis from '../book/AddAvis'
 import theme from './EditBook.scss'
 
@@ -14,9 +15,9 @@ class EditBook extends React.Component {
 			book: null,
 			avis: null,
 			categories: null,
-			auteurAvis: null,
 			displaySpinner: false,
-			redirect: false
+			redirect: false,
+			errors: []
 		}
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleChange = this.handleChange.bind(this);
@@ -24,19 +25,19 @@ class EditBook extends React.Component {
 	}
 
 	componentDidMount() {
-		helpers.getCategories().then((categories) => {
+		helpersBook.getCategories().then((categories) => {
 			this.setState({ categories, book: {...this.state.book, categorieId: categories[0].id } });
 		});
 
 		if (this.props.match.params && this.props.match.params.bookId) {
-			helpers.getBookDetail(this.props.match.params.bookId).then((book) => {
+			helpersBook.getBookDetail(this.props.match.params.bookId).then((book) => {
 				// if user post avis on his book
 				const auteurAvis = book.avis.find((avis) => {
 					if (this.props.userId == avis.auteur) {
 						return avis;
 					}
 				})
-				this.setState({ book: book, auteurAvis });
+				this.setState({ book: book, avis: auteurAvis });
 			})
 		} else {
 			this.setState({ book: { titreBook: '', auteur: '', description: '', isbn: '' } });
@@ -45,23 +46,23 @@ class EditBook extends React.Component {
 
 	handleSubmit(event) {
 		event.preventDefault();
-
-		if(!this.state.book || !this.state.book.titreBook){
-			alert('Saisir un nom de livre SVP.');
-			return;
-		}
-
 		// first save book
-		helpers.saveBook(this.state.book).then((book) => {
+		helpersBook.saveBook(this.state.book).then((response) => {
 			// then save avis if state modified
 			if (this.state.avis) {
-				helpers.saveAvis(this.state.avis, book.id).then((newAvisId) => {
+				helpersBook.saveAvis(this.state.avis, response.data.id).then(() => {
 					this.setState({ redirect: true });
-					
 				});
 			} else {
 				this.setState({ redirect: true });
 			}
+		}, 
+		(response)=> {
+			if(response.data && response.data.errors && response.data.errors.length > 0) {
+				this.setState({errors: response.data.errors});
+				window.scrollTo(0, 0);
+			}
+
 		});
 	}
 
@@ -103,67 +104,77 @@ class EditBook extends React.Component {
 			return <Redirect to='/my-books'/>;
 		}
 
+		let errors = [];
+		if (this.state.errors) {
+			errors = this.state.errors.map(err => {
+				return <div className="error" key={err.field+err.code}>{err.defaultMessage}</div>
+			});
+		}
+
 		const catReact = this.state.categories && this.state.categories.map(category => {
-			return <option value={category.id} selected={this.state.book.categorieId === category.id}>{category.name}</option>
+			return <option key={category.id} value={category.id}>{category.name}</option>
 		});
 
 		return (
 		
 			<div className="editbook-container">
+			
 			{this.state.displaySpinner && <div id ="overlay"><div className="spinner-bg"/></div>}
 				{this.props.match.params && this.props.match.params.bookId && <h2>Modifier livre</h2>}
 				{!this.props.match.params || !this.props.match.params.bookId && <h2>Ajouter un livre</h2>}
 				{this.state.book && 
 				<div className="main-content">
+					
 					<Col className="content-image">
 						<div className='container-image'>
 							<img className='content-image' src={this.state.book.image} />
 						</div>
 					</Col>
 					<Col className="content-form">
+						{errors && errors.length > 0 && <div className="error-container">{errors}</div>}
 						<Form horizontal>
 							<span>Remplissez l'ISBN sur 10 ou 13 caractères afin de remplir automatiquement les informations du livre!</span>
 							<FormGroup>
-								<Col for="isbn" sm={2}>isbn:</Col>
+								<Col sm={2}>isbn:</Col>
 								<Col sm={10}>
 									<FormControl type="text" name="isbn" value={this.state.book.isbn} onChange={this.handleChange} />
 								</Col>
 							</FormGroup>
 							<FormGroup>
-								<Col for="titreBook" sm={2}>titre:</Col>
+								<Col sm={2}>titre:</Col>
 								<Col sm={10}>
 									<FormControl type="text" name="titreBook" value={this.state.book.titreBook} onChange={this.handleChange} />
 								</Col>
 							</FormGroup>
 							
 							<FormGroup>
-								<Col for="auteur" sm={2}>Auteur:</Col>
+								<Col sm={2}>Auteur:</Col>
 								<Col sm={10}>
 									<FormControl type="text" name="auteur" value={this.state.book.auteur} onChange={this.handleChange} />
 								</Col>
 							</FormGroup>
 							<FormGroup>
-								<Col for="description" sm={2}>description:</Col>
+								<Col sm={2}>description:</Col>
 								<Col sm={10}>
 									<FormControl type="text" name="description" value={this.state.book.description} onChange={this.handleChange} />
 								</Col>
 							</FormGroup>
 						
 							<FormGroup>
-								<Col for="Catégorie"sm={2}>Catégorie:</Col>
+								<Col sm={2}>Catégorie:</Col>
 								<Col sm={10}>
-									<FormControl name="categorieId" componentClass="select" placeholder="select" onChange={this.handleChange}>
+									<FormControl name="categorieId" componentClass="select" value={this.state.book.categorieId} placeholder="select" onChange={this.handleChange}>
 										{catReact}
 									</FormControl>
 								</Col>
 							</FormGroup>
 							<FormGroup>
-								<Col for="note" sm={2}>Noter ce livre</Col>
+								<Col sm={2}>Noter ce livre</Col>
 								<Col sm={10}>
 									<AddAvis
 										visibleByDefault={true}
 										showRating={true}
-										avis={this.state.auteurAvis}
+										avis={this.state.avis}
 										handleAvisChange={this.handleAvisChange}
 									/>
 								</Col>

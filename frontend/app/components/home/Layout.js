@@ -1,8 +1,6 @@
 import React from 'react'
 import { Route } from "react-router-dom";
 import { Switch } from "react-router-dom";
-
-
 import Home from "../home/Home";
 import Header from "../home/Header";
 import MyLoans from "../user/MyLoans";
@@ -13,6 +11,7 @@ import ListBooks from "../book/ListBooks";
 import EditBook from "../user/EditBook";
 import BookDetail from "../book/BookDetail";
 import UserDetail from "../user/UserDetail";
+import Notification from "./Notification";
 import Account from "../user/Account";
 import MyHistorizedLendings from "../user/MyHistorizedLendings";
 import MyHistorizedLoans from "../user/MyHistorizedLoans";
@@ -21,12 +20,16 @@ import helpersFriend from '../../helpers/friend/api'
 import helpersUser from '../../helpers/user/api'
 import Footer from './Footer';
 import MyBooks from '../user/MyBooks';
+import Login from '../login/Login'
+import Subscribe from '../subscribe/Subscribe'
+import helpers from '../../helpers/user/api';
 
 class Layout extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.checkIfConnected = this.checkIfConnected.bind(this);
+		this.refreshUserConnected = this.refreshUserConnected.bind(this);
+		this.logout = this.logout.bind(this);
 		this.state = {
 			nbEmprunt: 0,
 			nbPret: 0,
@@ -34,7 +37,8 @@ class Layout extends React.Component {
 			requestedFriends: [],
 			currentUser: '',
 			userId: '',
-			isConnected: false
+			isConnected: false,
+			redirectToLogin: false
 		};
 
 		this.wrappedMyLoans = (props) => {
@@ -116,7 +120,27 @@ class Layout extends React.Component {
 		this.wrappedAccount = (props) => {
 			return (
 				<Account
-					onRefreshName={this.refreshName.bind(this)}
+					isCreation={false}
+					refreshUserConnected={this.refreshUserConnected}
+					{...props}
+				/>
+			);
+		}
+
+		this.wrappedSubscribe = (props) => {
+			return (
+				<Account
+					isCreation={true}
+					refreshUserConnected={this.refreshUserConnected}
+					{...props}
+				/>
+			);
+		}
+
+		this.wrappedLogin= (props) => {
+			return (
+				<Login
+					refreshUserConnected={this.refreshUserConnected.bind(this)}
 					{...props}
 				/>
 			);
@@ -124,19 +148,31 @@ class Layout extends React.Component {
 	}
 
 	componentDidMount() {
-		this.checkIfConnected();
+		this.refreshUserConnected();
 	}
 
 	render() {
+
+		let notifications = "";
+		if (this.state.isConnected) {
+			notifications = (
+				<Notification
+					isNewPret={this.state.isNewPret}
+					requestedFriends={this.state.requestedFriends}
+					onRefreshNotification={this.refreshNotif} />);
+		}
+
 		return (
-			<div>
+			<div className="main-content">
 				<Header
 					currentUser={this.state.currentUser}
 					isConnected={this.state.isConnected}
-					isNewPret={this.state.isNewPret}
-					requestedFriends={this.state.requestedFriends}
-					refreshNotif={this.refreshNotif.bind(this)}>
+					redirectToLogin={this.state.redirectToLogin}
+					nbPret={this.state.nbPret}
+					nbEmprunt={this.state.nbEmprunt}
+					logout={this.logout}>
 				</Header>
+				{notifications}
 				<Switch>
 					<Route exact path="/" component={Home}></Route>
 					<Route path="/my-books" component={this.wrappedMyBooks}></Route>
@@ -153,15 +189,17 @@ class Layout extends React.Component {
 					<Route path="/account" component={this.wrappedAccount} />
 					<Route path="/historized-lendings" component={this.wrappedMyHistLendings} />
 					<Route path="/historized-loans" component={this.wrappedMyHistLoans} />
+					<Route path="/login" component={this.wrappedLogin} />
+					<Route path="/subscribe" component={this.wrappedSubscribe} />
 				</Switch>
 				<Footer></Footer>
 			</div>
 		);
 	}
 
-	checkIfConnected() {
+	refreshUserConnected() {
 		helpersUser.isAuthenticated().then(id => {
-			this.setState({ isConnected: id != 0, userId: id })
+			this.setState({ isConnected: id != 0, userId: id, redirectToLogin: false})
 			this.refreshCount();
 			this.refreshNotif();
 			this.refreshName();
@@ -210,6 +248,17 @@ class Layout extends React.Component {
 			});
 		}
 	}
+
+	logout() {
+		this.setState({
+			redirectToLogin: true
+		});
+		helpers.logout().then(() => {
+			this.refreshUserConnected();
+		})
+	}
+
+	
 
 }
 

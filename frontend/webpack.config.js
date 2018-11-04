@@ -39,6 +39,12 @@ module.exports = {
 				target: 'http://localhost:8090',
 				// changeOrigin: true,
 				logLevel: 'debug',
+			},
+			'/login': {
+				target: 'http://localhost:8090',
+			},
+			'/logout': {
+				target: 'http://localhost:8090',
 			}
 		}
 

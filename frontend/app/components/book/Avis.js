@@ -41,10 +41,10 @@ class Avis extends React.Component {
 					<div className='avis-infos'>
 						<div>Ajouté le <b>{dateAvis}</b> par <b>{this.state.avis.auteur}</b> :</div>
 						<div>
-							<Rating empty={<SVGIcon href='#icon-star-empty' className='icon-rating'/>}
-									full={<SVGIcon href='#icon-star-full' className='icon-rating'/>}
+							<Rating emptySymbol={<SVGIcon href='#icon-star-empty' className='icon-rating'/>}
+									fullSymbol={<SVGIcon href='#icon-star-full' className='icon-rating'/>}
 									readonly={true}
-									initialRate={this.state.avis.note}/>
+									initialRating={this.state.avis.note}/>
 						</div>
 						<div>
 							<blockquote>{this.state.avis.libelle}</blockquote>

@@ -2,15 +2,16 @@ import React from 'react';
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import { render } from 'react-dom';
 import Layout from "./components/home/Layout";
+import ScrollToTop from "./components/common/ScrollToTop";
 
 class App extends React.Component {
 
 	render() {
 		return (
 			<Router>
-				<div>
+				<ScrollToTop>
 					<Route path="/" component={Layout}/>
-				</div>
+				</ScrollToTop>
 			</Router>)
 	}
 }

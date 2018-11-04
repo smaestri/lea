@@ -67,9 +67,9 @@ class AddAvis extends React.Component {
 					<Button bsStyle="primary" onClick={this.toggleInput.bind(this)}>Ajouter un avis</Button>
 				}
 				{this.state.showRating && <div>
-					<Rating empty={<SVGIcon href='#icon-star-empty' className='icon-rating' />}
-						full={<SVGIcon href='#icon-star-full' className='icon-rating' />}
-						initialRate={this.state.avis.note}
+					<Rating emptySymbol={<SVGIcon href='#icon-star-empty' className='icon-rating' />}
+						fullSymbol={<SVGIcon href='#icon-star-full' className='icon-rating' />}
+						initialRating={this.state.avis.note}
 						onClick={this.handleRating} />
 					<FormControl
 						name="libelle"

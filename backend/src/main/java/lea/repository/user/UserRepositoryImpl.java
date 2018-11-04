@@ -39,11 +39,6 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Utilisateur findOne(String id) {
-        return mongoUserRepository.findOne(id);
-    }
-
-    @Override
     public List<Utilisateur> findAll() {
         return mongoTemplate.findAll(Utilisateur.class);
     }

@@ -1,13 +1,20 @@
 package lea.modele;
 
+import lea.commun.EmailConstraint;
+import lea.commun.PasswordConstraint;
 import org.springframework.data.annotation.Transient;
 import org.springframework.util.StringUtils;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@PasswordConstraint(message = "{validation.password.error_password}")
+@EmailConstraint(message = "{validation.email.email_already_existing}")
 public class Utilisateur extends BaseDocumentImpl {
 
     // FK
@@ -19,23 +26,30 @@ public class Utilisateur extends BaseDocumentImpl {
     private List<PendingFriend> listPendingFriends = new ArrayList<PendingFriend>();
 
     @Transient
+    private boolean creation;
+
+    @Transient
     private List<Utilisateur> userFriends = new ArrayList<Utilisateur>();
 
     List<Livre> livres = new ArrayList<Livre>();
 
+    @NotNull
     @Size(min = 2, max = 14, message = "Le mot de passe doit comprendre entre 2 et 14 caractères")
     private String password;
 
     @Transient
     private String confirmPassword;
 
+    @NotNull
     @Size(min = 2, max = 14, message = "Le prénom doit comprendre entre 2 et 14 caractères")
     private String firstName;
 
     @Size(min = 2, max = 14, message = "Le nom doit comprendre entre 2 et 14 caractères")
     private String lastName;
 
-    @Size(min = 2, max = 50, message = "L'email doit comprendre entre 2 et 50 caractères")
+    @NotEmpty(message = "{validation.email.notEmpty}")
+    @Email(message = "{validation.email.incorrect}")
+    @Size(min = 2, max = 50, message = "{validation.email.size}")
     private String email;
 
     private String avatar;
@@ -176,6 +190,14 @@ public class Utilisateur extends BaseDocumentImpl {
 
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
+    }
+
+    public boolean isCreation() {
+        return creation;
+    }
+
+    public void setCreation(boolean creation) {
+        this.creation = creation;
     }
 
     @Override

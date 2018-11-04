@@ -4,6 +4,7 @@ import lea.commun.StatutEmprunt;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Transient;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,10 +14,10 @@ public class Livre extends BaseDocumentImpl {
         this.setId(ObjectId.get().toHexString());
     }
 
-    // FK
     private String categorieId;
     private List<Avis> avis = new ArrayList<Avis>();
 
+    @NotEmpty(message = "{validation.livre.notEmpty}")
     private String titreBook;
 
     private String description;

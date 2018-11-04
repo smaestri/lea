@@ -1,5 +1,6 @@
 package lea.controller;
 
+import lea.commun.Utils;
 import lea.dto.AmiBean;
 import lea.modele.Categorie;
 import lea.modele.Emprunt;
@@ -7,6 +8,7 @@ import lea.modele.PendingFriend;
 import lea.modele.Utilisateur;
 import lea.repository.categorie.CategorieRepository;
 import lea.repository.emprunt.EmpruntRepository;
+import lea.repository.user.MongoUserRepository;
 import lea.repository.user.UserRepository;
 import lea.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,9 @@ public class FriendController extends CommonController {
     private UserRepository userRepository;
 
     @Autowired
+    private MongoUserRepository mongoUserRepository;
+
+    @Autowired
     private EmpruntRepository empruntRepository;
 
     @Autowired
@@ -38,7 +43,7 @@ public class FriendController extends CommonController {
     @RequestMapping(value = "/api/myFriends", method = RequestMethod.GET)
     public List<Utilisateur> myFriends() {
         Utilisateur user = getPrincipal();
-        Utilisateur one = userRepository.findOne(user.getId());
+        Utilisateur one = mongoUserRepository.findById(user.getId()).get();
 
         List<Utilisateur> users = userRepository.findFriends(one.getListFriendsId());
 
@@ -52,7 +57,7 @@ public class FriendController extends CommonController {
     public List<PendingFriend> myPendingFriends() {
         Utilisateur user = getPrincipal();
         //need to reload
-        Utilisateur one = userRepository.findOne(user.getId());
+        Utilisateur one = mongoUserRepository.findById(user.getId()).get();
         return one.getListPendingFriends();
     }
 
@@ -72,7 +77,7 @@ public class FriendController extends CommonController {
     @RequestMapping(value = "/api/ami/new", method = RequestMethod.POST)
     public String addUser(@RequestBody AmiBean amiBean) throws UnsupportedEncodingException, MessagingException {
         Utilisateur userPrincipal = getPrincipal();
-        Utilisateur one = userRepository.findOne(userPrincipal.getId());
+        Utilisateur one = mongoUserRepository.findById(userPrincipal.getId()).get();
 
         List<Utilisateur> requestedFriends = userRepository.findRequestedFriends(userPrincipal.getEmail());
         if (requestedFriends != null && requestedFriends.size() > 0) {
@@ -94,7 +99,7 @@ public class FriendController extends CommonController {
     @RequestMapping(value = "/api/accepterAmi/{friendId}", method = RequestMethod.POST)
     public String accepterAmi(@PathVariable("friendId") String idFriend) throws InterruptedException {
         Utilisateur userConnected = getPrincipal();
-        Utilisateur userFriend = userRepository.findOne(idFriend);
+        Utilisateur userFriend = mongoUserRepository.findById(idFriend).get();
 
         addRealFriendAndDeletePending(userConnected, userFriend);
         addRealFriendAndDeletePending(userFriend, userConnected);
@@ -126,7 +131,7 @@ public class FriendController extends CommonController {
     public String deletePendingFriend(@PathVariable("friendId") String friendId) throws Exception {
         Utilisateur userConnected = getPrincipal();
         userRepository.deletePendingFriend(userConnected, friendId);
-        Utilisateur userFriend = userRepository.findOne(userConnected.getId());
+        Utilisateur userFriend = mongoUserRepository.findById(userConnected.getId()).get();
         return "1";
     }
 
@@ -152,7 +157,7 @@ public class FriendController extends CommonController {
         PendingFriend pf = new PendingFriend();
         pf.setDateDemande(new Date());
         pf.setEmail(emailFriend);
-        if (StringUtils.hasText(emailFriend) && LoginController.checkEmail(emailFriend) && !emailFriend.equals(source.getEmail())) {
+        if (StringUtils.hasText(emailFriend) && Utils.checkEmail(emailFriend) && !emailFriend.equals(source.getEmail())) {
             userRepository.addPendingFriend(source, pf);
             String objet = "Livres entre Amis - Nouvelle demande d'ami";
             String contenu = source.getFullName() + " souhaite vous ajouter en tant qu'ami afin d'échanger des livres. Connectez-vous ou inscrivez vous sur livresentreamis.com afin de rentrer dans la communatuté!";

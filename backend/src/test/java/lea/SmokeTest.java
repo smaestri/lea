@@ -3,6 +3,8 @@ package lea;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Map;
+
+import lea.controller.AmazonController;
 import lea.controller.LivreController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SmokeTest {
 
     @Autowired
-    private LivreController controller;
+    private AmazonController controller;
 
     @Test
     public void contexLoads() throws Exception {

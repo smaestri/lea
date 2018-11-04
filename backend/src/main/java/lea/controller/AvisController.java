@@ -47,7 +47,7 @@ public class AvisController extends CommonController {
         Utilisateur owner = userRepository.findproprietaire(bookId);
         owner.getLivres().stream().forEach(livre -> {
             Optional <Avis> optAvis = livre.getAvis().stream()
-                    .filter(currentAvis -> currentAvis.getId() == avisId)
+                    .filter(currentAvis -> currentAvis.getId().equals(avisId))
                     .findFirst();
             if(optAvis.isPresent()) {
                 Avis avis = optAvis.get();

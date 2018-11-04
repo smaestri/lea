@@ -5,6 +5,7 @@ package lea.dto;
  */
 public class UserBean {
 
+    String email;
     String firstName;
     String lastName;
     String password;
@@ -37,6 +38,14 @@ public class UserBean {
 
     public String getConfirmPassword() {
         return confirmPassword;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setConfirmPassword(String confirmPassword) {

@@ -18,8 +18,7 @@ public class MongoAuthenticationConfig extends AbstractMongoConfiguration {
     }
 
     @Override
-    @Bean
-    public Mongo mongo() throws Exception {
+    public MongoClient mongoClient() {
         return new MongoClient(singletonList(new ServerAddress("127.0.0.1", 27018)),
                 singletonList(MongoCredential.createCredential("admin", "admin", "password".toCharArray())));
     }

@@ -53,7 +53,7 @@ class Book extends React.Component {
 			return <Redirect to='/my-loans'/>;
 		}
 
-		if(this.state.redirectToMyFriends) {
+		if (this.state.redirectToMyFriends) {
 			return <Redirect to='/my-friends'/>;
 		}
 
@@ -84,10 +84,10 @@ class Book extends React.Component {
 					<div className="moyenneNote">Moyenne des avis ({this.props.book.avis.length} avis)
 					</div>
 					<div className="ratingBook">
-						<Rating empty={<SVGIcon href='#icon-star-empty' className='icon-rating' />}
-							full={<SVGIcon href='#icon-star-full' className='icon-rating' />}
+						<Rating emptySymbol={<SVGIcon href='#icon-star-empty' className='icon-rating' />}
+							fullSymbol={<SVGIcon href='#icon-star-full' className='icon-rating' />}
 							readonly={true}
-							initialRate={moyenne} />
+							initialRating={moyenne} />
 					</div>
 				</div>
 				<div className="linkBook">
@@ -99,18 +99,18 @@ class Book extends React.Component {
 				</div>
 				{this.props.book.description && <div><label>Description : </label>{this.props.book.description}</div> }
 				<ButtonToolbar className='container-buttons'>
-					{(this.props.currentPage == 'myBooks') &&
+					{(this.userConnected && this.props.currentPage == 'myBooks') &&
 						<LinkContainer to={url}><Button bsStyle="primary" bsSize="small">Modifier</Button></LinkContainer>}
 
-					{(this.props.currentPage == 'myBooks') &&
+					{(this.userConnected  && this.props.currentPage == 'myBooks') &&
 						<Button bsStyle="primary" bsSize="small" onClick={this.handleClick}>Supprimer</Button>}
 
-					{(!(this.props.currentPage == 'myBooks') && this.props.book.statut == 'FREE') &&
+					{(this.userConnected  && !this.props.currentPage == 'myBooks' && this.props.book.statut == 'FREE') &&
 						<Button bsStyle="primary" bsSize="small" disabled={this.state.disableEmprunterButton}
 							onClick={this.handleLoan}>Emprunter</Button>}
 							
-					{(!(this.props.currentPage == 'myBooks') && this.props.book.statut != 'FREE') &&
-						<span>Livre déjà emprunté ou demandé</span>}
+					{(this.userConnected && !(this.props.currentPage == 'myBooks') && this.props.book.statut != 'FREE') &&
+						<span>Livre déjà emprunté</span>}
 				</ButtonToolbar>
 			</div>
 		)

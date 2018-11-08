@@ -32,7 +32,7 @@ class EditAvis extends React.Component {
 		return (
 			<div className="add-comment-container">
 				<Rating emptySymbol={<SVGIcon href='#icon-star-empty' className='icon-rating'/>}
-						emptySymbol={<SVGIcon href='#icon-star-full' className='icon-rating'/>}
+						fullSymbol={<SVGIcon href='#icon-star-full' className='icon-rating'/>}
 						initialRating={this.props.avis.note}
 						readonly={!this.props.avis.editMode}
 						onClick={this.handleRating} />

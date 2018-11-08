@@ -36,16 +36,4 @@ public class CommonController {
         return user;
     }
 
-    protected void removeDeletedBooks(List<Livre> livres) {
-        // remove book deleted
-        Iterator<Livre> i = livres.iterator();
-        while (i.hasNext()) {
-            Livre l = i.next(); // must be called before you can call i.remove()
-            if (l.isDeleted()) {
-                i.remove();
-            }
-        }
-    }
-
-
 }

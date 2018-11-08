@@ -5,13 +5,8 @@ var helpers = {
 	},
 
 	fetchBookInfoFromAmazon: function (isbn) {
-		return axios.get('/api/getBookInfoFromAmazon/' + isbn)
-		.then(function (response) {
-			return response.data;
-		})
-		.catch(function (error) {
-			console.log(error);
-		});
+		return axios.get('/api/getBookInfoFromAmazon/' + isbn);
+
 	}
 };
 

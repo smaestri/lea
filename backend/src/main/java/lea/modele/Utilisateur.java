@@ -17,21 +17,12 @@ import java.util.Optional;
 @EmailConstraint(message = "{validation.email.email_already_existing}")
 public class Utilisateur extends BaseDocumentImpl {
 
-    // FK
     private List<String> listEmpruntsId;
     private List<String> listPretsId;
     private List<String> listUserProfilesId = new ArrayList<String>();
     private List<String> listFriendsId = new ArrayList<String>();
-    // probleme with array of email : containing .
     private List<PendingFriend> listPendingFriends = new ArrayList<PendingFriend>();
-
-    @Transient
-    private boolean creation;
-
-    @Transient
-    private List<Utilisateur> userFriends = new ArrayList<Utilisateur>();
-
-    List<Livre> livres = new ArrayList<Livre>();
+    private List<Livre> livres = new ArrayList<>();
 
     @NotNull
     @Size(min = 2, max = 14, message = "Le mot de passe doit comprendre entre 2 et 14 caractères")
@@ -55,6 +46,12 @@ public class Utilisateur extends BaseDocumentImpl {
     private String avatar;
 
     private Boolean enabled;
+
+    @Transient
+    private boolean creation;
+
+    @Transient
+    private List<Utilisateur> userFriends = new ArrayList<Utilisateur>();
 
     public String getPassword() {
         return password;
@@ -211,15 +208,15 @@ public class Utilisateur extends BaseDocumentImpl {
                 '}';
     }
 
-    public void updateLivre(String id, Livre livreUpdated) {
-
-        for (Livre livre : this.livres) {
-            if (livre.getId().equals(id)) {
-                livre.setTitreBook(livreUpdated.getTitreBook());
-                livre.setAuteur(livreUpdated.getAuteur());
-            }
-        }
-    }
+//    public void updateLivre(String id, Livre livreUpdated) {
+//
+//        for (Livre livre : this.livres) {
+//            if (livre.getId().equals(id)) {
+//                livre.setTitreBook(livreUpdated.getTitreBook());
+//                livre.setAuteur(livreUpdated.getAuteur());
+//            }
+//        }
+//    }
 
     public List<Utilisateur> getUserFriends() {
         return userFriends;
@@ -230,14 +227,14 @@ public class Utilisateur extends BaseDocumentImpl {
     }
 
     //TODO  get direct child with adequate mongoDb query
-    public Avis getAvis(String avisId) {
-        for (Livre livre : this.livres) {
-            for (Avis avis : livre.getAvis()) {
-                if (avis.getId().equals(avisId)) {
-                    return avis;
-                }
-            }
-        }
-        return null;
-    }
+//    public Avis getAvis(String avisId) {
+//        for (Livre livre : this.livres) {
+//            for (Avis avis : livre.getAvis()) {
+//                if (avis.getId().equals(avisId)) {
+//                    return avis;
+//                }
+//            }
+//        }
+//        return null;
+//    }
 }

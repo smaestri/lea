@@ -5,6 +5,7 @@ import { Col, FormGroup, FormControl, Button, Form, ButtonToolbar } from 'react-
 import helpersBook from '../../helpers/book/api'
 import helpers from '../../helpers/api'
 import AddAvis from '../book/AddAvis'
+import { renderHTML} from '../../helpers/utils'
 import theme from './EditBook.scss'
 
 class EditBook extends React.Component {
@@ -17,6 +18,7 @@ class EditBook extends React.Component {
 			categories: null,
 			displaySpinner: false,
 			redirect: false,
+			manualFill: false,
 			errors: []
 		}
 		this.handleSubmit = this.handleSubmit.bind(this);
@@ -50,7 +52,7 @@ class EditBook extends React.Component {
 		helpersBook.saveBook(this.state.book).then((response) => {
 			// then save avis if state modified
 			if (this.state.avis) {
-				helpersBook.saveAvis(this.state.avis, response.data.id).then(() => {
+				helpersBook.saveAvis(this.state.avis, response.data.livreModelId).then(() => {
 					this.setState({ redirect: true });
 				});
 			} else {
@@ -79,12 +81,14 @@ class EditBook extends React.Component {
 				//display spinner
 				this.setState({ displaySpinner: true });
 				const info = helpers.fetchBookInfoFromAmazon(event.target.value).then ( result => {
-					book['auteur'] = result['auteur']
-					book['image'] = result['image']
-					book['titreBook'] = result['name']
+					book['auteur'] = result.data['auteur']
+					book['image'] = result.data['image']
+					book['titreBook'] = result.data['name']
 					book['isbn'] = eventValue
 					this.setState({ book, displaySpinner: false });
 					return;
+				}, ()=> {
+					alert('error during amazon fetching')
 				})
 			}
 		}
@@ -140,35 +144,39 @@ class EditBook extends React.Component {
 									<FormControl type="text" name="isbn" value={this.state.book.isbn} onChange={this.handleChange} />
 								</Col>
 							</FormGroup>
-							<FormGroup>
-								<Col sm={2}>titre:</Col>
+							{this.state.book && this.state.book.titreBook && <FormGroup >
+								<Col sm={2} disabled>titre:</Col>
 								<Col sm={10}>
-									<FormControl type="text" name="titreBook" value={this.state.book.titreBook} onChange={this.handleChange} />
+									{!this.state.manualFill && renderHTML(this.state.book.titreBook)}
+									{this.state.manualFill && <FormControl disabled type="text" name="titreBook" value={this.state.book.titreBook != ''?renderHTML(this.state.book.titreBook):''} onChange={this.handleChange} />}
 								</Col>
-							</FormGroup>
+							</FormGroup>}
 							
-							<FormGroup>
+							{this.state.book && this.state.book.auteur && <FormGroup>
 								<Col sm={2}>Auteur:</Col>
 								<Col sm={10}>
-									<FormControl type="text" name="auteur" value={this.state.book.auteur} onChange={this.handleChange} />
+									{!this.state.manualFill && renderHTML(this.state.book.auteur)}
+									{this.state.manualFill && <FormControl disabled type="text" name="auteur" value={this.state.book.auteur} onChange={this.handleChange} />}
 								</Col>
-							</FormGroup>
-							<FormGroup>
+							</FormGroup>}
+							{this.state.book && this.state.book.description && <FormGroup>
 								<Col sm={2}>description:</Col>
 								<Col sm={10}>
-									<FormControl type="text" name="description" value={this.state.book.description} onChange={this.handleChange} />
+									{!this.state.manualFill && renderHTML(this.state.book.description)}
+									{this.state.manualFill && <FormControl disabled type="text" name="description" value={this.state.book.description} onChange={this.handleChange} />}
 								</Col>
-							</FormGroup>
+							</FormGroup>}
 						
-							<FormGroup>
+							{this.state.book && this.state.book.titreBook && <FormGroup>
 								<Col sm={2}>Catégorie:</Col>
 								<Col sm={10}>
-									<FormControl name="categorieId" componentClass="select" value={this.state.book.categorieId} placeholder="select" onChange={this.handleChange}>
+									{!this.state.manualFill && renderHTML(this.state.book.categorieId)}
+									{this.state.manualFill && <FormControl disabled name="categorieId" componentClass="select" value={this.state.book.categorieId} placeholder="select" onChange={this.handleChange}>
 										{catReact}
-									</FormControl>
+									</FormControl>}
 								</Col>
-							</FormGroup>
-							<FormGroup>
+							</FormGroup>}
+							{this.state.book && this.state.book.titreBook && <FormGroup>
 								<Col sm={2}>Noter ce livre</Col>
 								<Col sm={10}>
 									<AddAvis
@@ -178,7 +186,7 @@ class EditBook extends React.Component {
 										handleAvisChange={this.handleAvisChange}
 									/>
 								</Col>
-							</FormGroup>
+							</FormGroup>}
 							<ButtonToolbar className="text-center">
 								<Button  bsStyle="primary" type="submit" onClick={this.handleSubmit}>Valider</Button>
 							</ButtonToolbar>

@@ -4,7 +4,6 @@ import helpers from '../../helpers/book/api'
 import { Button } from 'react-bootstrap'
 import { FormControl } from 'react-bootstrap'
 import { SVGIcon } from '../common/SVGIcon'
-import Header from '../home/Header';
 
 class AddAvis extends React.Component {
 
@@ -47,7 +46,7 @@ class AddAvis extends React.Component {
 
 	handleSubmit(event) {
 		event.preventDefault();
-		helpers.saveAvis(this.state.avis, this.props.bookId).then(() => {
+		helpers.saveAvis(this.state.avis, this.props.bookModelId).then(() => {
 			this.setState({ avis: {} });
 			this.props.reloadEmprunt();
 		});

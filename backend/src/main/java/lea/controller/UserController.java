@@ -3,12 +3,10 @@ package lea.controller;
 import lea.commun.Utils;
 import lea.configuration.security.CustomUserDetailsService;
 import lea.dto.UserBean;
-import lea.modele.Emprunt;
-import lea.modele.Livre;
-import lea.modele.PendingFriend;
-import lea.modele.Utilisateur;
+import lea.modele.*;
 import lea.repository.categorie.MongoCategorieRepository;
 import lea.repository.emprunt.EmpruntRepository;
+import lea.repository.livremodel.MongoLivreModelRepository;
 import lea.repository.user.MongoUserRepository;
 import lea.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +33,10 @@ public class UserController extends CommonController {
     @Autowired
     private MongoUserRepository mongoUserRepository;
 
+
+    @Autowired
+    private MongoLivreModelRepository mongoLivreModelRepository;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -43,15 +45,15 @@ public class UserController extends CommonController {
     public Utilisateur userDetail(@PathVariable("userId") String userDetail) throws ServletException, IOException {
         Utilisateur userConnected = getPrincipal();
         Utilisateur friend = mongoUserRepository.findById(userDetail).get();
-        this.removeDeletedBooks(friend.getLivres());
-        List<Emprunt> currentEmprunts = empruntRepository.findEmprunts(userConnected.getId(), true);
         List<Livre> listeLivre = friend.getLivres();
         if (!listeLivre.isEmpty()) {
             for (Livre livre : listeLivre) {
+                LivreModel livreModel = this.mongoLivreModelRepository.findById(livre.getLivreModelId()).get();
+                livre.setLivreModel(livreModel);
                 livre.setUserId(friend.getId());
                 livre.setPreteur(friend.getFullName());
                 livre.setMailPreteur(friend.getEmail());
-                LivreController.setBookImage(livre);
+                LivreController.setBookImage(livreModel);
             }
         }
 
@@ -63,10 +65,11 @@ public class UserController extends CommonController {
             if (!subFriend.getId().equals(userConnected.getId())) {
                 userFriends.add(subFriend);
                 List<Livre> subFriendBooks = subFriend.getLivres();
-                this.removeDeletedBooks(subFriendBooks);
                 for (Livre livre : subFriendBooks) {
+                    LivreModel livreModel = this.mongoLivreModelRepository.findById(livre.getLivreModelId()).get();
+                    livre.setLivreModel(livreModel);
                     livre.setUserId(subFriend.getId());
-                    LivreController.setBookImage(livre);
+                    LivreController.setBookImage(livreModel);
                     livre.setPreteur(subFriend.getFullName());
                     livre.setIntermediaireid(friend.getId());
                     livre.setMailPreteur(subFriend.getEmail());
@@ -80,7 +83,6 @@ public class UserController extends CommonController {
     @RequestMapping(value = "/api/userInfo/{userId}", method = RequestMethod.GET)
     public Utilisateur getUserInfo(@PathVariable("userId") String userId) throws ServletException, IOException {
         Utilisateur user = mongoUserRepository.findById(userId).get();
-        removeDeletedBooks(user.getLivres());
         return user;
     }
 

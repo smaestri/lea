@@ -7,7 +7,9 @@ import Rating from 'react-rating'
 import helpersLoan from '../../helpers/loan-actions/api'
 import helpersFriend from '../../helpers/friend/api'
 import { SVGIcon } from '../common/SVGIcon'
+import { renderHTML} from '../../helpers/utils'
 import style from './Book.scss'
+import AddAvis from './AddAvis';
 
 class Book extends React.Component {
 
@@ -16,7 +18,6 @@ class Book extends React.Component {
 		this.handleClick = this.handleClick.bind(this);
 		this.handleLoan = this.handleLoan.bind(this);
 		this.savePendingFriend = this.savePendingFriend.bind(this);
-		this.userConnected = props.userId !== 0;
 		this.state = {
 			disableEmprunterButton: false,
 			redirectToMyLoans: false,
@@ -32,7 +33,7 @@ class Book extends React.Component {
 	handleLoan(event) {
 		this.setState({ disableEmprunterButton: true });
 		event.preventDefault();
-		if(!this.userConnected){
+		if(!this.props.userId){
 			window.location.replace("/login");
 			return;
 		}
@@ -49,6 +50,9 @@ class Book extends React.Component {
 
 	render() {
 
+		const isConnected = !!this.props.userId;
+		let livreModel={}
+
 		if(this.state.redirectToMyloans) {
 			return <Redirect to='/my-loans'/>;
 		}
@@ -57,31 +61,40 @@ class Book extends React.Component {
 			return <Redirect to='/my-friends'/>;
 		}
 
+		if(!this.props.book || !livreModel) {
+			return;
+		} else {
+			livreModel = this.props.book.livreModel;
+		}
+
 		//compute book note
 		let sum = 0;
-		this.props.book.avis.forEach((avis) => {
+		let avis = [];
+		if(livreModel.avis && livreModel.avis.length > 0) {
+			avis = livreModel.avis;
+		}
+		avis.forEach((avis) => {
 			sum = sum + avis.note;
 		});
-		let moyenne = sum / this.props.book.avis.length;
-		const url = '/edit-book/' + this.props.book.id
+		let moyenne = sum / avis.length;
 		return (
 			<div className="book-container">
-				<div className="title-book form-horizontal" ><p title={this.props.book.titreBook}>{this.props.book.titreBook}</p></div>
-				{this.userConnected && !(this.props.currentPage == 'myBooks') &&
+				{isConnected && !(this.props.currentPage == 'myBooks') &&
 					<div><label className="book-preteur">Prêteur : </label>
 						<Link to={'/user-detail/' + this.props.book.userId }><span>{this.props.book.preteur}</span></Link>
-					</div>}
-				{!this.userConnected && !(this.props.currentPage == 'myBooks') &&
+					</div>
+				}
+				{!isConnected && !(this.props.currentPage == 'myBooks') &&
 					<div><label
 						className="book-preteur">Prêteur : </label><span>{this.props.book.preteur}</span>
 					</div>}
 				<div className="image-container">
 					<div className="image-content">
-						<img className="img" src={this.props.book.image} />
+						<img className="img" src={livreModel.image} />
 					</div>
 				</div>
 				<div className="avisBook">
-					<div className="moyenneNote">Moyenne des avis ({this.props.book.avis.length} avis)
+					<div className="moyenneNote">Moyenne des avis ({avis.length} avis)
 					</div>
 					<div className="ratingBook">
 						<Rating emptySymbol={<SVGIcon href='#icon-star-empty' className='icon-rating' />}
@@ -91,25 +104,22 @@ class Book extends React.Component {
 					</div>
 				</div>
 				<div className="linkBook">
-					<Link to={'/book-detail/' + this.props.book.id}>Voir les avis</Link>
+					<Link to={'/book-detail/' + livreModel.id}>Voir les avis</Link>
 				</div>
 				<div className="content-auteur">
 					<label>Auteur : </label>
-					<span>{this.props.book.auteur}</span>
+					<span>{livreModel.auteur}</span>
 				</div>
-				{this.props.book.description && <div><label>Description : </label>{this.props.book.description}</div> }
+				{livreModel.description && <div><label>Description : </label>{livreModel.description}</div> }
 				<ButtonToolbar className='container-buttons'>
-					{(this.userConnected && this.props.currentPage == 'myBooks') &&
-						<LinkContainer to={url}><Button bsStyle="primary" bsSize="small">Modifier</Button></LinkContainer>}
-
-					{(this.userConnected  && this.props.currentPage == 'myBooks') &&
+					{(isConnected  && (this.props.currentPage == 'myBooks')) &&
 						<Button bsStyle="primary" bsSize="small" onClick={this.handleClick}>Supprimer</Button>}
 
-					{(this.userConnected  && !this.props.currentPage == 'myBooks' && this.props.book.statut == 'FREE') &&
+					{(isConnected  && !(this.props.currentPage == 'myBooks')&& this.props.book.statut == 'FREE') &&
 						<Button bsStyle="primary" bsSize="small" disabled={this.state.disableEmprunterButton}
 							onClick={this.handleLoan}>Emprunter</Button>}
 							
-					{(this.userConnected && !(this.props.currentPage == 'myBooks') && this.props.book.statut != 'FREE') &&
+					{(isConnected && !(this.props.currentPage == 'myBooks') && this.props.book.statut != 'FREE') &&
 						<span>Livre déjà emprunté</span>}
 				</ButtonToolbar>
 			</div>

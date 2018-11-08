@@ -3,7 +3,9 @@ package lea.controller;
 import lea.dto.AvisBean;
 import lea.modele.Avis;
 import lea.modele.Livre;
+import lea.modele.LivreModel;
 import lea.modele.Utilisateur;
+import lea.repository.livremodel.MongoLivreModelRepository;
 import lea.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,22 +20,25 @@ public class AvisController extends CommonController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private MongoLivreModelRepository mongoLivreModelRepository;
+
     @RequestMapping(value = "/api/avis/{bookId}", method = RequestMethod.POST)
     @ResponseBody
     public String addAvis(@PathVariable("bookId") String livreId, @RequestBody AvisBean avisBean) throws Exception {
-        Utilisateur proprietaire = userRepository.findproprietaire(livreId);
-        Utilisateur auteurAvis = this.getPrincipal();
+        // retrieve book model
+        Optional<LivreModel> byId = this.mongoLivreModelRepository.findById(livreId);
         Avis newAvis = new Avis();
-        newAvis.setNote(avisBean.getNote());
-        newAvis.setLibelle(avisBean.getLibelle());
-        newAvis.setAuteur(auteurAvis.getId());
-        newAvis.setDateavis(new Date());
-        // retrieve book
-        Optional<Livre> book = proprietaire.getLivre(livreId);
-        if (book.isPresent()) {
-            book.get().getAvis().add(newAvis);
+        if (byId.isPresent()) {
+            Utilisateur auteurAvis = this.getPrincipal();
+            newAvis.setNote(avisBean.getNote());
+            newAvis.setLibelle(avisBean.getLibelle());
+            newAvis.setAuteur(auteurAvis.getId());
+            newAvis.setDateavis(new Date());
+            LivreModel livremodel = byId.get();
+            livremodel.getAvis().add(newAvis);
+            this.mongoLivreModelRepository.save(livremodel);
         }
-        userRepository.saveUser(proprietaire);
         return newAvis.getId();
     }
 
@@ -41,33 +46,21 @@ public class AvisController extends CommonController {
     // Editer un avis : PUT
     @RequestMapping(value = "/api/avis/{avisId}/{bookId}", method = RequestMethod.PUT)
     public String editAvis(@PathVariable("avisId") String avisId,
-                           @PathVariable("bookId") String bookId,
+                           @PathVariable("bookId") String bookModelId,
                            @RequestBody AvisBean avisBean) {
-        //retrieve owner of the book
-        Utilisateur owner = userRepository.findproprietaire(bookId);
-        owner.getLivres().stream().forEach(livre -> {
-            Optional <Avis> optAvis = livre.getAvis().stream()
-                    .filter(currentAvis -> currentAvis.getId().equals(avisId))
-                    .findFirst();
-            if(optAvis.isPresent()) {
-                Avis avis = optAvis.get();
-                avis.setLibelle(avisBean.getLibelle());
-                avis.setNote(avisBean.getNote());
-                avis.setDateavis(new Date());
-            }
-        });
 
-//        for (Livre livre : owner.getLivres()) {
-//            for (Avis oldAvis : livre.getAvis()) {
-//                if (oldAvis.getId().equals(avisId)) {
-//                    oldAvis.setLibelle(avisBean.getLibelle());
-//                    oldAvis.setNote(avisBean.getNote());
-//                    oldAvis.setDateavis(new Date());
-//                    break;
-//                }
-//            }
-//        }
-        userRepository.saveUser(owner);
+        LivreModel livreModel = this.mongoLivreModelRepository.findById(bookModelId).get();
+        Optional <Avis> optAvis = livreModel.getAvis().stream()
+                .filter(currentAvis -> currentAvis.getId().equals(avisId))
+                .findFirst();
+        if(optAvis.isPresent()) {
+            Avis avis = optAvis.get();
+            avis.setLibelle(avisBean.getLibelle());
+            avis.setNote(avisBean.getNote());
+            avis.setDateavis(new Date());
+        }
+
+        this.mongoLivreModelRepository.save(livreModel);
         return avisId;
     }
 

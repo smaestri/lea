@@ -6,6 +6,8 @@ import lea.dto.EmpruntBean;
 import lea.dto.RefusBean;
 import lea.modele.*;
 import lea.repository.emprunt.EmpruntRepository;
+import lea.repository.livremodel.LivreModelRepository;
+import lea.repository.livremodel.MongoLivreModelRepository;
 import lea.repository.user.MongoUserRepository;
 import lea.repository.user.UserRepository;
 import lea.service.NotificationService;
@@ -30,6 +32,9 @@ public class EmpruntController extends CommonController {
 
     @Autowired
     private EmpruntRepository empruntRepository;
+
+    @Autowired
+    private MongoLivreModelRepository mongoLivreModelRepository;
 
     @Autowired
     private NotificationService notificationService;
@@ -80,7 +85,10 @@ public class EmpruntController extends CommonController {
 
         try {
             Optional<Livre> livre = proprietaire.getLivre(empruntBean.getIdLivre());
-            String content = "Livres entre Amis - nouvelle demande d'emprunt de la part de " + principal.getFullName() /*+  txtIntermediaire*/ + " pour le livre '" + ((livre.isPresent())?livre.get().getTitreBook():"") + "'. Connectez-vous au site pour consulter et accepter cet emprunt!";
+            //retrieve book information
+            Optional<LivreModel> livreModel = this.mongoLivreModelRepository.findById(livre.get().getLivreModelId());
+            String titreBook = livreModel.get().getTitreBook();
+            String content = "Livres entre Amis - nouvelle demande d'emprunt de la part de " + principal.getFullName() /*+  txtIntermediaire*/ + " pour le livremodel '" + titreBook + "'. Connectez-vous au site pour consulter et accepter cet emprunt!";
             String object = "Nouvelle demande d'emprunt";
             notificationService.sendNotificaition(proprietaire.getEmail(), object, content);
         } catch (Exception e) {
@@ -111,7 +119,9 @@ public class EmpruntController extends CommonController {
             addRealFriendAndDeletePending(emprunteur, userConnected);
         }
         Utilisateur preteur = mongoUserRepository.findById(emprunt.getPreteurId()).get();
-        String content = preteur.getFullName() + " a accepté votre demande d'emprunt pour le livre " + preteur.getLivre(emprunt.getLivreId()).get().getTitreBook() + ". Connectez-vous au site pour retourner le livre une fois que vous l'avez lu!";
+        Optional<LivreModel> livreModel = this.mongoLivreModelRepository.findById(emprunt.getLivre().getLivreModelId());
+        String titreBook = livreModel.get().getTitreBook();
+        String content = preteur.getFullName() + " a accepté votre demande d'emprunt pour le livremodel " + titreBook + ". Connectez-vous au site pour retourner le livremodel une fois que vous l'avez lu!";
         String object = "Le prêteur a accepté votre demande d'emprunt!";
         notificationService.sendNotificaition(emprunteur.getEmail(), object, content);
         return "OK";
@@ -130,7 +140,7 @@ public class EmpruntController extends CommonController {
         emprunt.setMotifRefus(refusBean.getRefus());
         empruntRepository.saveEmprunt(emprunt);
         Utilisateur emprunteur = mongoUserRepository.findById(emprunt.getEmprunteurId()).get();
-        String content = principal.getFullName() + " a refusé votre demande d'emprunt avec le motif :" + refusBean.getRefus() + ". Le livre est à nouveau empruntable.";
+        String content = principal.getFullName() + " a refusé votre demande d'emprunt avec le motif :" + refusBean.getRefus() + ". Le livremodel est à nouveau empruntable.";
         String object = "Refus de la demande d'emprunt";
         notificationService.sendNotificaition(emprunteur.getEmail(), object, content);
 
@@ -151,8 +161,10 @@ public class EmpruntController extends CommonController {
         empruntRepository.saveEmprunt(emprunt);
         Optional<Livre> livre = userRepository.findBook(emprunt.getLivreId());
         Utilisateur emprunteur = mongoUserRepository.findById(emprunt.getEmprunteurId()).get();
-        String object = "L'emprunteur vous a renvoyé le livre";
-        String content = emprunteur.getFullName() + " vous a renvoyé le livre " + (livre.isPresent()?livre.get().getTitreBook():"") + ". Vous pouvez donc clore l'emprunt en vous connectant au site!";
+        String object = "L'emprunteur vous a renvoyé le livremodel";
+        Optional<LivreModel> livreModel = this.mongoLivreModelRepository.findById(emprunt.getLivre().getLivreModelId());
+        String titreBook = livreModel.get().getTitreBook();
+        String content = emprunteur.getFullName() + " vous a renvoyé le livremodel " + titreBook+ ". Vous pouvez donc clore l'emprunt en vous connectant au site!";
         notificationService.sendNotificaition(preteur.getEmail(), object, content);
 
         return "OK";
@@ -221,9 +233,11 @@ public class EmpruntController extends CommonController {
     private void setEmpruntobjects(Emprunt emp) {
         emp.setPreteur(mongoUserRepository.findById(emp.getPreteurId()).get());
         emp.setEmprunteur(mongoUserRepository.findById(emp.getEmprunteurId()).get());
-        Optional<Livre> book = userRepository.findBook(emp.getLivreId());
+        Livre book = userRepository.findBook(emp.getLivreId()).get();
+        LivreModel livreModel = this.mongoLivreModelRepository.findById(book.getLivreModelId()).get();
+        book.setLivreModel(livreModel);
         setCommentuser(emp);
-        emp.setLivre(book.get());
+        emp.setLivre(book);
     }
 
     private boolean isNewPret(List<Emprunt> listeEmp) {

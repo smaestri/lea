@@ -137,7 +137,7 @@ class LoanAttributes extends React.Component {
 
 	saveEditAvis() {
 		const avis = this.state.events.find(ev => ev.dateavis != undefined)
-		helpersBook.saveAvis(avis, this.props.loan.livre.id).then(() => {
+		helpersBook.saveAvis(avis, this.props.loan.livre.livreModelId).then(() => {
 			this.props.reloadEmprunt();
 		});
 	}
@@ -212,10 +212,14 @@ class LoanAttributes extends React.Component {
 	};
 
 	displayAvis(avis, userConnected, emprunteur) {
+		let auteurAvis = emprunteur.fullName + " a ";
+		if(userConnected == emprunteur.id) {
+			auteurAvis = 'Vous avez ';
+		}
 		return (
 			<TimelineEvent
 				key={avis.id}
-				title={emprunteur.fullName + " a saisi la note suivante "}
+				title={auteurAvis + "saisi la note suivante "}
 				createdAt={formatDate(avis.dateavis)}
 				icon={<i className="material-icons md-18">favorite</i>}
 				iconColor="navy"
@@ -305,12 +309,13 @@ class LoanAttributes extends React.Component {
 
 	_getLoanText(userConnected, emprunteur, preteur, motif) {
 		let returnObj = {}
-		returnObj.titleCloture = preteur.fullName + " a cloturé l'emprunt";
-		returnObj.titleRefus = preteur.fullName + " a refusé cette demande avec le motif: " + motif;
+		
 		if (userConnected == emprunteur.id) {
 			returnObj.titleRequested = "Vous avez demandé ce livre à " + preteur.fullName;
 			returnObj.titleCurrent = preteur.fullName + " a accepté votre demande d'emprunt et vous envoie le livre. ";
 			returnObj.titleSent = "Vous avez renvoyé ce livre à " + preteur.fullName;
+			returnObj.titleRefus = preteur.fullName  + " a refusé cette demande avec le motif: " + motif;
+			returnObj.titleCloture = preteur.fullName + " cloturé l'emprunt";
 		}
 
 		if (userConnected == preteur.id) {
@@ -318,6 +323,7 @@ class LoanAttributes extends React.Component {
 			returnObj.titleCurrent = "Vous avez accepté la demande de " + emprunteur.fullName + ".";
 			returnObj.titleSent = emprunteur.fullName + " vous a renvoyé le livre. Merci de clore l'emprunt si vous l'avez bien reçu.";
 			returnObj.titleRefus = "Vous a refusé cette demande avec le motif " + motif;
+			returnObj.titleCloture = "Vous avez cloturé l'emprunt";
 		}
 
 		return returnObj;
@@ -364,7 +370,7 @@ class LoanAttributes extends React.Component {
 					{displayAddRating &&
 						<AddAvis
 							visibleByDefault={false}
-							bookId={this.props.loan.livre.id}
+							bookModelId={this.props.loan.livre.livreModel.id}
 							reloadEmprunt={this.props.reloadEmprunt}
 						/>}
 				</div>

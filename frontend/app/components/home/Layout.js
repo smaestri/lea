@@ -46,6 +46,7 @@ class Layout extends React.Component {
 				<MyLoans
 				  userId={this.state.userId}
 					onRefreshCount={this.refreshCount.bind(this)}
+					onRefreshNotif={this.refreshNotif.bind(this)}
 					{...props}
 				/>
 			);
@@ -56,6 +57,7 @@ class Layout extends React.Component {
 				<MyLendings
 					userId={this.state.userId}
 					onRefreshCount={this.refreshCount.bind(this)}
+					onRefreshNotif={this.refreshNotif.bind(this)}
 					{...props}
 				/>
 			);
@@ -65,7 +67,6 @@ class Layout extends React.Component {
 			return (
 				<MyHistorizedLendings
 					userId={this.state.userId}
-					onRefreshCount={this.refreshCount.bind(this)}
 					{...props}
 				/>
 			);
@@ -75,7 +76,6 @@ class Layout extends React.Component {
 			return (
 				<MyHistorizedLoans
 					userId={this.state.userId}
-					onRefreshCount={this.refreshCount.bind(this)}
 					{...props}
 				/>
 			);

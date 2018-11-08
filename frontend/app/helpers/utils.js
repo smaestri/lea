@@ -1,3 +1,5 @@
+import React from 'react'
+
 function formatDate(dateToConvert) {
 //convert date demande
 	let dateStr;
@@ -13,5 +15,7 @@ export const loanStatus = {
 	CURRENT: "CURRENT",
 	SENT: "SENT"
 }
+
+export const renderHTML = (rawHTML) => React.createElement("div", { dangerouslySetInnerHTML: { __html: rawHTML } });
 
 export default formatDate

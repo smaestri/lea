@@ -3,6 +3,7 @@ import { withRouter } from 'react-router'
 import helpers from '../../helpers/book/api'
 import Avis from './Avis.js'
 import { Button } from 'react-bootstrap'
+import { renderHTML} from '../../helpers/utils'
 import style from './BookDetail.scss'
 
 class BookDetail extends React.Component {
@@ -22,12 +23,12 @@ class BookDetail extends React.Component {
 
 	render() {
 		const avis = this.state.book.avis.map(avis => {
-			return <Avis key={avis.id} id={avis.id} avis={avis} displayImage={false}/>
+			return <Avis key={avis.id} id={avis.id} avis={avis} displayImage={false}/>		
 		});
 		return (
 			<div className="book-detail-container">
 				<div className="book-title">
-					<div><h1>Avis du livre <i>{this.state.book.titreBook}</i></h1></div>
+					<div><h1>Avis du livre <i>{renderHTML(this.state.book.titreBook)}</i></h1></div>
 				</div>
 				<div className="book-avis">
 					<div className="image-container">

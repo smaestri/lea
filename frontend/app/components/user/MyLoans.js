@@ -17,6 +17,8 @@ class MyLoans extends React.Component {
 			this.setState({
 				loans: loans
 			});
+			// refresh emprunt : refresh notif
+			this.props.onRefreshNotif();
 		});
 	}
 

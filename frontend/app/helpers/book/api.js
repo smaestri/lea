@@ -66,11 +66,11 @@ var helpers = {
     },
 
     saveBook: function (bookObj) {
-        if (bookObj.id) {
-            return axios.put('/api/livres/', {
-               ...bookObj
-            })
-        }
+        // if (bookObj.id) {
+        //     return axios.put('/api/livres/', {
+        //        ...bookObj
+        //     })
+        // }
         return axios.post('/api/livres/', {
            ...bookObj
         })

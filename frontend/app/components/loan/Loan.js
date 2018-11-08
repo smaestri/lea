@@ -8,7 +8,14 @@ class Loan extends React.Component {
 
 	render() {
 		const userConnected = this.props.userId;
-		let avis = this.props.loan.livre.avis.find( avisBook => {
+		let livremodel = {};
+		if(this.props.loan.livre && this.props.loan.livre.livreModel) {
+			livremodel =this.props.loan.livre.livreModel;
+		} else {
+			return
+		}
+		
+		let avis = livremodel.avis.find( avisBook => {
 				let dateFin = this.props.loan.dateCloture;
 				if(this.props.loan.dateRefus){
 					dateFin = this.props.loan.dateRefus;
@@ -19,11 +26,11 @@ class Loan extends React.Component {
 
 		return (
 			<div className="loan-container">
-				<div className="loan-header">{this.props.loan.livre.titreBook}</div>
+				<div className="loan-header">{livremodel.titreBook}</div>
 				<div className="loan-content">
 					<div className="image-container">
 						<div className="image-content">
-							<img className="img" src={this.props.loan.livre.image}/>
+							<img className="img" src={livremodel.image}/>
 						</div>
 					</div>
 					<div className="loan-main">

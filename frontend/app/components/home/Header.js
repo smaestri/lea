@@ -39,10 +39,10 @@ class Header extends Component {
 			</Navbar.Header>
 			<Navbar.Collapse>
 				{this.props.isConnected && <Nav>
-						<NavItem><LinkContainer to={'/my-books/'} ><span>Ma bibliothèque</span></LinkContainer></NavItem>
-						<NavItem><LinkContainer to={'/my-loans/'} ><span>Mes emprunts ({this.props.nbEmprunt})</span></LinkContainer></NavItem>
-						<NavItem><LinkContainer to={'/my-lendings/'} ><span>Mes prêts ({this.props.nbPret})</span></LinkContainer></NavItem>
-						<NavItem><LinkContainer to={'/my-friends/'} ><span>Mes amis</span></LinkContainer></NavItem>
+						<LinkContainer to={'/my-books/'} ><NavItem >Ma bibliothèque</NavItem></LinkContainer>
+						<LinkContainer to={'/my-loans/'} ><NavItem>Mes emprunts ({this.props.nbEmprunt})</NavItem></LinkContainer>
+						<LinkContainer to={'/my-lendings/'}><NavItem>Mes prêts ({this.props.nbPret})</NavItem></LinkContainer>
+						<LinkContainer to={'/my-friends/'} ><NavItem>Mes amis</NavItem></LinkContainer>
 					</Nav>
 				}
 				<Navbar.Form pullLeft>
@@ -54,16 +54,16 @@ class Header extends Component {
 				</Navbar.Form>
 				{this.props.isConnected && <Nav>
 				<NavDropdown id="basic-nav-dropdown" title={`Bienvenue, ${this.props.currentUser}`} pullRight>
-					<MenuItem><LinkContainer to={'/historized-loans/'}><span>Mes emprunts historiés</span></LinkContainer></MenuItem>
-					<MenuItem><LinkContainer to={'/historized-lendings/'}><span>Mes prêts historiés</span></LinkContainer></MenuItem>
-					<MenuItem><LinkContainer to={'/account/'}><span>Mon compte</span></LinkContainer></MenuItem>
+					<LinkContainer to={'/historized-loans/'}><MenuItem>Mes emprunts historiés</MenuItem></LinkContainer>
+					<LinkContainer to={'/historized-lendings/'}><MenuItem>Mes prêts historiés</MenuItem></LinkContainer>
+					<LinkContainer to={'/account/'}><MenuItem>Mon compte</MenuItem></LinkContainer>
 					<MenuItem><span onClick={this.logout}>Me déconnecter</span></MenuItem>
 				</NavDropdown>
 				</Nav>	}
 				{!this.props.isConnected &&
 				<Nav>
-					<NavItem><LinkContainer to="/login"><span>Se connecter</span></LinkContainer></NavItem>
-					<NavItem><LinkContainer to="/subscribe"><span>S'inscrire</span></LinkContainer></NavItem>
+					<LinkContainer to="/login"><NavItem>Se connecter</NavItem></LinkContainer>
+					<LinkContainer to="/subscribe"><NavItem>S'inscrire</NavItem></LinkContainer>
 				</Nav>					
 				}
 			</Navbar.Collapse>

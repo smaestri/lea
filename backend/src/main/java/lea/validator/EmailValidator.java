@@ -1,12 +1,9 @@
 package lea.validator;
 
-import lea.commun.EmailConstraint;
 import lea.modele.Utilisateur;
 import lea.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

@@ -1,7 +1,7 @@
 package lea.modele;
 
-import lea.commun.EmailConstraint;
-import lea.commun.PasswordConstraint;
+import lea.validator.EmailConstraint;
+import lea.validator.PasswordConstraint;
 import org.springframework.data.annotation.Transient;
 import org.springframework.util.StringUtils;
 

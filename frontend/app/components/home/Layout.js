@@ -21,7 +21,6 @@ import helpersUser from '../../helpers/user/api'
 import Footer from './Footer';
 import MyBooks from '../user/MyBooks';
 import Login from '../login/Login'
-import Subscribe from '../subscribe/Subscribe'
 import helpers from '../../helpers/user/api';
 
 class Layout extends React.Component {

@@ -1,4 +1,4 @@
-package lea.commun;
+package lea.validator;
 
 import lea.validator.EmailValidator;
 

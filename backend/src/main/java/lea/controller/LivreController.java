@@ -106,22 +106,20 @@ public class LivreController extends CommonController {
     public Livre addLivre(@Valid @RequestBody LivreModel livreModel) {
         Utilisateur principal = getPrincipal();
         Utilisateur user = this.mongoUserRepository.findById(principal.getId()).get();
-
         Livre userLivre = new Livre();
         userLivre.setStatut(StatutEmprunt.FREE);
-        //si livre model existe deja le recuperer
-        if(livreModel.getIsbn() != null){
-            LivreModel livreexist = mongoLivreModelRepository.findByIsbn(livreModel.getIsbn());
-            if(livreexist != null) {
-                userLivre.setLivreModelId(livreexist.getId());
-            } else {
-                //save livre model
-                mongoLivreModelRepository.save(livreModel);
-                userLivre.setLivreModelId(livreModel.getId());
+        LivreModel newLivreModel = this.mongoLivreModelRepository.findByIsbn(livreModel.getIsbn());
+        if(newLivreModel == null) {
+            //save only first 10 of isbn
+            if(livreModel.getIsbn().length() > 10) {
+                livreModel.setIsbn(livreModel.getIsbn().substring(0, 9));
             }
+            this.mongoLivreModelRepository.save(livreModel);
+            newLivreModel = livreModel;
         }
-
         //save user book
+        userLivre.setLivreModel(newLivreModel);
+        userLivre.setLivreModelId(newLivreModel.getId());
         userRepository.saveLivre(user, userLivre);
         return userLivre;
     }

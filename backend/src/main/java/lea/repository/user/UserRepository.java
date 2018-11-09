@@ -24,4 +24,5 @@ public interface UserRepository {
     public Utilisateur findproprietaire(String bookId);
     PendingFriend findPendingFriend(Utilisateur user, String email);
     List<Avis> findlastAvis();
+	void findBookByModelId();
 }

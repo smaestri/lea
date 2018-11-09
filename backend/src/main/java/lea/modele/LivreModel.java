@@ -1,14 +1,21 @@
 package lea.modele;
 
+import lea.validator.IsbnExistingConstraint;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.Transient;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class LivreModel extends BaseDocumentImpl  {
 
-    @NotEmpty(message = "{validation.livremodel.notEmpty}")
+    @NotEmpty(message = "{validation.livre.isbn_notEmpty}")
+    @Length(min = 10, message = "{validation.livre.isbn_size}")
+    @IsbnExistingConstraint(message = "{validation.livre.isbn_already_existing}")
+    private String isbn;
+
     private String titreBook;
 
     private String description;
@@ -19,7 +26,7 @@ public class LivreModel extends BaseDocumentImpl  {
 
     private String image;
 
-    private String isbn;
+
 
     private String categorieId;
 

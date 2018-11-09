@@ -1,6 +1,5 @@
 package lea.validator;
 
-import lea.commun.PasswordConstraint;
 import lea.modele.Utilisateur;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;

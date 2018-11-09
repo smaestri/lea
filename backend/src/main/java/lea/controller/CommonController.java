@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class CommonController {
 
-    protected Utilisateur getPrincipal() {
+    public static Utilisateur getPrincipal() {
 
         Utilisateur user = null;
         if (SecurityContextHolder.getContext().getAuthentication() == null) {

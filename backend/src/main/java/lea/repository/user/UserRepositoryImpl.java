@@ -222,6 +222,11 @@ public class UserRepositoryImpl implements UserRepository {
         return false;
     }
 
+    @Override
+    public void findBookByModelId() {
+// TODO
+    }
+
 //    private Avis getAvisFromBook(Livre livre, Avis newAvis) {
 //        for (Avis avisExiting : livre.getAvis()) {
 //            if (avisExiting.getId().equals(newAvis.getId())) {

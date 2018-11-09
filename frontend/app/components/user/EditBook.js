@@ -61,7 +61,13 @@ class EditBook extends React.Component {
 		}, 
 		(response)=> {
 			if(response.data && response.data.errors && response.data.errors.length > 0) {
-				this.setState({errors: response.data.errors});
+
+				let errors = [];
+				response.data.errors.forEach((err) => {
+					errors.push(err.defaultMessage)
+				})
+
+				this.setState({errors});
 				window.scrollTo(0, 0);
 			}
 
@@ -80,7 +86,7 @@ class EditBook extends React.Component {
 			if(event.target.value.length === 10 || event.target.value.length === 13){
 				//display spinner
 				this.setState({ displaySpinner: true });
-				const info = helpers.fetchBookInfoFromAmazon(event.target.value).then ( result => {
+				helpers.fetchBookInfoFromAmazon(event.target.value).then ( result => {
 					book['auteur'] = result.data['auteur']
 					book['image'] = result.data['image']
 					book['titreBook'] = result.data['name']
@@ -111,7 +117,8 @@ class EditBook extends React.Component {
 		let errors = [];
 		if (this.state.errors) {
 			errors = this.state.errors.map(err => {
-				return <div className="error" key={err.field+err.code}>{err.defaultMessage}</div>
+				//return <div className="error">TOTO</div>
+				return <div className="error">{err}</div>
 			});
 		}
 

@@ -1,8 +1,18 @@
 package lea.service;
 
-import org.springframework.mail.MailException;
 
 public interface NotificationService {
-    void sendNotificaition(String mailDest, String subject, String text) throws MailException, InterruptedException;
+    void sendNouvelEmprunt(String mailDest, String livre, String preteur, String nameDestinataire) ;
 
+    void sendAcceptation(String email, String fullName, String titreBook, String nameDestinataire) ;
+
+    void sendRefus(String email, String fullName, String titreBook, String motif, String nameDestinataire) ;
+    void sendLivreEnvoye(String email, String fullName, String titreBook, String nameDestinataire) ;
+    void sendClore(String email, String fullName, String titreBook, String nameDestinataire) ;
+
+    void sendResetPassword(String email, String link, String nameDestinataire) ;
+
+    void sendNewAmi(String email1, String fullName, String nameDestinataire) ;
+
+    void sendAmiAccepted(String email, String fullName, String nameDestinataire) ;
 }

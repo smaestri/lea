@@ -38,7 +38,7 @@ public class EmpruntRepositoryImpl implements EmpruntRepository {
 
     @Override
     public List<Commentaire> getCommentaires(String empruntId) {
-        Emprunt one = mongoEmpruntRepository.findOne(empruntId);
+        Emprunt one = mongoEmpruntRepository.findById(empruntId).get();
         return one.getCommentaires();
     }
 
@@ -57,7 +57,7 @@ public class EmpruntRepositoryImpl implements EmpruntRepository {
 
     @Override
     public Emprunt findOne(String empruntId) {
-        return mongoEmpruntRepository.findOne(empruntId);
+        return mongoEmpruntRepository.findById(empruntId).get();
     }
 
     @Override

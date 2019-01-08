@@ -4,8 +4,8 @@
     <body style="font-family: 'Amaranth', sans-serif;">
         <div class="container">
             <div th:replace="includes/header:: contentA" />
-            <h1>Réinitilaiser le mot de passe</h1>
-            <form th:action="@{/users/resetPwd}" th:object="${utilisateur}" method="POST" onsubmit="return checkForm(this);">
+            <h1>Réinitialiser le mot de passe</h1>
+            <form th:action="@{/users/resetPwd}" th:object="${utilisateur}" method="POST">
                 <div class="form-error">
                     <ul th:if="${#fields.hasErrors('*')}">
                         <li th:each="err : ${#fields.errors('*')}" th:text="${err}">Input is incorrect</li>
@@ -15,6 +15,7 @@
                 <input type="text" th:field="*{email}" placeholder="Votre e-mail"/>
                 <button name="validForm" type="submit" class="btn btn-primary">Valider</button>
             </form>
+            <a href="/#/login">Retour</a>
             <nav th:replace="includes/footer:: contentA" />
         </div>
     </body>

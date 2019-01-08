@@ -1,7 +1,7 @@
 import React from 'react'
 import { Modal } from 'react-bootstrap'
 import { Button } from 'react-bootstrap'
-import helpers from '../../helpers/api'
+import helpers from '../../helpers/friend/api'
 import AddFriend from './AddFriend'
 import MyFriend from './MyFriend'
 import PendingFriend from './PendingFriend'

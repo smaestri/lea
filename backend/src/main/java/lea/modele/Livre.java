@@ -4,6 +4,7 @@ import lea.commun.StatutEmprunt;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Transient;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,28 +14,12 @@ public class Livre extends BaseDocumentImpl {
         this.setId(ObjectId.get().toHexString());
     }
 
-    // FK
-    private String categorieId;
-    private List<Avis> avis = new ArrayList<Avis>();
-
-    private String titreBook;
-
-    private String description;
-
-    private String auteur;
-
-    private String editeur;
-
-    private String image;
-
-    private String isbn;
-
-    private boolean deleted;
+    private String livreModelId;
 
     private StatutEmprunt statut;
 
     @Transient
-    private Categorie categorie;
+    private LivreModel livreModel;
 
     @Transient
     private String userId;
@@ -47,30 +32,6 @@ public class Livre extends BaseDocumentImpl {
 
     @Transient
     private String mailPreteur;
-
-    public List<Avis> getAvis() {
-        return avis;
-    }
-
-    public void setAvis(List<Avis> avis) {
-        this.avis = avis;
-    }
-
-    public String getAuteur() {
-        return auteur;
-    }
-
-    public void setAuteur(String auteur) {
-        this.auteur = auteur;
-    }
-
-    public String getTitreBook() {
-        return titreBook;
-    }
-
-    public void setTitreBook(String titreBook) {
-        this.titreBook = titreBook;
-    }
 
     public String getMailPreteur() {
         return mailPreteur;
@@ -88,61 +49,12 @@ public class Livre extends BaseDocumentImpl {
         this.statut = statut;
     }
 
-    public String getImage() {
-        return image;
+    public String getLivreModelId() {
+        return livreModelId;
     }
 
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getIsbn() {
-        return isbn;
-    }
-
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
-    }
-
-    public String getEditeur() {
-        return editeur;
-    }
-
-    public void setEditeur(String editeur) {
-        this.editeur = editeur;
-    }
-
-
-    public String getPreteur() {
-        return preteur;
-    }
-
-    public void setPreteur(String preteur) {
-        this.preteur = preteur;
-    }
-
-    public String getCategorieId() {
-        return categorieId;
-    }
-
-    public void setCategorieId(String categorieId) {
-        this.categorieId = categorieId;
-    }
-
-    public Categorie getCategorie() {
-        return categorie;
-    }
-
-    public void setCategorie(Categorie categorie) {
-        this.categorie = categorie;
+    public void setLivreModelId(String livreModelId) {
+        this.livreModelId = livreModelId;
     }
 
     public String getUserId() {
@@ -161,25 +73,26 @@ public class Livre extends BaseDocumentImpl {
         this.intermediaireid = intermediaireid;
     }
 
-    public boolean isDeleted() {
-        return deleted;
+    public String getPreteur() {
+        return preteur;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void setPreteur(String preteur) {
+        this.preteur = preteur;
+    }
+
+    public LivreModel getLivreModel() {
+        return livreModel;
+    }
+
+    public void setLivreModel(LivreModel livreModel) {
+        this.livreModel = livreModel;
     }
 
     @Override
     public String toString() {
         return "Livre{" +
                 ", id='" + this.getId() + '\'' +
-                ", categorieId='" + categorieId + '\'' +
-                ", titreBook='" + titreBook + '\'' +
-                ", description='" + description + '\'' +
-                ", auteur='" + auteur + '\'' +
-                ", editeur='" + editeur + '\'' +
-                ", image='" + image + '\'' +
-                ", isbn='" + isbn + '\'' +
                 ", statut=" + statut +
                 '}';
     }

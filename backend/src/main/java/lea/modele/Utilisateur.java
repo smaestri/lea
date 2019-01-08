@@ -1,46 +1,57 @@
 package lea.modele;
 
+import lea.validator.EmailConstraint;
+import lea.validator.PasswordConstraint;
 import org.springframework.data.annotation.Transient;
 import org.springframework.util.StringUtils;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@PasswordConstraint(message = "{validation.password.error_password}")
+@EmailConstraint(message = "{validation.email.email_already_existing}")
 public class Utilisateur extends BaseDocumentImpl {
 
-    // FK
     private List<String> listEmpruntsId;
     private List<String> listPretsId;
     private List<String> listUserProfilesId = new ArrayList<String>();
     private List<String> listFriendsId = new ArrayList<String>();
-    // probleme with array of email : containing .
     private List<PendingFriend> listPendingFriends = new ArrayList<PendingFriend>();
+    private List<Livre> livres = new ArrayList<>();
 
-    @Transient
-    private List<Utilisateur> userFriends = new ArrayList<Utilisateur>();
-
-    List<Livre> livres = new ArrayList<Livre>();
-
+    @NotNull
     @Size(min = 2, max = 14, message = "Le mot de passe doit comprendre entre 2 et 14 caractères")
     private String password;
 
     @Transient
     private String confirmPassword;
 
+    @NotNull
     @Size(min = 2, max = 14, message = "Le prénom doit comprendre entre 2 et 14 caractères")
     private String firstName;
 
     @Size(min = 2, max = 14, message = "Le nom doit comprendre entre 2 et 14 caractères")
     private String lastName;
 
-    @Size(min = 2, max = 50, message = "L'email doit comprendre entre 2 et 50 caractères")
+    @NotEmpty(message = "{validation.email.notEmpty}")
+    @Email(message = "{validation.email.incorrect}")
+    @Size(min = 2, max = 50, message = "{validation.email.size}")
     private String email;
 
     private String avatar;
 
     private Boolean enabled;
+
+    @Transient
+    private boolean creation;
+
+    @Transient
+    private List<Utilisateur> userFriends = new ArrayList<Utilisateur>();
 
     public String getPassword() {
         return password;
@@ -178,6 +189,14 @@ public class Utilisateur extends BaseDocumentImpl {
         this.confirmPassword = confirmPassword;
     }
 
+    public boolean isCreation() {
+        return creation;
+    }
+
+    public void setCreation(boolean creation) {
+        this.creation = creation;
+    }
+
     @Override
     public String toString() {
         return "Utilisateur{" +
@@ -189,15 +208,15 @@ public class Utilisateur extends BaseDocumentImpl {
                 '}';
     }
 
-    public void updateLivre(String id, Livre livreUpdated) {
-
-        for (Livre livre : this.livres) {
-            if (livre.getId().equals(id)) {
-                livre.setTitreBook(livreUpdated.getTitreBook());
-                livre.setAuteur(livreUpdated.getAuteur());
-            }
-        }
-    }
+//    public void updateLivre(String id, Livre livreUpdated) {
+//
+//        for (Livre livre : this.livres) {
+//            if (livre.getId().equals(id)) {
+//                livre.setTitreBook(livreUpdated.getTitreBook());
+//                livre.setAuteur(livreUpdated.getAuteur());
+//            }
+//        }
+//    }
 
     public List<Utilisateur> getUserFriends() {
         return userFriends;
@@ -208,14 +227,14 @@ public class Utilisateur extends BaseDocumentImpl {
     }
 
     //TODO  get direct child with adequate mongoDb query
-    public Avis getAvis(String avisId) {
-        for (Livre livre : this.livres) {
-            for (Avis avis : livre.getAvis()) {
-                if (avis.getId().equals(avisId)) {
-                    return avis;
-                }
-            }
-        }
-        return null;
-    }
+//    public Avis getAvis(String avisId) {
+//        for (Livre livre : this.livres) {
+//            for (Avis avis : livre.getAvis()) {
+//                if (avis.getId().equals(avisId)) {
+//                    return avis;
+//                }
+//            }
+//        }
+//        return null;
+//    }
 }

@@ -2,13 +2,21 @@ import React from 'react'
 import { withRouter } from 'react-router'
 import ButtonsEmprunt from './ButtonsEmprunt'
 import LoanAttributes from './LoanAttributes'
+import { renderHTML} from '../../helpers/utils'
 import style from './Loan.scss'
 
 class Loan extends React.Component {
 
 	render() {
 		const userConnected = this.props.userId;
-		let avis = this.props.loan.livre.avis.find( avisBook => {
+		let livremodel = {};
+		if(this.props.loan.livreModel) {
+			livremodel =this.props.loan.livreModel;
+		} else {
+			return null;
+		}
+		
+		let avis = livremodel.avis.find( avisBook => {
 				let dateFin = this.props.loan.dateCloture;
 				if(this.props.loan.dateRefus){
 					dateFin = this.props.loan.dateRefus;
@@ -19,11 +27,11 @@ class Loan extends React.Component {
 
 		return (
 			<div className="loan-container">
-				<div className="loan-header">{this.props.loan.livre.titreBook}</div>
+				<div className="loan-header">{renderHTML(livremodel.titreBook)}</div>
 				<div className="loan-content">
 					<div className="image-container">
 						<div className="image-content">
-							<img className="img" src={this.props.loan.livre.image}/>
+							<img className="img" src={livremodel.image}/>
 						</div>
 					</div>
 					<div className="loan-main">

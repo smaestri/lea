@@ -1,11 +1,10 @@
 package lea.repository.user;
 
 import lea.commun.StatutEmprunt;
-import lea.controller.LivreController;
-import lea.modele.Avis;
 import lea.modele.Livre;
 import lea.modele.PendingFriend;
 import lea.modele.Utilisateur;
+import lea.repository.livremodel.MongoLivreModelRepository;
 import lea.repository.password.PasswordResetTokenRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +27,9 @@ public class UserRepositoryImpl implements UserRepository {
     private MongoUserRepository mongoUserRepository = null;
 
     @Autowired
+    private MongoLivreModelRepository mongoLivreModelRepository = null;
+
+    @Autowired
     private MongoTemplate mongoTemplate = null;
 
     @Override
@@ -36,11 +37,6 @@ public class UserRepositoryImpl implements UserRepository {
         Criteria criteria = Criteria.where("email").in(email);
         Query query = new Query(criteria);
         return mongoTemplate.find(query, Utilisateur.class);
-    }
-
-    @Override
-    public Utilisateur findOne(String id) {
-        return mongoUserRepository.findOne(id);
     }
 
     @Override
@@ -53,13 +49,22 @@ public class UserRepositoryImpl implements UserRepository {
         return mongoUserRepository.save(userDetail);
     }
 
-    @Override
-    public void supprimerLivre(String bookId, String userId) {
+    public void supprimerLivre2(String bookId, String userId) {
         Query q = new Query();
         q.addCriteria(Criteria.where("id").is(new ObjectId(userId)).and("livres.id").is(new ObjectId(bookId)));
         Update update = new Update();
         update.set("livres.$.deleted", true);
         mongoTemplate.updateFirst(q, update, Utilisateur.class);
+    }
+
+    @Override
+    public void supprimerLivre(String bookId, String userId) {
+        Query q = new Query();
+        q.addCriteria(Criteria.where("id").is(new ObjectId(userId)).and("livres.id").is(new ObjectId(bookId)));
+        Update update = new Update();
+        update.pull("livres", Query.query(Criteria.where("id").is(new ObjectId(bookId))));
+        mongoTemplate.updateFirst(q, update, Utilisateur.class);
+
     }
 
     @Override
@@ -140,28 +145,6 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public List<Avis> findlastAvis() {
-        List<Avis> returnList = new ArrayList<Avis>();
-        Query q = new Query();
-        List<Utilisateur> utilisateurs = mongoTemplate.find(q, Utilisateur.class);
-
-        for (Utilisateur u : utilisateurs) {
-            List<Livre> livres = u.getLivres();
-            for (Livre l : livres) {
-                List<Avis> avis = l.getAvis();
-                for (Avis a : avis) {
-                    a.setLivre(l.getTitreBook());
-                    LivreController.setBookImage(l);
-                    a.setImage(l.getImage());
-
-                }
-                returnList.addAll(avis);
-            }
-        }
-        return returnList;
-    }
-
-    @Override
     public void updateBookStatus(Utilisateur proprietaire, String livreId, StatutEmprunt statut) {
         Query q = new Query();
         q.addCriteria(Criteria.where("id").is(new ObjectId(proprietaire.getId())).and("livres.id").is(new ObjectId(livreId)));
@@ -170,14 +153,7 @@ public class UserRepositoryImpl implements UserRepository {
         mongoTemplate.updateFirst(q, update, Utilisateur.class);
     }
 
-    @Override
-    public void deleteAvis(String idAvis) {
-        Query q = new Query();
-        q.addCriteria(Criteria.where("livres.avis.id").is(new ObjectId(idAvis)));
-        Update update = new Update();
-        update.pull("livres.$.avis", Query.query(Criteria.where("id").is(new ObjectId(idAvis))));
-        mongoTemplate.updateFirst(q, update, Utilisateur.class);
-    }
+
 
 
     @Override
@@ -188,19 +164,19 @@ public class UserRepositoryImpl implements UserRepository {
             mongoTemplate.save(user);
         }
         //update
-        else {
-            Query q = new Query();
-            q.addCriteria(Criteria.where("id").is(new ObjectId(user.getId())).and("livres.id").is(new ObjectId(newLivre.getId())));
-            Update update = new Update();
-            update.set("livres.$.titreBook", newLivre.getTitreBook());
-            update.set("livres.$.auteur", newLivre.getAuteur());
-            update.set("livres.$.description", newLivre.getDescription());
-            update.set("livres.$.categorieId", newLivre.getCategorieId());
-            update.set("livres.$.editeur", newLivre.getEditeur());
-            update.set("livres.$.image", newLivre.getImage());
-            update.set("livres.$.isbn", newLivre.getIsbn());
-            mongoTemplate.updateFirst(q, update, Utilisateur.class);
-        }
+//        else {
+//            Query q = new Query();
+//            q.addCriteria(Criteria.where("id").is(new ObjectId(user.getId())).and("livres.id").is(new ObjectId(newLivre.getId())));
+//            Update update = new Update();
+//            update.set("livres.$.titreBook", newLivre.getTitreBook());
+//            update.set("livres.$.auteur", newLivre.getAuteur());
+//            update.set("livres.$.description", newLivre.getDescription());
+//            update.set("livres.$.categorieId", newLivre.getCategorieId());
+//            update.set("livres.$.editeur", newLivre.getEditeur());
+//            update.set("livres.$.image", newLivre.getImage());
+//            update.set("livres.$.isbn", newLivre.getIsbn());
+//            mongoTemplate.updateFirst(q, update, Utilisateur.class);
+//        }
     }
 
     private boolean bookExist(Utilisateur user, Livre livre) {
@@ -216,12 +192,14 @@ public class UserRepositoryImpl implements UserRepository {
         return false;
     }
 
-    private Avis getAvisFromBook(Livre livre, Avis newAvis) {
-        for (Avis avisExiting : livre.getAvis()) {
-            if (avisExiting.getId().equals(newAvis.getId())) {
-                return avisExiting;
-            }
-        }
-        return null;
-    }
+
+
+//    private Avis getAvisFromBook(Livre livre, Avis newAvis) {
+//        for (Avis avisExiting : livre.getAvis()) {
+//            if (avisExiting.getId().equals(newAvis.getId())) {
+//                return avisExiting;
+//            }
+//        }
+//        return null;
+//    }
 }

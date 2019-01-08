@@ -19,6 +19,6 @@ public class CategorieRepositoryImpl implements CategorieRepository {
 
     @Override
     public Categorie findOne(String categorieId) {
-        return mongoCategorieRepository.findOne(categorieId);
+        return mongoCategorieRepository.findById(categorieId).get();
     }
 }

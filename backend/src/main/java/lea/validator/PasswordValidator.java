@@ -1,28 +1,25 @@
 package lea.validator;
 
 import lea.modele.Utilisateur;
-import lea.repository.user.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
+import org.springframework.util.StringUtils;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 @Component
-public class PasswordValidator implements Validator {
-
-    @Autowired
-    private UserRepository userRepository;
+public class PasswordValidator implements ConstraintValidator<PasswordConstraint, Utilisateur> {
 
     @Override
-    public boolean supports(Class clazz) {
-        return Utilisateur.class.equals(clazz);
-    }
-
-    @Override
-    public void validate(Object target, Errors errors) {
-        Utilisateur user = (Utilisateur) target;
-        if (!user.getPassword().equals(user.getConfirmPassword())) {
-            errors.rejectValue("password", "error_password");
+    public boolean isValid(Utilisateur user, ConstraintValidatorContext constraintValidatorContext) {
+        if (StringUtils.isEmpty(user.getPassword())&& StringUtils.isEmpty(user.getConfirmPassword())) {
+            return true;
         }
+
+        if (!user.getPassword().equals(user.getConfirmPassword())) {
+            return false;
+        }
+        return true;
+
     }
 }

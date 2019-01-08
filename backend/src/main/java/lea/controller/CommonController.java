@@ -2,7 +2,7 @@ package lea.controller;
 
 import lea.modele.Livre;
 import lea.modele.Utilisateur;
-import lea.service.CustomUserDetailsService;
+import lea.configuration.security.CustomUserDetailsService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 
@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class CommonController {
 
-    protected Utilisateur getPrincipal() {
+    public static Utilisateur getPrincipal() {
 
         Utilisateur user = null;
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -35,17 +35,5 @@ public class CommonController {
         }
         return user;
     }
-
-    protected void removeDeletedBooks(List<Livre> livres) {
-        // remove book deleted
-        Iterator<Livre> i = livres.iterator();
-        while (i.hasNext()) {
-            Livre l = i.next(); // must be called before you can call i.remove()
-            if (l.isDeleted()) {
-                i.remove();
-            }
-        }
-    }
-
 
 }

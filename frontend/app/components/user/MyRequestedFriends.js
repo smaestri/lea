@@ -1,5 +1,6 @@
 import React from 'react'
-import helpers from '../../helpers/api'
+import { Redirect } from 'react-router-dom'
+import helpersFriend from '../../helpers/friend/api'
 import { withRouter } from 'react-router'
 import PendingFriend from './PendingFriend'
 
@@ -7,12 +8,12 @@ class MyRequestedFriends extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = { requestedFriends: [] };
+		this.state = { requestedFriends: [], redirectToMyFriends: false };
 		this.acceptRequestFriend = this.acceptRequestFriend.bind(this);
 	}
 
 	componentDidMount() {
-		helpers.getMyRequestedFriends().then((friends) => {
+		helpersFriend.getMyRequestedFriends().then((friends) => {
 			this.setState({
 				requestedFriends: friends
 			});
@@ -20,14 +21,17 @@ class MyRequestedFriends extends React.Component {
 	}
 
 	acceptRequestFriend(id) {
-		helpers.acceptFriend(id).then(() => {
+		helpersFriend.acceptFriend(id).then(() => {
 			this.props.onRefreshNotification();
 			this.componentDidMount();
-			this.props.router.push('/my-friends')
+			this.setState({ redirectToMyFriends: true });
 		})
 	}
 
 	render() {
+		if(this.state.redirectToMyFriends) {
+			return <Redirect to='/my-friends'/>;
+		}
 		const requestedFriends = this.state.requestedFriends.map(friend => {
 			return <PendingFriend
 						showAcceptButton={true}

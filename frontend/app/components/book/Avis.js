@@ -1,10 +1,10 @@
 import React from 'react'
 import Rating from 'react-rating'
-import { Link } from 'react-router'
-import helpers from '../../helpers/api'
+import helpers from '../../helpers/user/api'
 import formatDate from '../../helpers/utils'
-import { SVGIcon } from '../../helpers/api'
-import style from './Avis.scss'
+import { SVGIcon } from '../common/SVGIcon'
+import { renderHTML} from '../../helpers/utils'
+import './Avis.scss'
 
 class Avis extends React.Component {
 
@@ -30,7 +30,7 @@ class Avis extends React.Component {
 		return (
 			<div className='container-avis'>
 				<div className="title-book">
-					<p>{this.state.avis.livre}</p>
+					{renderHTML(this.state.avis.titrebook)}
 				</div>
 				<div className="avis-livre">
 					{this.props.displayImage && <div className="image-container">
@@ -41,10 +41,10 @@ class Avis extends React.Component {
 					<div className='avis-infos'>
 						<div>Ajouté le <b>{dateAvis}</b> par <b>{this.state.avis.auteur}</b> :</div>
 						<div>
-							<Rating empty={<SVGIcon href='#icon-star-empty' className='icon-rating'/>}
-									full={<SVGIcon href='#icon-star-full' className='icon-rating'/>}
+							<Rating emptySymbol={<SVGIcon href='#icon-star-empty' className='icon-rating'/>}
+									fullSymbol={<SVGIcon href='#icon-star-full' className='icon-rating'/>}
 									readonly={true}
-									initialRate={this.state.avis.note}/>
+									initialRating={this.state.avis.note}/>
 						</div>
 						<div>
 							<blockquote>{this.state.avis.libelle}</blockquote>

@@ -15,7 +15,7 @@ const PATHS = {
 
 module.exports = {
 
-	entry: './app/app.js',
+	entry: './app/App.js',
 	output: {
 		path: PATHS.build,
 		filename: 'bundle.js',
@@ -39,6 +39,15 @@ module.exports = {
 				target: 'http://localhost:8090',
 				// changeOrigin: true,
 				logLevel: 'debug',
+			},
+			'/login': {
+				target: 'http://localhost:8090',
+			},
+			'/logout': {
+				target: 'http://localhost:8090',
+			},
+			'/users/resetPwd' : {
+				target: 'http://localhost:8090',	
 			}
 		}
 

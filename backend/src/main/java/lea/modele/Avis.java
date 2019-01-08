@@ -15,7 +15,7 @@ public class Avis extends BaseDocumentImpl {
     private String auteur;
 
     @Transient
-    private String livre;
+    private String titrebook;
 
     @Transient
     private String image;
@@ -88,12 +88,12 @@ public class Avis extends BaseDocumentImpl {
         return result;
     }
 
-    public String getLivre() {
-        return livre;
+    public String getTitrebook() {
+        return titrebook;
     }
 
-    public void setLivre(String livre) {
-        this.livre = livre;
+    public void setTitrebook(String titrebook) {
+        this.titrebook = titrebook;
     }
 
     public String getImage() {

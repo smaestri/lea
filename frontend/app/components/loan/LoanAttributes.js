@@ -1,13 +1,13 @@
 import React from 'react'
-import { Link } from 'react-router'
 import { Timeline, TimelineEvent } from 'react-event-timeline'
 import AddComment from './AddComment'
 import Comment from './Comment'
 import formatDate, { loanStatus } from '../../helpers/utils'
-import helpers from '../../helpers/api'
+import helpersLoan from '../../helpers/loan-actions/api'
+import helpersBook from '../../helpers/book/api'
 import AddAvis from '../book/AddAvis'
 import EditAvis from '../book/EditAvis'
-import style from './LoanAttributes.scss'
+import './LoanAttributes.scss'
 
 class LoanAttributes extends React.Component {
 
@@ -84,13 +84,13 @@ class LoanAttributes extends React.Component {
 			return comment.id == idComm;
 		})
 		comment.editMode = false;
-		helpers.saveComment(comment.message, idComm).then(() => {
+		helpersLoan.saveComment(comment.message, idComm).then(() => {
 			this.props.reloadEmprunt();
 		});
 	}
 
 	deleteComment(idComment) {
-		helpers.deleteComment(idComment).then(() => {
+		helpersLoan.deleteComment(idComment).then(() => {
 			this.props.reloadEmprunt();
 		});
 	}
@@ -137,7 +137,7 @@ class LoanAttributes extends React.Component {
 
 	saveEditAvis() {
 		const avis = this.state.events.find(ev => ev.dateavis != undefined)
-		helpers.saveAvis(avis, this.props.loan.livre.id).then(() => {
+		helpersBook.saveAvis(avis, this.props.loan.livreModelId).then(() => {
 			this.props.reloadEmprunt();
 		});
 	}
@@ -159,13 +159,14 @@ class LoanAttributes extends React.Component {
 	}
 
 	deleteAvis(avis) {
-		helpers.deleteAvis(avis.id).then(() => {
+		helpersBook.deleteAvis(avis.id).then(() => {
 			this.props.reloadEmprunt();
 		});
 	}
 
 	displayStep(title, icon, date) {
 		return <TimelineEvent
+			key={title + date}
 			title={title}
 			createdAt={formatDate(date)}
 			icon={<i className="material-icons md-18">{icon}</i>}
@@ -173,19 +174,21 @@ class LoanAttributes extends React.Component {
 	}
 
 	displayComment(comment, userConnected) {
+		
 		return (<TimelineEvent
+			key={comment.id}
 			title={this.props.userId == comment.user.id ? "Vous avez saisi :" : comment.user.fullName + " a saisi le commentaire suivant:"}
 			createdAt={formatDate(comment.dateMessage)}
 			icon={<i className="material-icons md-18">email</i>}
 			iconColor="navy"
 			buttons={userConnected == comment.auteur && !this.props.isHistory && (comment.editMode ?
 				[
-					<i onClick={this.saveEditComment.bind(this, comment.id)} className="material-icons md-18" style={{ color: 'navy' }}>done</i>,
-					<i onClick={this.undoEditComment.bind(this, comment.id)} className="material-icons md-18" style={{ color: 'navy' }}>close</i>
+					<i key="done" onClick={this.saveEditComment.bind(this, comment.id)} className="material-icons md-18" style={{ color: 'navy' }}>done</i>,
+					<i key="close" onClick={this.undoEditComment.bind(this, comment.id)} className="material-icons md-18" style={{ color: 'navy' }}>close</i>
 				] :
 				[
-					<i onClick={this.editComment.bind(this, comment.id)} className="material-icons md-18" style={{ color: 'navy' }}>mode_edit</i>,
-					<i onClick={this.deleteComment.bind(this, comment.id)} className="material-icons md-18" style={{ color: 'navy' }}>delete</i>
+					<i key="edit"  onClick={this.editComment.bind(this, comment.id)} className="material-icons md-18" style={{ color: 'navy' }}>mode_edit</i>,
+					<i key="delete"  onClick={this.deleteComment.bind(this, comment.id)} className="material-icons md-18" style={{ color: 'navy' }}>delete</i>
 				]
 			)
 			}
@@ -209,9 +212,14 @@ class LoanAttributes extends React.Component {
 	};
 
 	displayAvis(avis, userConnected, emprunteur) {
+		let auteurAvis = emprunteur.fullName + " a ";
+		if(userConnected == emprunteur.id) {
+			auteurAvis = 'Vous avez ';
+		}
 		return (
 			<TimelineEvent
-				title={emprunteur.fullName + " a saisi la note suivante "}
+				key={avis.id}
+				title={auteurAvis + "saisi la note suivante "}
 				createdAt={formatDate(avis.dateavis)}
 				icon={<i className="material-icons md-18">favorite</i>}
 				iconColor="navy"
@@ -301,12 +309,13 @@ class LoanAttributes extends React.Component {
 
 	_getLoanText(userConnected, emprunteur, preteur, motif) {
 		let returnObj = {}
-		returnObj.titleCloture = preteur.fullName + " a cloturé l'emprunt";
-		returnObj.titleRefus = preteur.fullName + " a refusé cette demande avec le motif: " + motif;
+		
 		if (userConnected == emprunteur.id) {
 			returnObj.titleRequested = "Vous avez demandé ce livre à " + preteur.fullName;
 			returnObj.titleCurrent = preteur.fullName + " a accepté votre demande d'emprunt et vous envoie le livre. ";
 			returnObj.titleSent = "Vous avez renvoyé ce livre à " + preteur.fullName;
+			returnObj.titleRefus = preteur.fullName  + " a refusé cette demande avec le motif: " + motif;
+			returnObj.titleCloture = preteur.fullName + " cloturé l'emprunt";
 		}
 
 		if (userConnected == preteur.id) {
@@ -314,6 +323,7 @@ class LoanAttributes extends React.Component {
 			returnObj.titleCurrent = "Vous avez accepté la demande de " + emprunteur.fullName + ".";
 			returnObj.titleSent = emprunteur.fullName + " vous a renvoyé le livre. Merci de clore l'emprunt si vous l'avez bien reçu.";
 			returnObj.titleRefus = "Vous a refusé cette demande avec le motif " + motif;
+			returnObj.titleCloture = "Vous avez cloturé l'emprunt";
 		}
 
 		return returnObj;
@@ -325,20 +335,6 @@ class LoanAttributes extends React.Component {
 		}
 		const events = this.state.events;
 
-		if (!events)
-			return
-		let envoyerMessage = "Noter le livre / Echanger avec le prêteur";
-		if (this.props.isLending) {
-			envoyerMessage = "Détails et envoyer message à l'emprunteur"
-		}
-		else {
-			const status = this.props.loan.livre.statut;
-			if (status == loanStatus.REQUESTED) {
-				envoyerMessage = "Echanger avec le prêteur";
-			}
-		}
-
-		let titleRequested, titleCurrent, titleSent
 		const userConnected = this.props.userId;
 		const emprunteur = this.props.loan.emprunteur;
 		const preteur = this.props.loan.preteur;
@@ -360,7 +356,7 @@ class LoanAttributes extends React.Component {
 					{displayAddRating &&
 						<AddAvis
 							visibleByDefault={false}
-							bookId={this.props.loan.livre.id}
+							bookModelId={this.props.loan.livreModel.id}
 							reloadEmprunt={this.props.reloadEmprunt}
 						/>}
 				</div>

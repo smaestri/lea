@@ -1,18 +1,23 @@
 package lea.controller;
 
+import lea.commun.Utils;
+import lea.configuration.security.CustomUserDetailsService;
 import lea.dto.UserBean;
-import lea.modele.Emprunt;
-import lea.modele.Livre;
-import lea.modele.PendingFriend;
-import lea.modele.Utilisateur;
+import lea.modele.*;
+import lea.repository.categorie.MongoCategorieRepository;
 import lea.repository.emprunt.EmpruntRepository;
+import lea.repository.livremodel.MongoLivreModelRepository;
+import lea.repository.user.MongoUserRepository;
 import lea.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,22 +31,29 @@ public class UserController extends CommonController {
     private UserRepository userRepository;
 
     @Autowired
+    private MongoUserRepository mongoUserRepository;
+
+
+    @Autowired
+    private MongoLivreModelRepository mongoLivreModelRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     //Detail d'un utilisateur ; ses livres et ceux de ses amis
     @RequestMapping(value = "/api/users/{userId}", method = RequestMethod.GET)
     public Utilisateur userDetail(@PathVariable("userId") String userDetail) throws ServletException, IOException {
         Utilisateur userConnected = getPrincipal();
-        Utilisateur friend = userRepository.findOne(userDetail);
-        this.removeDeletedBooks(friend.getLivres());
-        List<Emprunt> currentEmprunts = empruntRepository.findEmprunts(userConnected.getId(), true);
+        Utilisateur friend = mongoUserRepository.findById(userDetail).get();
         List<Livre> listeLivre = friend.getLivres();
         if (!listeLivre.isEmpty()) {
             for (Livre livre : listeLivre) {
+                LivreModel livreModel = this.mongoLivreModelRepository.findById(livre.getLivreModelId()).get();
+                livre.setLivreModel(livreModel);
                 livre.setUserId(friend.getId());
                 livre.setPreteur(friend.getFullName());
                 livre.setMailPreteur(friend.getEmail());
-                LivreController.setBookImage(livre);
+                LivreController.setBookImage(livreModel);
             }
         }
 
@@ -53,10 +65,11 @@ public class UserController extends CommonController {
             if (!subFriend.getId().equals(userConnected.getId())) {
                 userFriends.add(subFriend);
                 List<Livre> subFriendBooks = subFriend.getLivres();
-                this.removeDeletedBooks(subFriendBooks);
                 for (Livre livre : subFriendBooks) {
+                    LivreModel livreModel = this.mongoLivreModelRepository.findById(livre.getLivreModelId()).get();
+                    livre.setLivreModel(livreModel);
                     livre.setUserId(subFriend.getId());
-                    LivreController.setBookImage(livre);
+                    LivreController.setBookImage(livreModel);
                     livre.setPreteur(subFriend.getFullName());
                     livre.setIntermediaireid(friend.getId());
                     livre.setMailPreteur(subFriend.getEmail());
@@ -69,43 +82,52 @@ public class UserController extends CommonController {
 
     @RequestMapping(value = "/api/userInfo/{userId}", method = RequestMethod.GET)
     public Utilisateur getUserInfo(@PathVariable("userId") String userId) throws ServletException, IOException {
-        Utilisateur user = userRepository.findOne(userId);
-        removeDeletedBooks(user.getLivres());
+        Utilisateur user = mongoUserRepository.findById(userId).get();
         return user;
     }
 
     @RequestMapping(value = "/api/account", method = RequestMethod.GET)
     public Utilisateur account() throws ServletException, IOException {
         Utilisateur userConnected = getPrincipal();
-        Utilisateur user = userRepository.findOne(userConnected.getId());
+        Utilisateur user = mongoUserRepository.findById(userConnected.getId()).get();
         return user;
     }
 
-    @RequestMapping(value = "/api/saveEditUser", method = RequestMethod.POST)
-    public String saveUser(@RequestBody UserBean user) throws ServletException, IOException {
-        if (user.getFirstName().length() < 3) {
-            return "firstNameLength";
-        }
-
-        if (user.getLastName().length() < 3) {
-            return "lastNameLength";
-        }
-
-        if (user.getPassword().length() < 6) {
-            return "passwordLength";
-        }
-        if (!user.getPassword().equals(user.getConfirmPassword())) {
-            return "passwordNotMatch";
-        }
+    @RequestMapping(value = "/api/updateUSer", method = RequestMethod.POST)
+    public String updateUSer(@RequestBody UserBean user) {
         Utilisateur userConnected = getPrincipal();
-        Utilisateur userDetail = userRepository.findOne(userConnected.getId());
+        Utilisateur userDetail = mongoUserRepository.findById(userConnected.getId()).get();
         userDetail.setLastName(user.getLastName());
         userDetail.setFirstName(user.getFirstName());
         userDetail.setPassword(passwordEncoder.encode(user.getPassword()));
-        // userDetail.setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
         userRepository.saveUser(userDetail);
         return "1";
     }
+
+    @RequestMapping(value = "/api/createUSer", method = RequestMethod.POST)
+    public String createUser(@RequestBody UserBean user) {
+        //Check email
+        boolean mailValid = Utils.checkEmail(user.getEmail());
+        if(!mailValid){
+            throw new RuntimeException("Email invalid");
+        }
+
+        // encrypt password
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+//        UserProfile profileUser = userProfileRepository.getProfileUser();
+//        List<String> set = new ArrayList<String>();
+//        set.add(profileUser.getId());
+//        user.setListUserProfilesId(set);
+//        user.setEnabled(true);
+//        userRepository.saveUser(user);
+//
+//        // Authenticate manually
+//        userSecurityService.authenticateManually(user);
+
+        return "redirect:/";
+    }
+
 
 
     @RequestMapping("/api/isAuthenticated")
@@ -115,5 +137,13 @@ public class UserController extends CommonController {
             return userSpring.getId();
         }
         return "0";
+    }
+
+    @RequestMapping("/succeslogin")
+    public CustomUserDetailsService.UserPrincipal success(Authentication authentication) {
+
+        CustomUserDetailsService.UserPrincipal userDetails = (CustomUserDetailsService.UserPrincipal) authentication.getPrincipal();
+        return userDetails;
+
     }
 }

@@ -1,10 +1,9 @@
 import React from 'react'
 import Rating from 'react-rating'
-import helpers from '../../helpers/api'
+import helpers from '../../helpers/book/api'
 import { Button } from 'react-bootstrap'
 import { FormControl } from 'react-bootstrap'
-import formatDate from '../../helpers/utils'
-import { SVGIcon } from '../../helpers/api'
+import { SVGIcon } from '../common/SVGIcon'
 
 class AddAvis extends React.Component {
 
@@ -47,7 +46,7 @@ class AddAvis extends React.Component {
 
 	handleSubmit(event) {
 		event.preventDefault();
-		helpers.saveAvis(this.state.avis, this.props.bookId).then(() => {
+		helpers.saveAvis(this.state.avis, this.props.bookModelId).then(() => {
 			this.setState({ avis: {} });
 			this.props.reloadEmprunt();
 		});
@@ -67,9 +66,9 @@ class AddAvis extends React.Component {
 					<Button bsStyle="primary" onClick={this.toggleInput.bind(this)}>Ajouter un avis</Button>
 				}
 				{this.state.showRating && <div>
-					<Rating empty={<SVGIcon href='#icon-star-empty' className='icon-rating' />}
-						full={<SVGIcon href='#icon-star-full' className='icon-rating' />}
-						initialRate={this.state.avis.note}
+					<Rating emptySymbol={<SVGIcon href='#icon-star-empty' className='icon-rating' />}
+						fullSymbol={<SVGIcon href='#icon-star-full' className='icon-rating' />}
+						initialRating={this.state.avis.note}
 						onClick={this.handleRating} />
 					<FormControl
 						name="libelle"

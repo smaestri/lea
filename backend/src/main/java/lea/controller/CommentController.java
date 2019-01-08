@@ -4,6 +4,7 @@ import lea.modele.Commentaire;
 import lea.modele.Emprunt;
 import lea.modele.Utilisateur;
 import lea.repository.emprunt.EmpruntRepository;
+import lea.repository.user.MongoUserRepository;
 import lea.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -22,6 +23,10 @@ public class CommentController extends CommonController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private MongoUserRepository mongoUserRepository;
+
     @Autowired
     private EmpruntRepository empruntRepository;
 
@@ -30,7 +35,7 @@ public class CommentController extends CommonController {
         List<Commentaire> comments = empruntRepository.getCommentaires(empruntId);
         //set user author
         for (Commentaire com : comments) {
-            com.setUser(this.userRepository.findOne(com.getAuteur()));
+            com.setUser(this.mongoUserRepository.findById(com.getAuteur()).get());
         }
         return comments;
     }

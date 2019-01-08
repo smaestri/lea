@@ -6,6 +6,8 @@ import lea.dto.EmpruntBean;
 import lea.dto.RefusBean;
 import lea.modele.*;
 import lea.repository.emprunt.EmpruntRepository;
+import lea.repository.livremodel.MongoLivreModelRepository;
+import lea.repository.user.MongoUserRepository;
 import lea.repository.user.UserRepository;
 import lea.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +26,13 @@ public class EmpruntController extends CommonController {
     private UserRepository userRepository;
 
     @Autowired
+    private MongoUserRepository mongoUserRepository;
+
+    @Autowired
     private EmpruntRepository empruntRepository;
+
+    @Autowired
+    private MongoLivreModelRepository mongoLivreModelRepository;
 
     @Autowired
     private NotificationService notificationService;
@@ -56,13 +63,14 @@ public class EmpruntController extends CommonController {
     @RequestMapping(value = "/api/isNewPret", method = RequestMethod.GET)
     public String findNouveauPret() throws ServletException, IOException {
         Utilisateur principal = getPrincipal();
+        Utilisateur userConnected = mongoUserRepository.findById(principal.getId()).get();
         List<Emprunt> prets = empruntRepository.findPrets(principal.getId(), true);
         setListEmpruntobjects(prets);
-        return isNewPret(prets) ? "1" : "0";
+        return isNewPret(prets, userConnected) ? "1" : "0";
     }
 
     @RequestMapping(value = "/api/emprunter", method = RequestMethod.POST)
-    public String processNewEmpruntForm(@RequestBody EmpruntBean empruntBean) throws ParseException {
+    public String processNewEmpruntForm(@RequestBody EmpruntBean empruntBean) {
         Utilisateur principal = getPrincipal();
         Utilisateur proprietaire = userRepository.findproprietaire(empruntBean.getIdLivre());
         Emprunt emprunt = new Emprunt();
@@ -71,18 +79,14 @@ public class EmpruntController extends CommonController {
         emprunt.setEmprunteurId(principal.getId());
         emprunt.setPreteurId(proprietaire.getId());
         emprunt.setLivreId(empruntBean.getIdLivre());
+        Optional<Livre> livre = proprietaire.getLivre(empruntBean.getIdLivre());
+        Optional<LivreModel> livreModel = this.mongoLivreModelRepository.findById(livre.get().getLivreModelId());
+        emprunt.setLivreModelId(livreModel.get().getId());
         this.empruntRepository.saveEmprunt(emprunt);
         this.userRepository.updateBookStatus(proprietaire, emprunt.getLivreId(), StatutEmprunt.REQUESTED);
 
-        try {
-            Optional<Livre> livre = proprietaire.getLivre(empruntBean.getIdLivre());
-            String content = "Livres entre Amis - nouvelle demande d'emprunt de la part de " + principal.getFullName() /*+  txtIntermediaire*/ + " pour le livre '" + ((livre.isPresent())?livre.get().getTitreBook():"") + "'. Connectez-vous au site pour consulter et accepter cet emprunt!";
-            String object = "Nouvelle demande d'emprunt";
-            notificationService.sendNotificaition(proprietaire.getEmail(), object, content);
-        } catch (Exception e) {
-            // catch error
-            System.out.println("Error Sending Email: " + e.getMessage());
-        }
+        String titreBook = livreModel.get().getTitreBook();
+        notificationService.sendNouvelEmprunt(proprietaire.getEmail(), principal.getFullName(), titreBook, proprietaire.getFullName());
         return "redirect:/emprunts";
     }
 
@@ -97,19 +101,19 @@ public class EmpruntController extends CommonController {
         emprunt.setDateAccept(new Date());
         empruntRepository.saveEmprunt(emprunt);
 
-
         String emprunteurId = emprunt.getEmprunteurId();
-        Utilisateur userConnected = userRepository.findOne(principal.getId());
-        Utilisateur emprunteur = userRepository.findOne(emprunteurId);
+        Utilisateur userConnected = mongoUserRepository.findById(principal.getId()).get();
+        Utilisateur emprunteur = mongoUserRepository.findById(emprunteurId).get();
         // if not friend add it in both ways
         if (!(principal.getListFriendsId().contains(emprunt.getEmprunteurId()))) {
             addRealFriendAndDeletePending(userConnected, emprunteur);
             addRealFriendAndDeletePending(emprunteur, userConnected);
         }
-        Utilisateur preteur = userRepository.findOne(emprunt.getPreteurId());
-        String content = preteur.getFullName() + " a accepté votre demande d'emprunt pour le livre " + preteur.getLivre(emprunt.getLivreId()).get().getTitreBook() + ". Connectez-vous au site pour retourner le livre une fois que vous l'avez lu!";
-        String object = "Le prêteur a accepté votre demande d'emprunt!";
-        notificationService.sendNotificaition(emprunteur.getEmail(), object, content);
+        Utilisateur preteur = mongoUserRepository.findById(emprunt.getPreteurId()).get();
+        Livre livre = preteur.getLivre(emprunt.getLivreId()).get();
+        Optional<LivreModel> livreModel = this.mongoLivreModelRepository.findById(livre.getLivreModelId());
+        String titreBook = livreModel.get().getTitreBook();
+        notificationService.sendAcceptation(emprunteur.getEmail(), preteur.getFullName(), titreBook, emprunteur.getFullName());
         return "OK";
     }
 
@@ -121,15 +125,16 @@ public class EmpruntController extends CommonController {
             throw new Exception("Probleme de securite");
         }
         this.userRepository.updateBookStatus(principal, emprunt.getLivreId(), StatutEmprunt.FREE);
+        Utilisateur preteur = mongoUserRepository.findById(emprunt.getPreteurId()).get();
+        Livre livre = preteur.getLivre(emprunt.getLivreId()).get();
+        Optional<LivreModel> livreModel = this.mongoLivreModelRepository.findById(livre.getLivreModelId());
+        String titreBook = livreModel.get().getTitreBook();
         emprunt.setActif(false);
         emprunt.setDateRefus(new Date());
         emprunt.setMotifRefus(refusBean.getRefus());
         empruntRepository.saveEmprunt(emprunt);
-        Utilisateur emprunteur = userRepository.findOne(emprunt.getEmprunteurId());
-        String content = principal.getFullName() + " a refusé votre demande d'emprunt avec le motif :" + refusBean.getRefus() + ". Le livre est à nouveau empruntable.";
-        String object = "Refus de la demande d'emprunt";
-        notificationService.sendNotificaition(emprunteur.getEmail(), object, content);
-
+        Utilisateur emprunteur = mongoUserRepository.findById(emprunt.getEmprunteurId()).get();
+        notificationService.sendRefus(emprunteur.getEmail(), principal.getFullName(), titreBook, refusBean.getRefus(), emprunteur.getFullName());
         return "OK";
     }
 
@@ -140,16 +145,15 @@ public class EmpruntController extends CommonController {
         if (!principal.getId().equals(emprunt.getEmprunteurId())) {
             throw new Exception("Probleme de securite");
         }
-        Utilisateur preteur = userRepository.findOne(emprunt.getPreteurId());
+        Utilisateur preteur = mongoUserRepository.findById(emprunt.getPreteurId()).get();
         this.userRepository.updateBookStatus(preteur, emprunt.getLivreId(), StatutEmprunt.SENT);
         emprunt.setActif(true);
         emprunt.setDateEnvoi(new Date());
         empruntRepository.saveEmprunt(emprunt);
-        Optional<Livre> livre = userRepository.findBook(emprunt.getLivreId());
-        Utilisateur emprunteur = userRepository.findOne(emprunt.getEmprunteurId());
-        String object = "L'emprunteur vous a renvoyé le livre";
-        String content = emprunteur.getFullName() + " vous a renvoyé le livre " + (livre.isPresent()?livre.get().getTitreBook():"") + ". Vous pouvez donc clore l'emprunt en vous connectant au site!";
-        notificationService.sendNotificaition(preteur.getEmail(), object, content);
+        Livre livre = preteur.getLivre(emprunt.getLivreId()).get();
+        Optional<LivreModel> livreModel = this.mongoLivreModelRepository.findById(livre.getLivreModelId());
+        Utilisateur emprunteur = mongoUserRepository.findById(emprunt.getEmprunteurId()).get();
+        notificationService.sendLivreEnvoye(preteur.getEmail(), emprunteur.getFullName(), livreModel.get().getTitreBook(), preteur.getFullName());
 
         return "OK";
     }
@@ -165,10 +169,12 @@ public class EmpruntController extends CommonController {
         emprunt.setActif(false);
         emprunt.setDateCloture(new Date());
         empruntRepository.saveEmprunt(emprunt);
-        Utilisateur emprunteur = userRepository.findOne(emprunt.getEmprunteurId());
-        String content = "Le preteur a clot l'emprunt. Vous pouvez consulter celui-ci dans votre compte, à la rubrique 'Vos emprunts historiés'.";
-        String object = "Le preteur a clos l'emprunt.";
-        notificationService.sendNotificaition(emprunteur.getEmail(), object, content);
+        Utilisateur emprunteur = mongoUserRepository.findById(emprunt.getEmprunteurId()).get();
+        Utilisateur preteur = mongoUserRepository.findById(emprunt.getPreteurId()).get();
+        Livre livre = preteur.getLivre(emprunt.getLivreId()).get();
+        Optional<LivreModel> livreModel = this.mongoLivreModelRepository.findById(livre.getLivreModelId());
+        String titreBook = livreModel.get().getTitreBook();
+        notificationService.sendClore(emprunteur.getEmail(), preteur.getFullName(), titreBook, emprunteur.getFullName());
         return "OK";
     }
 
@@ -215,17 +221,30 @@ public class EmpruntController extends CommonController {
     }
 
     private void setEmpruntobjects(Emprunt emp) {
-        emp.setPreteur(userRepository.findOne(emp.getPreteurId()));
-        emp.setEmprunteur(userRepository.findOne(emp.getEmprunteurId()));
-        Optional<Livre> book = userRepository.findBook(emp.getLivreId());
+        Utilisateur preteur = mongoUserRepository.findById(emp.getPreteurId()).get();
+        emp.setPreteur(preteur);
+        emp.setEmprunteur(mongoUserRepository.findById(emp.getEmprunteurId()).get());
+        Livre book = null;
+        if (preteur.getLivre(emp.getLivreId()).isPresent()){
+            book = preteur.getLivre(emp.getLivreId()).get();
+        }
+        if(book != null) {
+            emp.setLivre(book);
+        }
+        if(emp.getLivreModelId() != null) {
+            Optional<LivreModel> livreModel = this.mongoLivreModelRepository.findById(emp.getLivreModelId());
+            if(livreModel.isPresent()) {
+                emp.setLivreModel(livreModel.get());
+            }
+        }
+
         setCommentuser(emp);
-        emp.setLivre(book.get());
     }
 
-    private boolean isNewPret(List<Emprunt> listeEmp) {
+    private boolean isNewPret(List<Emprunt> listeEmp, Utilisateur user) {
         for (Emprunt emp : listeEmp) {
-            Optional<Livre> book = userRepository.findBook(emp.getLivreId());
-            if (book.isPresent() && book.get().getStatut().equals(StatutEmprunt.REQUESTED)) {
+            Optional<Livre> livre = user.getLivre(emp.getLivreId());
+            if (livre.isPresent() && livre.get().getStatut().equals(StatutEmprunt.REQUESTED)) {
                 return true;
             }
         }
@@ -234,10 +253,11 @@ public class EmpruntController extends CommonController {
 
     private void setCommentuser(Emprunt emp) {
         for (Commentaire comm : emp.getCommentaires()) {
-            Utilisateur auteurComm = userRepository.findOne(comm.getAuteur());
+            Utilisateur auteurComm = mongoUserRepository.findById(comm.getAuteur()).get();
             comm.setUser(auteurComm);
         }
     }
+
     private void addRealFriendAndDeletePending(Utilisateur user, Utilisateur friend) {
         user.getListFriendsId().add(friend.getId());
         userRepository.saveUser(user);

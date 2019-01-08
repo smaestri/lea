@@ -1,93 +1,102 @@
 import React from 'react'
-import { Link, ControlLabel, Col, FormGroup, FormControl, Button, Form, ButtonToolbar } from 'react-bootstrap'
+import { Col, FormGroup, FormControl, Button, Form, ButtonToolbar } from 'react-bootstrap'
 import { withRouter } from 'react-router'
-import helpers from '../../helpers/api'
-import style from './Account.scss'
+import { Redirect } from 'react-router-dom'
+import helpers from '../../helpers/user/api'
+import './Account.scss'
 
 class Account extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = { user: { firstName: '', lastName: '', password: '', confirmpassword: '' } }
+		this.state = { 
+			user: {
+				email: '', firstName: '', lastName: '', password: '', confirmpassword: ''
+			},
+			redirectToHome: false,
+			errors: []
+		}
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 	}
 
 	componentDidMount() {
-		helpers.getAccount(this.props.params.bookId).then((user) => {
-			this.setState(Object.assign({}, user, {password: ''}, {confirmPassword: ''}));
-		})
+		if(!this.props.isCreation) {
+			helpers.getAccount(this.props.match.params.bookId).then((user) => {
+				this.setState( { user : {...user, password: '', confirmPassword: ''}});
+			})
+		}
 	}
 
 	handleSubmit(event) {
 		event.preventDefault();
-		if (this.password != this.confirmPassword) {
-			alert('les password ne correspondent pas');
-			return;
-		}
-		helpers.saveEditUser(this.state).then((response) => {
-			this.props.onRefreshName();
-			if(response == 'firstNameLength'){
-				alert('Le prénom doit faire plus de deux caractères SVP.')
-				return
+		helpers.updateOrCreateUser(this.props.isCreation, this.state.user).then(() => {
+			this.setState({ redirectToHome: true });
+			this.props.refreshUserConnected();
+		}, (response) => {
+			if(response.data && response.data.errors && response.data.errors.length > 0) {
+				this.setState({errors: response.data.errors});
+				window.scrollTo(0, 0);
 			}
-
-			if(response == 'lastNameLength'){
-				alert('Le nom doit faire plus de deux caractères SVP.')
-				return
-			}
-			if(response == 'passwordLength'){
-				alert('Le mot de passe doit faire plus de six caractères SVP.')
-				return
-			}
-			if(response == 'passwordNotMatch'){
-				alert('Les mots de passe ne correspondent pas.')
-				return
-			}
-			alert('Modifications apportés avec succès')
 		});
 	}
 
 	handleChange(event) {
-		const user = this.state;
+		const user = this.state.user;
 		user[event.target.name] = event.target.value;
-		this.setState(Object.assign({}, user));
+		this.setState(user);
 	}
 
 	render() {
+
+		if (this.state.redirectToHome) {
+            return <Redirect to='/' />;
+		}
+		let emailField = <span>{this.state.user.email}</span>;
+		if(this.props.isCreation) {
+			emailField =  <FormControl type="text" name="email" value={this.state.user.email} onChange={this.handleChange} />
+		}
+		let errors = [];
+		if (this.state.errors) {
+			errors = this.state.errors.map(err => {
+				return <div className="error" key={err.field+err.code}>{err.defaultMessage}</div>
+			});
+		}
+
 		return (
 			<div className="container-account">
 				<h2>Veuillez indiquer vos informations</h2>
+				{errors && errors.length > 0 && <div className="error-container">{errors}</div>}
 				<div className="form-content">
 					<Form horizontal onSubmit={this.handleSubmit}>
 						<FormGroup>
-							<Col for="firstName" sm={4}>Email : </Col>
-							<Col sm={8}>
-								<span>{this.state.email}</span>
+							<Col sm={3}>Email : </Col>
+							<Col sm={9}>
+								{emailField}
 							</Col>
 						</FormGroup>
 						<FormGroup>
-							<Col for="firstName" sm={4}>Prénom : </Col>
-							<Col sm={8}>
-								<FormControl type="text" name="firstName" value={this.state.firstName} onChange={this.handleChange} />
+							<Col sm={3}>Prénom : </Col>
+							<Col sm={9}>
+								<FormControl type="text" name="firstName" value={this.state.user.firstName} onChange={this.handleChange} />
 							</Col>
 						</FormGroup>
 						<FormGroup>
-							<Col for="lastName" sm={4}>Nom : </Col>
-							<Col sm={8}>
-								<FormControl type="text" name="lastName" value={this.state.lastName} onChange={this.handleChange} />
+							<Col sm={3}>Nom : </Col>
+							<Col sm={9}>
+								<FormControl type="text" name="lastName" value={this.state.user.lastName} onChange={this.handleChange} />
 							</Col>
 						</FormGroup>
 						<FormGroup>
-							<Col for="password" sm={4}>Mot de passe : </Col>
-							<Col sm={8}>
-								<FormControl type="password" name="password" value={this.state.password} onChange={this.handleChange} />
+							<Col sm={3}>Mot de passe : </Col>
+							<Col sm={9}>
+								<FormControl type="password" name="password" value={this.state.user.password} onChange={this.handleChange} />
 							</Col>
 						</FormGroup>
 						<FormGroup>
-							<Col for="confirmPassword" sm={4}>Confirmer mot de passe : </Col>
-							<Col sm={8}>
-								<FormControl type="password" name="confirmPassword" value={this.state.confirmPassword} onChange={this.handleChange} />
+							<Col sm={3}>Confirmer mot de passe : </Col>
+							<Col sm={9}>
+								<FormControl type="password" name="confirmPassword" value={this.state.user.confirmPassword} onChange={this.handleChange} />
 							</Col>
 						</FormGroup>
 						<ButtonToolbar className="text-center">
@@ -95,7 +104,7 @@ class Account extends React.Component {
 						</ButtonToolbar>
 					</Form>
 				</div>
-				<Button onClick={() => this.props.router.push('/home')}>Retour</Button>
+				<Button bsStyle="primary" onClick={this.props.history.goBack}>Retour</Button>
 			</div>
 		)
 	}

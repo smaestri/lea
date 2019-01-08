@@ -1,28 +1,31 @@
-init mongo
-**************
 
+launch mongo
+******************
+
+1 / Add user
+be sure to add a user in admin DB in ROOT :
+use admin
+    db.createUser(
+      {
+        user: "admin",
+        pwd: "password",
+        roles: [ { role: "root", db: "admin" } ]
+      }
+    );
+    exit;
+
+Change MongoAuthenticationConfig accordingly
+
+2/ THen Connect to mongo :
+./mongo --port 27018 -u "admin" -p "password" --authenticationDatabase "admin"
+
+3/ Add some data
 use test
 db.categorie.save({name: 'Roman'})
 db.userProfile.save({type: 'USER'})
 
 
-launch mongo
-******************
-
-be sure to add a user in admin DB in ROOT :
-use admin
-db.createUser(
-  {
-    user: "admin",
-    pwd: "password",
-    roles: [ { role: "root", db: "admin" } ]
-  }
-);
-exit;
-
-and change in MongoAuthenticateConfig.java accordingly
-
-Launch demon:
+4 / Launch demon:
 dev : ./mongod --port 27018 --dbpath ~/temp --auth
 
 debug BACKEND

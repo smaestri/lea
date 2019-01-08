@@ -3,9 +3,11 @@ package lea.service;
 import java.util.Arrays;
 import java.util.Calendar;
 
+import lea.configuration.security.CustomUserDetailsService;
 import lea.modele.PasswordResetToken;
 import lea.modele.Utilisateur;
 import lea.repository.password.PasswordResetTokenRepository;
+import lea.repository.user.MongoUserRepository;
 import lea.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,7 +23,7 @@ public class UserSecurityServiceImpl implements UserSecurityService {
     private PasswordResetTokenRepository passwordTokenRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private MongoUserRepository mongoUserRepository;
 
     @Override
     public String validatePasswordResetToken(String id, String token) {
@@ -38,15 +40,14 @@ public class UserSecurityServiceImpl implements UserSecurityService {
         }
 
         final String userId = passToken.getUserId();
-        Utilisateur user = userRepository.findOne(userId);
+        Utilisateur user = mongoUserRepository.findById(userId).get();
         this.validToken(user);
         return null;
     }
 
     @Override
     public void authenticateManually(Utilisateur user) {
-        CustomUserDetailsService.UserPrincipal principal = new CustomUserDetailsService.UserPrincipal(
-                user.getFirstName(), user.getPassword(), CustomUserDetailsService.getGrantedAuthorities(), user);
+        CustomUserDetailsService.UserPrincipal principal = new CustomUserDetailsService.UserPrincipal(user);
         Authentication authentication = new UsernamePasswordAuthenticationToken(principal, null,
                 principal.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);

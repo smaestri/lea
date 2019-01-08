@@ -3,7 +3,7 @@ import { Col, FormGroup, FormControl, Button, Form, ButtonToolbar } from 'react-
 import { withRouter } from 'react-router'
 import { Redirect } from 'react-router-dom'
 import helpers from '../../helpers/user/api'
-import style from './Account.scss'
+import './Account.scss'
 
 class Account extends React.Component {
 
@@ -70,32 +70,32 @@ class Account extends React.Component {
 				<div className="form-content">
 					<Form horizontal onSubmit={this.handleSubmit}>
 						<FormGroup>
-							<Col sm={2}>Email : </Col>
-							<Col sm={10}>
+							<Col sm={3}>Email : </Col>
+							<Col sm={9}>
 								{emailField}
 							</Col>
 						</FormGroup>
 						<FormGroup>
-							<Col sm={2}>Prénom : </Col>
-							<Col sm={10}>
+							<Col sm={3}>Prénom : </Col>
+							<Col sm={9}>
 								<FormControl type="text" name="firstName" value={this.state.user.firstName} onChange={this.handleChange} />
 							</Col>
 						</FormGroup>
 						<FormGroup>
-							<Col sm={2}>Nom : </Col>
-							<Col sm={10}>
+							<Col sm={3}>Nom : </Col>
+							<Col sm={9}>
 								<FormControl type="text" name="lastName" value={this.state.user.lastName} onChange={this.handleChange} />
 							</Col>
 						</FormGroup>
 						<FormGroup>
-							<Col sm={2}>Mot de passe : </Col>
-							<Col sm={10}>
+							<Col sm={3}>Mot de passe : </Col>
+							<Col sm={9}>
 								<FormControl type="password" name="password" value={this.state.user.password} onChange={this.handleChange} />
 							</Col>
 						</FormGroup>
 						<FormGroup>
-							<Col sm={2}>Confirmer mot de passe : </Col>
-							<Col sm={10}>
+							<Col sm={3}>Confirmer mot de passe : </Col>
+							<Col sm={9}>
 								<FormControl type="password" name="confirmPassword" value={this.state.user.confirmPassword} onChange={this.handleChange} />
 							</Col>
 						</FormGroup>

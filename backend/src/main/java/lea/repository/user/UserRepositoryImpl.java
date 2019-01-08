@@ -1,8 +1,9 @@
 package lea.repository.user;
 
 import lea.commun.StatutEmprunt;
-import lea.controller.LivreController;
-import lea.modele.*;
+import lea.modele.Livre;
+import lea.modele.PendingFriend;
+import lea.modele.Utilisateur;
 import lea.repository.livremodel.MongoLivreModelRepository;
 import lea.repository.password.PasswordResetTokenRepository;
 import org.bson.types.ObjectId;
@@ -13,7 +14,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -145,29 +145,6 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public List<Avis> findlastAvis() {
-        List<Avis> returnList = new ArrayList<Avis>();
-        Query q = new Query();
-        List<Utilisateur> utilisateurs = mongoTemplate.find(q, Utilisateur.class);
-
-        for (Utilisateur u : utilisateurs) {
-            List<Livre> livres = u.getLivres();
-            for (Livre l : livres) {
-                LivreModel livreModel = this.mongoLivreModelRepository.findById(l.getLivreModelId()).get();
-                List<Avis> avis = livreModel.getAvis();
-                for (Avis a : avis) {
-                    a.setLivre(livreModel.getTitreBook());
-                    LivreController.setBookImage(livreModel);
-                    a.setImage(livreModel.getImage());
-
-                }
-                returnList.addAll(avis);
-            }
-        }
-        return returnList;
-    }
-
-    @Override
     public void updateBookStatus(Utilisateur proprietaire, String livreId, StatutEmprunt statut) {
         Query q = new Query();
         q.addCriteria(Criteria.where("id").is(new ObjectId(proprietaire.getId())).and("livres.id").is(new ObjectId(livreId)));
@@ -176,14 +153,7 @@ public class UserRepositoryImpl implements UserRepository {
         mongoTemplate.updateFirst(q, update, Utilisateur.class);
     }
 
-    @Override
-    public void deleteAvis(String idAvis) {
-        Query q = new Query();
-        q.addCriteria(Criteria.where("livres.avis.id").is(new ObjectId(idAvis)));
-        Update update = new Update();
-        update.pull("livres.$.avis", Query.query(Criteria.where("id").is(new ObjectId(idAvis))));
-        mongoTemplate.updateFirst(q, update, Utilisateur.class);
-    }
+
 
 
     @Override
@@ -222,10 +192,7 @@ public class UserRepositoryImpl implements UserRepository {
         return false;
     }
 
-    @Override
-    public void findBookByModelId() {
-// TODO
-    }
+
 
 //    private Avis getAvisFromBook(Livre livre, Avis newAvis) {
 //        for (Avis avisExiting : livre.getAvis()) {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import style from './Notification.scss'
+import './Notification.scss'
 
 class Notification extends React.Component {
 	constructor(props) {

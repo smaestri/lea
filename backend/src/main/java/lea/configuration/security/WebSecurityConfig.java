@@ -65,6 +65,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/api/editUser/**").authenticated()
             .antMatchers("/api/createUser/**").permitAll()
             .antMatchers("/api/isAuthenticated/**").permitAll() // To know if user is connected
+            .antMatchers("/testenvoi/**").permitAll() // To know if user is connected
             .anyRequest().authenticated()
             .antMatchers("/users/updatePassword*",
                     "/users/savePassword*",

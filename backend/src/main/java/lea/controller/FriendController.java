@@ -15,8 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.mail.MessagingException;
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.List;
 
@@ -38,6 +36,9 @@ public class FriendController extends CommonController {
 
     @Autowired
     private CategorieRepository categorieRepository;
+
+    @Autowired
+    private NotificationService notificationService;
 
 
     @RequestMapping(value = "/api/myFriends", method = RequestMethod.GET)
@@ -75,7 +76,7 @@ public class FriendController extends CommonController {
     }
 
     @RequestMapping(value = "/api/ami/new", method = RequestMethod.POST)
-    public String addUser(@RequestBody AmiBean amiBean) throws UnsupportedEncodingException, MessagingException {
+    public String addUser(@RequestBody AmiBean amiBean) {
         Utilisateur userPrincipal = getPrincipal();
         Utilisateur one = mongoUserRepository.findById(userPrincipal.getId()).get();
 
@@ -97,14 +98,15 @@ public class FriendController extends CommonController {
     }
 
     @RequestMapping(value = "/api/accepterAmi/{friendId}", method = RequestMethod.POST)
-    public String accepterAmi(@PathVariable("friendId") String idFriend) throws InterruptedException {
+    public String accepterAmi(@PathVariable("friendId") String idFriend){
         Utilisateur userConnected = getPrincipal();
         Utilisateur userFriend = mongoUserRepository.findById(idFriend).get();
+
 
         addRealFriendAndDeletePending(userConnected, userFriend);
         addRealFriendAndDeletePending(userFriend, userConnected);
 
-        this.mailService.sendNotificaition(userFriend.getEmail(), "Livres entre amis - Vous avez un nouvel ami!", userConnected.getEmail() + " a accecpté votre demande d'amis! Vous pouvez donc échanger des livres avec lui/elle! A bientôt sur Livres entre amis!");
+        notificationService.sendAmiAccepted(userFriend.getEmail(), userConnected.getFullName(), userFriend.getFullName());
 
         return "OK";
     }
@@ -128,10 +130,9 @@ public class FriendController extends CommonController {
     }
 
     @RequestMapping(value = "/api/pendingFriend/{friendId}", method = RequestMethod.DELETE)
-    public String deletePendingFriend(@PathVariable("friendId") String friendId) throws Exception {
+    public String deletePendingFriend(@PathVariable("friendId") String friendId) {
         Utilisateur userConnected = getPrincipal();
         userRepository.deletePendingFriend(userConnected, friendId);
-        Utilisateur userFriend = mongoUserRepository.findById(userConnected.getId()).get();
         return "1";
     }
 
@@ -153,19 +154,14 @@ public class FriendController extends CommonController {
         return false;
     }
 
-    private String addPendingFriend(Utilisateur source, String emailFriend) {
+    private String addPendingFriend(Utilisateur source, String emailFriend){
         PendingFriend pf = new PendingFriend();
         pf.setDateDemande(new Date());
         pf.setEmail(emailFriend);
         if (StringUtils.hasText(emailFriend) && Utils.checkEmail(emailFriend) && !emailFriend.equals(source.getEmail())) {
             userRepository.addPendingFriend(source, pf);
-            String objet = "Livres entre Amis - Nouvelle demande d'ami";
-            String contenu = source.getFullName() + " souhaite vous ajouter en tant qu'ami afin d'échanger des livres. Connectez-vous ou inscrivez vous sur livresentreamis.com afin de rentrer dans la communatuté!";
-            try {
-                this.mailService.sendNotificaition(emailFriend, objet, contenu);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            notificationService.sendNewAmi(emailFriend, source.getFullName(), "");
+
         } else {
             return "KO email incorrect";
         }

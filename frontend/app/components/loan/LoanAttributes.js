@@ -7,7 +7,7 @@ import helpersLoan from '../../helpers/loan-actions/api'
 import helpersBook from '../../helpers/book/api'
 import AddAvis from '../book/AddAvis'
 import EditAvis from '../book/EditAvis'
-import style from './LoanAttributes.scss'
+import './LoanAttributes.scss'
 
 class LoanAttributes extends React.Component {
 
@@ -137,7 +137,7 @@ class LoanAttributes extends React.Component {
 
 	saveEditAvis() {
 		const avis = this.state.events.find(ev => ev.dateavis != undefined)
-		helpersBook.saveAvis(avis, this.props.loan.livre.livreModelId).then(() => {
+		helpersBook.saveAvis(avis, this.props.loan.livreModelId).then(() => {
 			this.props.reloadEmprunt();
 		});
 	}
@@ -335,20 +335,6 @@ class LoanAttributes extends React.Component {
 		}
 		const events = this.state.events;
 
-		if (!events)
-			return
-		let envoyerMessage = "Noter le livre / Echanger avec le prêteur";
-		if (this.props.isLending) {
-			envoyerMessage = "Détails et envoyer message à l'emprunteur"
-		}
-		else {
-			const status = this.props.loan.livre.statut;
-			if (status == loanStatus.REQUESTED) {
-				envoyerMessage = "Echanger avec le prêteur";
-			}
-		}
-
-		let titleRequested, titleCurrent, titleSent
 		const userConnected = this.props.userId;
 		const emprunteur = this.props.loan.emprunteur;
 		const preteur = this.props.loan.preteur;
@@ -370,7 +356,7 @@ class LoanAttributes extends React.Component {
 					{displayAddRating &&
 						<AddAvis
 							visibleByDefault={false}
-							bookModelId={this.props.loan.livre.livreModel.id}
+							bookModelId={this.props.loan.livreModel.id}
 							reloadEmprunt={this.props.reloadEmprunt}
 						/>}
 				</div>

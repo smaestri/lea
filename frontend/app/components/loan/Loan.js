@@ -2,6 +2,7 @@ import React from 'react'
 import { withRouter } from 'react-router'
 import ButtonsEmprunt from './ButtonsEmprunt'
 import LoanAttributes from './LoanAttributes'
+import { renderHTML} from '../../helpers/utils'
 import style from './Loan.scss'
 
 class Loan extends React.Component {
@@ -9,10 +10,10 @@ class Loan extends React.Component {
 	render() {
 		const userConnected = this.props.userId;
 		let livremodel = {};
-		if(this.props.loan.livre && this.props.loan.livre.livreModel) {
-			livremodel =this.props.loan.livre.livreModel;
+		if(this.props.loan.livreModel) {
+			livremodel =this.props.loan.livreModel;
 		} else {
-			return
+			return null;
 		}
 		
 		let avis = livremodel.avis.find( avisBook => {
@@ -26,7 +27,7 @@ class Loan extends React.Component {
 
 		return (
 			<div className="loan-container">
-				<div className="loan-header">{livremodel.titreBook}</div>
+				<div className="loan-header">{renderHTML(livremodel.titreBook)}</div>
 				<div className="loan-content">
 					<div className="image-container">
 						<div className="image-content">

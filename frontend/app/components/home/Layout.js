@@ -3,6 +3,10 @@ import { Route } from "react-router-dom";
 import { Switch } from "react-router-dom";
 import Home from "../home/Home";
 import Header from "../home/Header";
+import CommentMarche from "../home/footer/CommentMarche";
+import Contact from "../home/footer/Contact";
+import Faq from "../home/footer/Faq";
+import InformationsLegales from "../home/footer/InformationsLegales";
 import MyLoans from "../user/MyLoans";
 import MyFriends from "../user/MyFriends";
 import MyRequestedFriends from "../user/MyRequestedFriends";
@@ -18,7 +22,7 @@ import MyHistorizedLoans from "../user/MyHistorizedLoans";
 import helpersLoan from '../../helpers/loan/api'
 import helpersFriend from '../../helpers/friend/api'
 import helpersUser from '../../helpers/user/api'
-import Footer from './Footer';
+import Footer from './footer/Footer';
 import MyBooks from '../user/MyBooks';
 import Login from '../login/Login'
 import helpers from '../../helpers/user/api';
@@ -27,8 +31,6 @@ class Layout extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.refreshUserConnected = this.refreshUserConnected.bind(this);
-		this.logout = this.logout.bind(this);
 		this.state = {
 			nbEmprunt: 0,
 			nbPret: 0,
@@ -120,7 +122,7 @@ class Layout extends React.Component {
 			return (
 				<Account
 					isCreation={false}
-					refreshUserConnected={this.refreshUserConnected}
+					refreshUserConnected={this.refreshUserConnected.bind(this)}
 					{...props}
 				/>
 			);
@@ -130,7 +132,7 @@ class Layout extends React.Component {
 			return (
 				<Account
 					isCreation={true}
-					refreshUserConnected={this.refreshUserConnected}
+					refreshUserConnected={this.refreshUserConnected.bind(this)}
 					{...props}
 				/>
 			);
@@ -143,6 +145,17 @@ class Layout extends React.Component {
 					{...props}
 				/>
 			);
+		}
+
+		this.wrappedRequestedFriends = () => {
+
+			return (
+				<MyRequestedFriends
+					onRefreshNotification={this.refreshNotif.bind(this)}
+					{...props}
+				/>
+			);
+			
 		}
 	}
 
@@ -169,7 +182,7 @@ class Layout extends React.Component {
 					redirectToLogin={this.state.redirectToLogin}
 					nbPret={this.state.nbPret}
 					nbEmprunt={this.state.nbEmprunt}
-					logout={this.logout}>
+					logout={this.logout.bind(this)}>
 				</Header>
 				{notifications}
 				<Switch>
@@ -183,13 +196,17 @@ class Layout extends React.Component {
 					<Route exact path="/list-book/:category" component={this.wrappedListBooks} />
 					<Route path="/my-lendings" component={this.wrappedMyLendings} />
 					<Route path="/my-friends" component={MyFriends} />
-					<Route path="/my-requested-friends" component={MyRequestedFriends} />
+					<Route path="/my-requested-friends" component={this.wrappedRequestedFriends} />
 					<Route path="/user-detail/:userId" component={this.wrappedUserDetail} />
 					<Route path="/account" component={this.wrappedAccount} />
 					<Route path="/historized-lendings" component={this.wrappedMyHistLendings} />
 					<Route path="/historized-loans" component={this.wrappedMyHistLoans} />
 					<Route path="/login" component={this.wrappedLogin} />
 					<Route path="/subscribe" component={this.wrappedSubscribe} />
+					<Route path="/camarche" component={CommentMarche} />
+					<Route path="/faq" component={Faq} />
+					<Route path="/infos" component={InformationsLegales} />
+					<Route path="/contact" component={Contact} />
 				</Switch>
 				<Footer></Footer>
 			</div>

@@ -1,4 +1,8 @@
 .container-timeline{
+    /* NEEDED FOR REACT TIMELINEEVENT */
+    .md-18 {
+        font-size: 18px;
+    }
     .header-timeline {
         display: flex;
         flex-direction: column;

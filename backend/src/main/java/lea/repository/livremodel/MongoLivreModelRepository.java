@@ -6,4 +6,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface MongoLivreModelRepository extends MongoRepository<LivreModel, String> {
 
     LivreModel findByIsbn(String isbn);
+
 }

@@ -13,6 +13,7 @@ public class Emprunt extends BaseDocumentImpl implements Serializable {
     private String emprunteurId;
     private String preteurId;
     private String livreId;
+    private String livreModelId;
 
     private Date debutEmprunt;
     private Date finEmprunt;
@@ -34,6 +35,8 @@ public class Emprunt extends BaseDocumentImpl implements Serializable {
     private Utilisateur emprunteur;
     @Transient
     private Livre livre;
+    @Transient
+    private LivreModel livreModel;
 
     public String getIntermediaire() {
         return intermediaire;
@@ -187,6 +190,22 @@ public class Emprunt extends BaseDocumentImpl implements Serializable {
 
     public void setLivre(Livre livre) {
         this.livre = livre;
+    }
+
+    public String getLivreModelId() {
+        return livreModelId;
+    }
+
+    public void setLivreModelId(String livreModelId) {
+        this.livreModelId = livreModelId;
+    }
+
+    public LivreModel getLivreModel() {
+        return livreModel;
+    }
+
+    public void setLivreModel(LivreModel livreModel) {
+        this.livreModel = livreModel;
     }
 
     //TODO  get direct child with adequate mongoDb query

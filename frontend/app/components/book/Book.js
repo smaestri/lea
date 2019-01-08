@@ -1,15 +1,13 @@
 import React from 'react'
 import { Button, ButtonToolbar } from 'react-bootstrap'
-import { LinkContainer } from 'react-router-bootstrap'
 import { withRouter } from 'react-router'
 import { Link, Redirect } from 'react-router-dom'
 import Rating from 'react-rating'
 import helpersLoan from '../../helpers/loan-actions/api'
 import helpersFriend from '../../helpers/friend/api'
-import { SVGIcon } from '../common/SVGIcon'
 import { renderHTML} from '../../helpers/utils'
-import style from './Book.scss'
-import AddAvis from './AddAvis';
+import { SVGIcon } from '../common/SVGIcon'
+import './Book.scss'
 
 class Book extends React.Component {
 
@@ -77,8 +75,12 @@ class Book extends React.Component {
 			sum = sum + avis.note;
 		});
 		let moyenne = sum / avis.length;
+		const titre = renderHTML(livreModel.titreBook);
 		return (
 			<div className="book-container">
+				<div className="title-book form-horizontal">
+					<p>{titre}</p>
+				</div>
 				{isConnected && !(this.props.currentPage == 'myBooks') &&
 					<div><label className="book-preteur">Prêteur : </label>
 						<Link to={'/user-detail/' + this.props.book.userId }><span>{this.props.book.preteur}</span></Link>

@@ -17,10 +17,10 @@ class MyFriend extends React.Component {
 						{this.props.friend.fullName}
 					</Link>
 				</div>
-				<div className="linkUser">
+				{/* <div className="linkUser">
 					<Button bsStyle="primary" bsSize="small"
 					        onClick={() => this.props.deleteFriend(this.props.friend.id)}>Supprimer</Button>
-				</div>
+				</div> */}
 			</div>
 		)
 	}

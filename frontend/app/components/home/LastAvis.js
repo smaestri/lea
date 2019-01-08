@@ -1,7 +1,7 @@
 import React from 'react'
 import helpers from '../../helpers/book/api'
 import Avis from '../book/Avis.js'
-import style from './LastAvis.scss'
+import './LastAvis.scss'
 
 class LastAvis extends React.Component {
 
@@ -19,6 +19,9 @@ class LastAvis extends React.Component {
 	}
 
 	render() {
+		if(!this.state.avis || this.state.avis.length == 0 ) {
+			return null;
+		}
 		const avis = this.state.avis.map(avis => {
 			return <Avis key={avis.id} id={avis.id} avis={avis} />
 		});

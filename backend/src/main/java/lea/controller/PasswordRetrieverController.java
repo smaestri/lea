@@ -1,9 +1,6 @@
 package lea.controller;
 
-import com.google.gson.Gson;
 import lea.commun.Utils;
-import lea.modele.Categorie;
-import lea.modele.Livre;
 import lea.modele.Utilisateur;
 import lea.repository.categorie.CategorieRepository;
 import lea.repository.user.MongoUserRepository;
@@ -24,12 +21,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
 @Controller
-public class PasswordRetrieverController extends CommonController{
+public class PasswordRetrieverController extends CommonController {
 
     @Autowired
     private UserRepository userRepository;
@@ -76,7 +72,7 @@ public class PasswordRetrieverController extends CommonController{
 
     // reset pwd
     @RequestMapping(value = "/users/resetPwd", method = RequestMethod.POST)
-    public String resetPassword(HttpServletRequest request, @ModelAttribute("utilisateur") Utilisateur user, BindingResult result, Model model) throws InterruptedException {
+    public String resetPassword(HttpServletRequest request, @ModelAttribute("utilisateur") Utilisateur user, BindingResult result, Model model) {
 
         boolean b = Utils.checkEmail(user.getEmail());
         if (!b) {
@@ -90,20 +86,18 @@ public class PasswordRetrieverController extends CommonController{
 
         List<Utilisateur> listUsers = this.userRepository.findByEmail(user.getEmail());
 
-        if(listUsers == null || listUsers.isEmpty()){
+        if (listUsers == null || listUsers.isEmpty()) {
             result.rejectValue("email", "error_email_not_found");
             model.addAttribute("utilisateur", user);
             return "forgot-pwd";
         }
 
-
         Utilisateur userFound = listUsers.get(0);
 
         String token = UUID.randomUUID().toString();
         userSecurityService.createPasswordResetTokenForUser(userFound, token);
-        final String body = "Bonjour, une demande de nouveau mot de passe a été effectuée. Veuillez cliquer sur le lien suivant pour enregistrer un nouveau mot de passe : " +
-                getAppUrl(request) + "/users/changePassword?id=" + userFound.getId() + "&token=" + token;
-        notificationService.sendNotificaition(userFound.getEmail(), "Reset mot de passe", body);
+        String link = getAppUrl(request) + "/users/changePassword?id=" + userFound.getId() + "&token=" + token;
+        notificationService.sendResetPassword(userFound.getEmail(), link, userFound.getFullName());
         return "confirm-forgot-pwd";
     }
 

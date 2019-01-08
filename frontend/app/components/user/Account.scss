@@ -3,9 +3,25 @@
         color: red;
     }
     .form-content {
+       
         button {
             float: none;
         }
     }
+}
+/** REDUCE COntainer size if desktop */
+@media screen and (min-width: 768px) {
 
+    .container-account {
+
+        width: 600px;
+
+        input[type=text] {
+            width: 300px;
+        }
+        input[type=password] {
+            width: 300px;
+        }
+
+    }
 }

@@ -5,20 +5,22 @@ import lea.modele.Avis;
 import lea.modele.Livre;
 import lea.modele.LivreModel;
 import lea.modele.Utilisateur;
+import lea.repository.livremodel.LivreModelRepository;
 import lea.repository.livremodel.MongoLivreModelRepository;
 import lea.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 public class AvisController extends CommonController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private LivreModelRepository livreModelRepository;
 
     @Autowired
     private MongoLivreModelRepository mongoLivreModelRepository;
@@ -67,14 +69,31 @@ public class AvisController extends CommonController {
     @RequestMapping(value = "/api/avis/{avisId}", method = RequestMethod.DELETE)
     @ResponseBody
     public Livre deleteAvis(@PathVariable("avisId") String avisId) throws Exception {
-        userRepository.deleteAvis(avisId);
+        livreModelRepository.deleteAvis(avisId);
         return null;
     }
 
     @RequestMapping(value = "/api/getLastAvis", method = RequestMethod.GET)
     @ResponseBody
     public List<Avis> getLast() throws Exception {
-        return userRepository.findlastAvis();
+       // PageRequest request = new PageRequest(0, 100, new Sort(Sort.Direction.DESC, "avis.dateavis"));
+        List<LivreModel> list = this.livreModelRepository.findByLastAvis();
+        List<Avis> listAvis = new ArrayList<>();
+        for(LivreModel lm : list) {
+            List<Avis> bookAvis = lm.getAvis();
+            for(Avis avis : bookAvis) {
+                avis.setTitrebook(lm.getTitreBook());
+                avis.setImage(lm.getImage());
+            }
+            listAvis.addAll(bookAvis);
+            if(listAvis.size() > 50) {
+                break;
+            }
+        }
+        listAvis.sort(Comparator.comparing(o -> o.getDateavis()));
+        Collections.reverse(listAvis);
+        return listAvis;
+
     }
 
 }

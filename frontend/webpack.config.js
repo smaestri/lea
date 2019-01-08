@@ -15,7 +15,7 @@ const PATHS = {
 
 module.exports = {
 
-	entry: './app/app.js',
+	entry: './app/App.js',
 	output: {
 		path: PATHS.build,
 		filename: 'bundle.js',

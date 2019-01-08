@@ -144,9 +144,8 @@ class EditBook extends React.Component {
 					<Col className="content-form">
 						{errors && errors.length > 0 && <div className="error-container">{errors}</div>}
 						<Form horizontal>
-							<span>Remplissez l'ISBN sur 10 ou 13 caractères afin de remplir automatiquement les informations du livre!</span>
 							<FormGroup>
-								<Col sm={2}>isbn:</Col>
+								<Col sm={2}>Isbn:</Col>
 								<Col sm={10}>
 									<FormControl type="text" name="isbn" value={this.state.book.isbn} onChange={this.handleChange} />
 								</Col>
@@ -177,10 +176,9 @@ class EditBook extends React.Component {
 							{this.state.book && this.state.book.titreBook && <FormGroup>
 								<Col sm={2}>Catégorie:</Col>
 								<Col sm={10}>
-									{!this.state.manualFill && renderHTML(this.state.book.categorieId)}
-									{this.state.manualFill && <FormControl disabled name="categorieId" componentClass="select" value={this.state.book.categorieId} placeholder="select" onChange={this.handleChange}>
+									 <FormControl name="categorieId" componentClass="select" value={this.state.book.categorieId} placeholder="select" onChange={this.handleChange}>
 										{catReact}
-									</FormControl>}
+									</FormControl>
 								</Col>
 							</FormGroup>}
 							{this.state.book && this.state.book.titreBook && <FormGroup>

@@ -1,10 +1,10 @@
 import React from 'react'
 import Rating from 'react-rating'
-import { Link } from 'react-router'
 import helpers from '../../helpers/user/api'
 import formatDate from '../../helpers/utils'
 import { SVGIcon } from '../common/SVGIcon'
-import style from './Avis.scss'
+import { renderHTML} from '../../helpers/utils'
+import './Avis.scss'
 
 class Avis extends React.Component {
 
@@ -30,7 +30,7 @@ class Avis extends React.Component {
 		return (
 			<div className='container-avis'>
 				<div className="title-book">
-					<p>{this.state.avis.livre}</p>
+					{renderHTML(this.state.avis.titrebook)}
 				</div>
 				<div className="avis-livre">
 					{this.props.displayImage && <div className="image-container">

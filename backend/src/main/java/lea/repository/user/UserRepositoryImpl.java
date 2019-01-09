@@ -108,22 +108,6 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<Livre> findBook(String bookId) {
-        Query q = new Query();
-        q.addCriteria(Criteria.where("livres.id").is(new ObjectId(bookId)));
-        Utilisateur user = mongoTemplate.findOne(q, Utilisateur.class);
-
-        if (user != null) {
-            Optional<Livre> livre = user.getLivre(bookId);
-            if(livre.isPresent()){
-                livre.get().setUserId(user.getId());
-            }
-            return livre;
-        }
-        return Optional.empty();
-    }
-
-    @Override
     public Utilisateur findproprietaire(String bookId) {
         Query q = new Query();
         q.addCriteria(Criteria.where("livres.id").is(new ObjectId(bookId)));

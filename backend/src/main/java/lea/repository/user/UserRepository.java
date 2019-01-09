@@ -18,7 +18,6 @@ public interface UserRepository {
     List<Utilisateur> findRequestedFriends(String email);
     void deleteFriend(String idUserConnected, String pendingEmail);
     void deletePendingFriend(Utilisateur userDetail, String pendingEmail);
-    Optional<Livre> findBook(String id);
     void updateBookStatus(Utilisateur proprietaire, String livreId, StatutEmprunt status);
     Utilisateur findproprietaire(String bookId);
     PendingFriend findPendingFriend(Utilisateur user, String email);

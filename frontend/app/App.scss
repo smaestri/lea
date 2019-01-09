@@ -1,0 +1,37 @@
+.btn[disabled] {
+    background: url("/webjars/app-react/1.0.0/img/spinner.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    color: black;
+}
+
+.icon-rating {
+    height: 22px;
+    width: 22px;
+}
+
+.title-book {
+    font-size: 17px;
+    font-weight: 600;
+}
+
+@media screen and (max-width: 768px) {
+    h1 {
+        font-size: 18px;
+    }
+
+    h2 {
+        font-size: 16px;
+    }
+
+    h3 {
+        font-size: 15px;
+    }
+
+    .title-book {
+        font-size: 15px;
+        font-weight: 600;
+    }
+}
+
+

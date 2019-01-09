@@ -1,0 +1,15 @@
+.container-comment-marche {
+
+    display: flex;
+    flex-direction: column;
+
+    .line {
+        display: flex;
+
+        .title-aide {
+            font-weight: 800;
+            margin-right: 5px;
+        }
+    }
+
+}

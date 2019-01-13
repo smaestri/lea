@@ -87,6 +87,7 @@ public class EmpruntController extends CommonController {
 
         String titreBook = livreModel.get().getTitreBook();
         notificationService.sendNouvelEmprunt(proprietaire.getEmail(), principal.getFullName(), titreBook, proprietaire.getFullName());
+        notificationService.sendNouvelEmpruntToMyself(principal.getEmail(), proprietaire.getFullName(), titreBook, principal.getFullName());
         return "redirect:/emprunts";
     }
 
@@ -114,6 +115,7 @@ public class EmpruntController extends CommonController {
         Optional<LivreModel> livreModel = this.mongoLivreModelRepository.findById(livre.getLivreModelId());
         String titreBook = livreModel.get().getTitreBook();
         notificationService.sendAcceptation(emprunteur.getEmail(), preteur.getFullName(), titreBook, emprunteur.getFullName());
+        notificationService.sendAcceptationToMyself(preteur.getEmail(), emprunteur.getFullName(), titreBook, preteur.getFullName());
         return "OK";
     }
 
@@ -127,7 +129,7 @@ public class EmpruntController extends CommonController {
         this.userRepository.updateBookStatus(principal, emprunt.getLivreId(), StatutEmprunt.FREE);
         Utilisateur preteur = mongoUserRepository.findById(emprunt.getPreteurId()).get();
         Livre livre = preteur.getLivre(emprunt.getLivreId()).get();
-        Optional<LivreModel> livreModel = this.mongoLivreModelRepository.findById(livre.getLivreModelId());
+        Optional<LivreModel> livreModel = this.mongoLivreModelRepository.findById(emprunt.getLivreModelId());
         String titreBook = livreModel.get().getTitreBook();
         emprunt.setActif(false);
         emprunt.setDateRefus(new Date());
@@ -135,6 +137,7 @@ public class EmpruntController extends CommonController {
         empruntRepository.saveEmprunt(emprunt);
         Utilisateur emprunteur = mongoUserRepository.findById(emprunt.getEmprunteurId()).get();
         notificationService.sendRefus(emprunteur.getEmail(), principal.getFullName(), titreBook, refusBean.getRefus(), emprunteur.getFullName());
+        notificationService.sendRefusToMyself(preteur.getEmail(), emprunteur.getFullName(), titreBook, refusBean.getRefus(), preteur.getFullName());
         return "OK";
     }
 
@@ -154,6 +157,7 @@ public class EmpruntController extends CommonController {
         Optional<LivreModel> livreModel = this.mongoLivreModelRepository.findById(livre.getLivreModelId());
         Utilisateur emprunteur = mongoUserRepository.findById(emprunt.getEmprunteurId()).get();
         notificationService.sendLivreEnvoye(preteur.getEmail(), emprunteur.getFullName(), livreModel.get().getTitreBook(), preteur.getFullName());
+        notificationService.sendLivreEnvoyeToMyself(principal.getEmail(), preteur.getFullName(), livreModel.get().getTitreBook(), principal.getFullName());
 
         return "OK";
     }
@@ -175,6 +179,7 @@ public class EmpruntController extends CommonController {
         Optional<LivreModel> livreModel = this.mongoLivreModelRepository.findById(livre.getLivreModelId());
         String titreBook = livreModel.get().getTitreBook();
         notificationService.sendClore(emprunteur.getEmail(), preteur.getFullName(), titreBook, emprunteur.getFullName());
+        notificationService.sendCloreToMyself(preteur.getEmail(), titreBook, preteur.getFullName());
         return "OK";
     }
 

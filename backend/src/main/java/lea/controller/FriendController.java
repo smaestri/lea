@@ -80,6 +80,9 @@ public class FriendController extends CommonController {
         Utilisateur userPrincipal = getPrincipal();
         Utilisateur one = mongoUserRepository.findById(userPrincipal.getId()).get();
 
+
+        // je parcours mes pendings existants. si l un deux ma ajoute egalement je le declare en ami,
+        // et supprime le pending
         List<Utilisateur> requestedFriends = userRepository.findRequestedFriends(userPrincipal.getEmail());
         if (requestedFriends != null && requestedFriends.size() > 0) {
             for (Utilisateur user : requestedFriends) {
@@ -106,7 +109,8 @@ public class FriendController extends CommonController {
         addRealFriendAndDeletePending(userConnected, userFriend);
         addRealFriendAndDeletePending(userFriend, userConnected);
 
-        notificationService.sendAmiAccepted(userFriend.getEmail(), userConnected.getFullName(), userFriend.getFullName());
+        notificationService.sendAmiAccepted(userFriend.getFullName() , userConnected.getFullName() + "(" +userConnected.getEmail() +")", userFriend.getFullName());
+        notificationService.sendAmiAcceptedToMyself(userConnected.getEmail(), userFriend.getFullName() + "(" +userFriend.getEmail() +")", userConnected.getFullName());
 
         return "OK";
     }
@@ -161,6 +165,7 @@ public class FriendController extends CommonController {
         if (StringUtils.hasText(emailFriend) && Utils.checkEmail(emailFriend) && !emailFriend.equals(source.getEmail())) {
             userRepository.addPendingFriend(source, pf);
             notificationService.sendNewAmi(emailFriend, source.getFullName(), "");
+            notificationService.sendNewAmiToMyself(source.getEmail(), emailFriend, source.getFullName());
 
         } else {
             return "KO email incorrect";

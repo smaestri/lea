@@ -8,7 +8,15 @@ class PendingFriend extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = { friends: [], pendingFriends: [] };
+		this.handleSubmit = this.handleSubmit.bind(this);
+		this.state = { friends: [], pendingFriends: [], disableSubmit: false};
+	}
+
+	handleSubmit() {
+		this.setState({disableSubmit: true})
+		this.props.acceptRequestFriend(this.props.friend.id).then(()=> {
+			this.setState({disableSubmit: false})
+		});
 	}
 
 	render() {
@@ -44,9 +52,8 @@ class PendingFriend extends React.Component {
 				}
 				{this.props.showAcceptButton &&
 				<div className="accept-button">
-					<Button bsStyle="primary" bsSize="small" onClick={() => {
-						this.props.acceptRequestFriend(this.props.friend.id)
-					}}>Accepter</Button>
+					<Button bsStyle="primary" disabled={this.state.disableSubmit} bsSize="small"
+					 onClick={this.handleSubmit}>Accepter</Button>
 				</div>
 				}
 				{!this.props.showAcceptButton &&

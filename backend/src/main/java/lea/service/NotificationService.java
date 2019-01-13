@@ -15,4 +15,24 @@ public interface NotificationService {
     void sendNewAmi(String email1, String fullName, String nameDestinataire) ;
 
     void sendAmiAccepted(String email, String fullName, String nameDestinataire) ;
+
+    void confirmCommenToOther(String email, String titrebook, String auteurComm, String nameDestinataire);
+
+    void confirmCommenToMyself(String email, String titrebook, String nameDestinataire);
+
+    void sendNouvelEmpruntToMyself(String email, String fullName, String titreBook, String fullName1);
+
+    void sendAcceptationToMyself(String email, String fullName, String titreBook, String fullName1);
+
+    void sendRefusToMyself(String email, String fullName, String titreBook, String refus, String fullName1);
+
+    void sendLivreEnvoyeToMyself(String email, String fullName, String titreBook, String fullName1);
+
+    void sendCloreToMyself(String email, String titreBook, String fullName);
+
+    void sendNewAmiToMyself(String email, String emailAmi, String fullName);
+
+    void sendAmiAcceptedToMyself(String email, String email1, String fullName);
+
+    void confirmSubscription(String email, String fullName);
 }

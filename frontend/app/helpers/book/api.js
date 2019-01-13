@@ -32,8 +32,8 @@ var helpers = {
             });
     },
 
-    getAllBooks: function (category) {
-        const url = '/api/searchBook' + (category ? "?categorie=" + category : '');
+    getAllBooks: function (category, searchTerm) {
+        const url = '/api/searchBook' + ((category && category != 0) ? "?categorie=" + category : '') + (searchTerm ? "?search=" + searchTerm : '');
         return axios.get(url)
             .then(function (response) {
                 return response.data;

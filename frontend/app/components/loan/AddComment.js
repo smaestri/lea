@@ -8,16 +8,18 @@ class AddComment extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = { comm: '', showInput: false };
+		this.state = { comm: '', showInput: false, disableAddCommentButton: false };
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 	}
 
 	handleSubmit(event) {
 		event.preventDefault();
+		this.setState({ disableAddCommentButton: true });
 		helpers.saveComment(this.state.comm, null, this.props.idLoan).then(() => {
 			this.setState({ comm: '', showInput: false });
 			this.props.reloadEmprunt();
+			this.setState({ disableAddCommentButton: true });
 		});
 	}
 
@@ -36,7 +38,7 @@ class AddComment extends React.Component {
 				{this.state.showInput && <div className="bloc-input-comm">
 					<span>Veuillez entrer un message à l'attention de {this.props.destinataire}.</span>
 					<FormControl name="message" componentClass="textarea" onChange={this.handleChange} value={this.state.comm} />
-					<Button onClick={this.handleSubmit} type="submit" bsStyle="primary" bsSize="small">Valider</Button>
+					<Button onClick={this.handleSubmit} type="submit" disabled={this.state.disableAddCommentButton} bsStyle="primary" bsSize="small">Valider</Button>
 				</div>}
 			</div>
 		)

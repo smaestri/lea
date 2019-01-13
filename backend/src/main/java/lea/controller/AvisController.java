@@ -8,6 +8,7 @@ import lea.modele.Utilisateur;
 import lea.repository.livremodel.LivreModelRepository;
 import lea.repository.livremodel.MongoLivreModelRepository;
 import lea.repository.user.UserRepository;
+import lea.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,10 @@ public class AvisController extends CommonController {
 
     @Autowired
     private MongoLivreModelRepository mongoLivreModelRepository;
+
+
+    @Autowired
+    private NotificationService notificationService;
 
     @RequestMapping(value = "/api/avis/{bookId}", method = RequestMethod.POST)
     @ResponseBody

@@ -11,7 +11,7 @@ class Account extends React.Component {
 		super(props);
 		this.state = { 
 			user: {
-				email: '', firstName: '', lastName: '', password: '', confirmpassword: ''
+				email: '', firstName: '', lastName: '', password: '', confirmpassword: '', disableSubmit: false
 			},
 			redirectToHome: false,
 			errors: []
@@ -29,11 +29,13 @@ class Account extends React.Component {
 	}
 
 	handleSubmit(event) {
+		this.setState({ disableSubmit: true });
 		event.preventDefault();
 		helpers.updateOrCreateUser(this.props.isCreation, this.state.user).then(() => {
 			this.setState({ redirectToHome: true });
 			this.props.refreshUserConnected();
 		}, (response) => {
+			this.setState({ disableSubmit: false });
 			if(response.data && response.data.errors && response.data.errors.length > 0) {
 				this.setState({errors: response.data.errors});
 				window.scrollTo(0, 0);
@@ -100,7 +102,7 @@ class Account extends React.Component {
 							</Col>
 						</FormGroup>
 						<ButtonToolbar className="text-center">
-							<Button type="submit" value="Valider" bsStyle="primary">Valider</Button>
+							<Button type="submit" value="Valider" bsStyle="primary" disabled={this.state.disableSubmit}>Valider</Button>
 						</ButtonToolbar>
 					</Form>
 				</div>

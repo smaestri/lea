@@ -147,6 +147,15 @@ class Layout extends React.Component {
 			);
 		}
 
+		this.wrappedMyFriends = () => {
+			return (
+				<MyFriends
+					onRefreshNotification={this.refreshNotif.bind(this)}
+					{...props}
+				/>
+			);
+		}
+
 		this.wrappedRequestedFriends = () => {
 
 			return (
@@ -193,9 +202,10 @@ class Layout extends React.Component {
 					<Route path="/my-loans" component={this.wrappedMyLoans} />
 					<Route path="/book-detail/:bookId" component={BookDetail} />
 					<Route exact path="/list-book" component={this.wrappedListBooks} />
-					<Route exact path="/list-book/:category" component={this.wrappedListBooks} />
+					<Route exact path="/list-book-by-category/:category" component={this.wrappedListBooks} />
+					<Route exact path="/list-book-by-term/:search" component={this.wrappedListBooks} />
 					<Route path="/my-lendings" component={this.wrappedMyLendings} />
-					<Route path="/my-friends" component={MyFriends} />
+					<Route path="/my-friends" component={this.wrappedMyFriends} />
 					<Route path="/my-requested-friends" component={this.wrappedRequestedFriends} />
 					<Route path="/user-detail/:userId" component={this.wrappedUserDetail} />
 					<Route path="/account" component={this.wrappedAccount} />

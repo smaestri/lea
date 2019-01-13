@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import helpers from '../../helpers/book/api'
-import style from './ListCategories.scss'
+import'./ListCategories.scss'
 
 class ListCategories extends React.Component {
 
@@ -12,15 +12,16 @@ class ListCategories extends React.Component {
 
 	componentDidMount() {
 		helpers.getCategories().then((avis) => {
+			const avisWithAll = [{ id:0, name: 'Tous les livres' }, ...avis]
 			this.setState({
-				categories: avis
+				categories: avisWithAll
 			});
 		});
 	}
 
 	render() {
 		const categories = this.state.categories.map(cat => {
-			return <div key={cat.id}><Link to={'/list-book/' + cat.id}>{cat.name}</Link></div>
+			return <div key={cat.id}><Link to={'/list-book-by-category/' + cat.id}>{cat.name}</Link></div>
 		});
 
 		return (

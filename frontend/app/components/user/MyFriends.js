@@ -59,7 +59,7 @@ class MyFriends extends React.Component {
 	}
 
 	savePendingFriend(email) {
-		helpers.savePendingFriend(email).then(() => {
+		return helpers.savePendingFriend(email).then(() => {
 			this.componentDidMount();
 		})
 	}
@@ -85,7 +85,7 @@ class MyFriends extends React.Component {
 				<h2>Mes amis (attente de leur confirmation)</h2>
 				{(pendingFriends.length == 0) && <span>Pas d'amis en attente de confirmation</span>}
 				<div className="friends-container">{pendingFriends}</div>
-				<AddFriend savePendingFriend={this.savePendingFriend}/>
+				<AddFriend onRefreshNotification={this.props.onRefreshNotification} savePendingFriend={this.savePendingFriend}/>
 				<Modal show={this.state.showModal} onHide={this.closeModal}>
 					<Modal.Header closeButton>
 						<Modal.Title>Impossible de supprimer cet ami</Modal.Title>

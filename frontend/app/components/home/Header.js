@@ -1,9 +1,9 @@
 import React from 'react'
 import { withRouter } from 'react-router'
 import { LinkContainer } from 'react-router-bootstrap'
-import { Navbar, FormGroup, FormControl, MenuItem, Nav, NavItem, NavDropdown } from 'react-bootstrap'
+import { Navbar, FormGroup, Form, FormControl, Button, MenuItem, Nav, NavItem, NavDropdown } from 'react-bootstrap'
 import { Redirect } from 'react-router-dom'
-import style from './Header.scss'
+import './Header.scss'
 
 
 const { Component } = React;
@@ -12,7 +12,10 @@ class Header extends Component {
 
 	constructor(props) {
 		super(props);
+		this.state = { searchTerm: '' };
 		this.logout = this.logout.bind(this);
+		this.handleSearchChange = this.handleSearchChange.bind(this);
+		this.handleSubmit = this.handleSubmit.bind(this);
 
 	}
 
@@ -20,9 +23,21 @@ class Header extends Component {
 		this.props.logout();
 	}
 
+	handleSearchChange(event) {
+		this.setState({searchTerm: event.target.value});
+	}
+
+	handleSubmit() {
+		let url = '/list-book-by-term/' + this.state.searchTerm;
+		if(!this.state.searchTerm) {
+			url = '/list-book/';
+		}
+		this.props.history.push(url)
+	}
+
 	render() {
 
-		//redirect to login if logout triggered
+		// redirect to login if logout triggered
 		if (this.props.redirectToLogin && !(this.props.location.pathname === '/login')) {
 			return <Redirect to='/login' />;
 		}
@@ -45,12 +60,14 @@ class Header extends Component {
 						<LinkContainer to={'/my-friends/'} ><NavItem>Mes amis</NavItem></LinkContainer>
 					</Nav>
 					}
-					<Navbar.Form pullLeft>
+					<Navbar.Form pullLeft onSubmit={this.handleSubmit}>
+					<Form>
 						<FormGroup>
-							<FormControl type="text" placeholder="Indiquez le titre d'un livre, auteur, etc à emprunter" />
+							<FormControl type="text" placeholder="livre, auteur, etc." onChange={this.handleSearchChange} />
 						</FormGroup>
 						{' '}
-						<LinkContainer to='/list-book'><button className="btn">Rechercher</button></LinkContainer>
+						<Button type="submit" className="btn">Rechercher</Button>
+						</Form>
 					</Navbar.Form>
 					{this.props.isConnected && <Nav>
 						<NavDropdown id="basic-nav-dropdown" title={`Bienvenue, ${this.props.currentUser}`} pullRight>

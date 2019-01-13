@@ -19,7 +19,8 @@ class EditBook extends React.Component {
 			displaySpinner: false,
 			redirect: false,
 			manualFill: false,
-			errors: []
+			errors: [],
+			disableSubmit: true
 		}
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleChange = this.handleChange.bind(this);
@@ -48,15 +49,16 @@ class EditBook extends React.Component {
 
 	handleSubmit(event) {
 		event.preventDefault();
+		this.setState({ disableSubmit: true });
 		// first save book
 		helpersBook.saveBook(this.state.book).then((response) => {
 			// then save avis if state modified
 			if (this.state.avis) {
 				helpersBook.saveAvis(this.state.avis, response.data.livreModelId).then(() => {
-					this.setState({ redirect: true });
+					this.setState({ redirect: true, disableSubmit: false  });
 				});
 			} else {
-				this.setState({ redirect: true });
+				this.setState({ redirect: true, disableSubmit: false });
 			}
 		}, 
 		(response)=> {
@@ -78,7 +80,6 @@ class EditBook extends React.Component {
 		const book = this.state.book;
 		const eventName = event.target.name;
 		const eventValue = event.target.value;
-	
 		if(eventName === 'isbn') {
 			book['auteur'] = ""
 			book['image'] = ""
@@ -87,12 +88,16 @@ class EditBook extends React.Component {
 				//display spinner
 				this.setState({ displaySpinner: true });
 				helpers.fetchBookInfoFromAmazon(event.target.value).then ( result => {
+					if(result.data && result.data.error ) {
+						alert('Livre introuvable. Veuillez saisir un ISBN correct SVP');
+						this.setState({ displaySpinner: false});
+						return;
+					}
 					book['auteur'] = result.data['auteur']
 					book['image'] = result.data['image']
 					book['titreBook'] = result.data['name']
 					book['isbn'] = eventValue
-					this.setState({ book, displaySpinner: false });
-					return;
+					this.setState({ book, displaySpinner: false, disableSubmit: false });
 				}, ()=> {
 					alert('error during amazon fetching')
 				})
@@ -193,7 +198,7 @@ class EditBook extends React.Component {
 								</Col>
 							</FormGroup>}
 							<ButtonToolbar className="text-center">
-								<Button  bsStyle="primary" type="submit" onClick={this.handleSubmit}>Valider</Button>
+								<Button title="Merci de saisir un ISBN sur 10 ou 13 caractères correct SVP" disabled={this.state.disableSubmit} bsStyle="primary" type="submit" onClick={this.handleSubmit}>Valider</Button>
 							</ButtonToolbar>
 							
 						</Form>

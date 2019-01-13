@@ -28,7 +28,9 @@ public class AmazonController {
             urlproduct = this.getProductPageFromEnglishIsbn(urlEnglish);
         }
         if (urlproduct == "") {
-            return new HashMap();
+            HashMap hashMap = new HashMap();
+            hashMap.put("error", true);
+            return hashMap;
         }
         return this.getInfosFomProductPage(urlproduct);
     }

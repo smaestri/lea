@@ -43,22 +43,6 @@ var helpers = {
         }
     },
 
-    createUser: function () {
-        return axios.post('/api/createUser', {
-            email: user.firstName,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            password: user.password,
-            confirmPassword: user.confirmPassword
-        })
-            .then(function (response) {
-                return response.data;
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    },
-
     getAccount: function () {
         return axios.get('/api/account')
             .then(function (response) {

@@ -8,9 +8,9 @@ import lea.repository.emprunt.EmpruntRepository;
 import lea.repository.livremodel.MongoLivreModelRepository;
 import lea.repository.user.MongoUserRepository;
 import lea.repository.user.UserRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletException;
@@ -44,7 +44,7 @@ public class LivreController extends CommonController {
 
     // Recherche generale
     @RequestMapping(value = "/api/searchBook", method = RequestMethod.GET)
-    public List<Livre> searchBook(@RequestParam(value = "titreBook", required = false) String titre,
+    public List<Livre> searchBook(@RequestParam(value = "search", required = false) String search,
                                   @RequestParam(value = "categorie", required = false) String categorieId) throws ServletException, IOException {
         List<Livre> res = new ArrayList<Livre>();
         List<Utilisateur> allUsers = userRepository.findAll();
@@ -68,7 +68,7 @@ public class LivreController extends CommonController {
                 livre.setUserId(user.getId());
                 livre.setPreteur(user.getFullName());
                 livre.setMailPreteur(user.getEmail());
-                addBookinlist(livre, categorieId, titre, res);
+                addBookinlist(livre, categorieId, search, res);
             }
         }
 
@@ -77,6 +77,7 @@ public class LivreController extends CommonController {
 
     /**
      * Détail d'un livre
+     *
      * @param idLivre
      * @return
      */
@@ -101,9 +102,9 @@ public class LivreController extends CommonController {
         Livre userLivre = new Livre();
         userLivre.setStatut(StatutEmprunt.FREE);
         LivreModel newLivreModel = this.mongoLivreModelRepository.findByIsbn(livreModel.getIsbn());
-        if(newLivreModel == null) {
+        if (newLivreModel == null) {
             //save only first 10 of isbn
-            if(livreModel.getIsbn().length() > 10) {
+            if (livreModel.getIsbn().length() > 10) {
                 livreModel.setIsbn(livreModel.getIsbn().substring(0, 9));
             }
             this.mongoLivreModelRepository.save(livreModel);
@@ -141,7 +142,8 @@ public class LivreController extends CommonController {
                 // retrive bookmodel
                 LivreModel livremodel = this.mongoLivreModelRepository.findById(livre.getLivreModelId()).get();
                 this.setBookImage(livremodel);
-                livre.setUserId(user.getId());;
+                livre.setUserId(user.getId());
+                ;
                 livre.setLivreModel(livremodel);
             }
         }
@@ -162,19 +164,22 @@ public class LivreController extends CommonController {
         return "0";
     }
 
-    private void addBookinlist(Livre livre, String categorieId, String titre, List<Livre> res) throws IOException {
+    private void addBookinlist(Livre livre, String categorieId, String search, List<Livre> res) throws IOException {
         boolean addLivre = true;
-        if (categorieId != null && StringUtils.hasText(categorieId)) {
-            if (livre.getLivreModel().getCategorieId() == null || !livre.getLivreModel().getCategorieId().equals(categorieId)) {
+
+        //check categorie
+        if (StringUtils.isNotBlank(categorieId)) {
+            String categorieId1 = livre.getLivreModel().getCategorieId();
+            if (StringUtils.isNotBlank(categorieId1) && !categorieId1.equals(categorieId)) {
                 addLivre = false;
             }
         }
 
-        //Check titre
-        if (titre != null && StringUtils.hasText(titre)) {
-            if (livre.getLivreModel().getTitreBook().equalsIgnoreCase(titre)) {
-                addLivre = false;
-            }
+        //Check search : title, auteur, description
+        if (search != null && !StringUtils.containsIgnoreCase(livre.getLivreModel().getTitreBook(), search)
+                && !StringUtils.containsIgnoreCase(livre.getLivreModel().getAuteur(), search)
+                && !StringUtils.containsIgnoreCase(livre.getLivreModel().getDescription(), search)) {
+            addLivre = false;
         }
 
         setBookImage(livre.getLivreModel());

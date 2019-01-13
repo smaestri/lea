@@ -1,23 +1,21 @@
 package lea.controller;
 
-import lea.commun.Utils;
 import lea.configuration.security.CustomUserDetailsService;
 import lea.dto.UserBean;
-import lea.modele.*;
-import lea.repository.categorie.MongoCategorieRepository;
+import lea.modele.Livre;
+import lea.modele.LivreModel;
+import lea.modele.Utilisateur;
 import lea.repository.emprunt.EmpruntRepository;
 import lea.repository.livremodel.MongoLivreModelRepository;
 import lea.repository.user.MongoUserRepository;
 import lea.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,32 +101,6 @@ public class UserController extends CommonController {
         userRepository.saveUser(userDetail);
         return "1";
     }
-
-    @RequestMapping(value = "/api/createUSer", method = RequestMethod.POST)
-    public String createUser(@RequestBody UserBean user) {
-        //Check email
-        boolean mailValid = Utils.checkEmail(user.getEmail());
-        if(!mailValid){
-            throw new RuntimeException("Email invalid");
-        }
-
-        // encrypt password
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-//        UserProfile profileUser = userProfileRepository.getProfileUser();
-//        List<String> set = new ArrayList<String>();
-//        set.add(profileUser.getId());
-//        user.setListUserProfilesId(set);
-//        user.setEnabled(true);
-//        userRepository.saveUser(user);
-//
-//        // Authenticate manually
-//        userSecurityService.authenticateManually(user);
-
-        return "redirect:/";
-    }
-
-
 
     @RequestMapping("/api/isAuthenticated")
     public String isAuthenticated() {

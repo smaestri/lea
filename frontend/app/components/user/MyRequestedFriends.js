@@ -8,7 +8,7 @@ class MyRequestedFriends extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = { requestedFriends: [], redirectToMyFriends: false };
+		this.state = { requestedFriends: [], redirectToMyFriends: false, disableSubmit: false };
 		this.acceptRequestFriend = this.acceptRequestFriend.bind(this);
 	}
 
@@ -21,10 +21,11 @@ class MyRequestedFriends extends React.Component {
 	}
 
 	acceptRequestFriend(id) {
+		this.setState({disableSubmit: true})
 		helpersFriend.acceptFriend(id).then(() => {
 			this.props.onRefreshNotification();
 			this.componentDidMount();
-			this.setState({ redirectToMyFriends: true });
+			this.setState({ redirectToMyFriends: true, disableSubmit: false});
 		})
 	}
 

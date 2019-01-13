@@ -4,20 +4,27 @@ import lea.commun.MailUtils;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Component
 @Profile({"default", "dev"})
 public class NotificationServiceImpl implements NotificationService {
 
     public void sendNouvelEmprunt(String mailDest, String emprunteur, String livre, String nameDestinataire) {
-        MailUtils.sendMail(mailDest, "Nouvelle demande d'emprunt", "Une nouvelle demande d'emprunt a été effectuée par " + emprunteur + " pour le livre " + livre + " Connectez-vous au site pour accepter ou refuser cet emprunt!", nameDestinataire);
+        MailUtils.sendMail(mailDest, "Nouvelle demande d'emprunt", "Une nouvelle demande d'emprunt a été effectuée par " + emprunteur + " pour le livre '" + livre + "'. Connectez-vous au site pour accepter ou refuser cet emprunt!", nameDestinataire);
+    }
+
+    @Override
+    public void sendNouvelEmpruntToMyself(String email, String fullName, String titreBook, String nameDest) {
+        MailUtils.sendMail(email, "Nouvelle demande d'emprunt effectuée","L'emprunt pour le livre '" + titreBook +  "' a bien été demandé à " + fullName +".", nameDest);
+    }
+
+    @Override
+    public void sendAcceptationToMyself(String email, String fullName, String titreBook, String nameDest) {
+        MailUtils.sendMail(email, "Vous avez accepté un emprunt", "Votre avez accepté l'emprunt de " + fullName + " pour le livre '" + titreBook + "'. Merci.", nameDest);
     }
 
     @Override
     public void sendAcceptation(String mailDest, String preteur, String livre, String nameDestinataire) {
-        MailUtils.sendMail(mailDest, "Demande d'emprunt acceptée", "Votre demande d'emprunt à" + preteur + " pour le livre " + livre + " a été acceptée Vous devriez recevoir très prochainement. Si ce n'est pas le cas, n'hésitez pas à envoyer un petit message à " + preteur + " via le site", nameDestinataire);
+        MailUtils.sendMail(mailDest, "Demande d'emprunt acceptée", "Votre demande d'emprunt pour le livre '" + livre + "' a été acceptée par " + preteur +". Vous devriez le recevoir très prochainement. Si ce n'est pas le cas, n'hésitez pas à envoyer un petit message à " + preteur + " via le site!", nameDestinataire);
     }
 
     @Override
@@ -26,13 +33,28 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
+    public void sendRefusToMyself(String mailDest, String emprunteur, String livre, String motif, String nameDestinataire) {
+        MailUtils.sendMail(mailDest, "Vous avez refusé un emprunt", " Votre refus de l'emprunt pour le livre " + livre + " effectuée par " + emprunteur +" a bien été prise en compte avec le motif: " + motif, nameDestinataire);
+    }
+
+    @Override
     public void sendLivreEnvoye(String mailDest, String emprunteur, String livre, String nameDestinataire) {
-        MailUtils.sendMail(mailDest, "Le livre a été envoyé", emprunteur + " vous a renvoyé le livre " + livre + ", que vous devriez donc recevoir rapidement! Une fois reçu, vous pourrez clore l'emprunt.", nameDestinataire);
+        MailUtils.sendMail(mailDest, "Le livre a été envoyé", emprunteur + " vous a renvoyé le livre '" + livre + "', que vous devriez donc recevoir rapidement! Une fois reçu, vous pourrez clore l'emprunt.", nameDestinataire);
+    }
+
+    @Override
+    public void sendLivreEnvoyeToMyself(String mailDest, String preteur, String livre, String nameDestinataire) {
+        MailUtils.sendMail(mailDest, "Vous avez renvoyé le livre",  "Vous avez renvoyé le livre '" + livre + "' appartenant à " + preteur +" , merci.", nameDestinataire);
     }
 
     @Override
     public void sendClore(String mailDest, String preteur, String livre, String nameDestinataire) {
-        MailUtils.sendMail(mailDest, "Le prêteur a clos l'emprunt", preteur + " a clos l'emprunt. En espérant que le livre vous a plu!", nameDestinataire);
+        MailUtils.sendMail(mailDest, "Le prêteur a clos l'emprunt", preteur + " a clos l'emprunt pour le livre '" + livre + "'. En espérant que le livre vous a plu!", nameDestinataire);
+    }
+
+    @Override
+    public void sendCloreToMyself(String mailDest, String livre, String nameDestinataire) {
+        MailUtils.sendMail(mailDest, "Vous avez clos l'emprunt",  " Vous avez bien clos l'emprunt pour le livre '" + livre + "'.", nameDestinataire);
     }
 
     @Override
@@ -46,9 +68,34 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
+    public void sendNewAmiToMyself(String mailDest, String emailAmi, String nameDestinataire) {
+        MailUtils.sendMail(mailDest, "Vous avez ajouté un ami",  " Vous avez ajouté l'ami suivant " + emailAmi+ ". Merci d'attendre sa réponse", nameDestinataire);
+    }
+
+    @Override
     public void sendAmiAccepted(String email, String guest, String nameDestinataire) {
-        Map<String, String> vars = new HashMap<>();
-        vars.put("guest", guest);
         MailUtils.sendMail(email, "Demande d'ami acceptée", guest + " a accepté votre demande d'amitié. Connectez-vous au site pour lui emprunter des livres!", nameDestinataire);
     }
+
+    @Override
+    public void sendAmiAcceptedToMyself(String email, String guest, String nameDestinataire) {
+        MailUtils.sendMail(email, "Vous avez accepté un ami", "Vous avez bien accepté l'ami " + guest +". Vous pouvez à présent échanger des livres avec cette personne!", nameDestinataire);
+    }
+
+    @Override
+    public void confirmSubscription(String email, String fullName) {
+        MailUtils.sendMail(email, "Bienvenue sur Livresentreamis.com!", "Votre inscription sur Livresentreamis.com a bien été prise en compte. Merci.", fullName);
+    }
+
+    @Override
+    public void confirmCommenToOther(String email, String book, String  auteurComm , String nameDestinataire) {
+        MailUtils.sendMail(email, "Nouveau commentaire sur emprunt",auteurComm + " a saisi un nouveau commentaire pour l'emprunt du livre '" +  book + "'.  Connectez-vous au site pour découvrir ce commentaire!", nameDestinataire);
+    }
+
+    @Override
+    public void confirmCommenToMyself(String email, String book, String nameDestinataire) {
+        MailUtils.sendMail(email, "Votre  nouveau commentaire a bien été pris en compte","Votre commentaire sur l'emprunt de '" +  book+ "' a bien été pris en compte. Connectez-vous au site dans la section emprunt!", nameDestinataire);
+    }
+
+
 }

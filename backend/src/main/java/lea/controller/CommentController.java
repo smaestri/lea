@@ -1,11 +1,11 @@
 package lea.controller;
 
-import lea.modele.Commentaire;
-import lea.modele.Emprunt;
-import lea.modele.Utilisateur;
+import lea.modele.*;
 import lea.repository.emprunt.EmpruntRepository;
+import lea.repository.livremodel.MongoLivreModelRepository;
 import lea.repository.user.MongoUserRepository;
 import lea.repository.user.UserRepository;
+import lea.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +14,7 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by sylvain on 30/12/16.
@@ -29,6 +30,12 @@ public class CommentController extends CommonController {
 
     @Autowired
     private EmpruntRepository empruntRepository;
+
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private MongoLivreModelRepository mongoLivreModelRepository;
 
     @RequestMapping(value = "/api/comments/{empruntId}", method = RequestMethod.GET, produces = "application/json")
     public List<Commentaire> getEchanges(Model model, @PathVariable(value = "empruntId", required = true) String empruntId) throws ServletException, IOException {
@@ -51,6 +58,18 @@ public class CommentController extends CommonController {
         comm.setUser(principal);
         emprunt.getCommentaires().add(comm);
         empruntRepository.saveEmprunt(emprunt);
+        Utilisateur preteur = mongoUserRepository.findById(emprunt.getPreteurId()).get();
+        Utilisateur emprunteur = mongoUserRepository.findById(emprunt.getEmprunteurId()).get();
+        Optional<LivreModel> livreModel = this.mongoLivreModelRepository.findById(emprunt.getLivreModelId());
+        // commentaire a moi meme dans tous les cas
+        this.notificationService.confirmCommenToMyself(principal.getEmail(), livreModel.get().getTitreBook(), principal.getFullName() );
+        // commentaire a lautre
+        if(principal.getId().equals(preteur.getId())){
+            this.notificationService.confirmCommenToOther(emprunteur.getEmail(), livreModel.get().getTitreBook(), preteur.getFullName(), emprunteur.getFullName() );
+        } else {
+            this.notificationService.confirmCommenToOther(preteur.getEmail(), livreModel.get().getTitreBook(), emprunteur.getFullName(), preteur.getFullName());
+        }
+
         return comm;
     }
 

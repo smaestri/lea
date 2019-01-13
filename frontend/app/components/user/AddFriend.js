@@ -6,15 +6,19 @@ class AddFriend extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = { emailFriend: '' };
+		this.state = { emailFriend: '', disableSubmit: false };
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 	}
 
 	handleSubmit(event) {
+		this.setState({ disableSubmit: true });
 		event.preventDefault();
-		this.props.savePendingFriend(this.state.emailFriend);
-		this.setState({ emailFriend: '' });
+		this.props.savePendingFriend(this.state.emailFriend).then(()=> {
+			this.setState({ emailFriend: '', disableSubmit: false});
+			this.props.onRefreshNotification();
+		})
+		
 	}
 
 	handleChange(event) {
@@ -31,7 +35,7 @@ class AddFriend extends React.Component {
 						<FormControl type="text" onChange={this.handleChange}
 						             value={this.state.emailFriend}/>
 					</div>
-					<Button bsStyle="primary" bsSize="small"
+					<Button disabled={this.state.disableSubmit} bsStyle="primary" bsSize="small"
 					        onClick={this.handleSubmit}>Ajouter</Button>
 				</form>
 			</div>

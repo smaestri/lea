@@ -5,12 +5,12 @@ import lea.modele.Utilisateur;
 import lea.repository.user.MongoUserRepository;
 import lea.repository.user.UserRepository;
 import lea.repository.userprofile.UserProfileRepository;
+import lea.service.NotificationService;
 import lea.service.UserSecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -39,6 +39,9 @@ public class LoginController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private NotificationService notificationService;
+
 
     // Editer user
     @RequestMapping(value = "/api/editUser", method = RequestMethod.POST)
@@ -64,6 +67,7 @@ public class LoginController {
         userRepository.saveUser(user);
         userSecurityService.authenticateManually(user);
         ResponseEntity responseEntity = new ResponseEntity(user, HttpStatus.OK);
+        this.notificationService.confirmSubscription(user.getEmail(), user.getFullName());
         return responseEntity;
     }
 

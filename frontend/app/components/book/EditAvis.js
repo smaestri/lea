@@ -30,7 +30,7 @@ class EditAvis extends React.Component {
 
 	render() {
 		return (
-			<div className="add-comment-container">
+			<div>
 				<Rating emptySymbol={<SVGIcon href='#icon-star-empty' className='icon-rating'/>}
 						fullSymbol={<SVGIcon href='#icon-star-full' className='icon-rating'/>}
 						initialRating={this.props.avis.note}

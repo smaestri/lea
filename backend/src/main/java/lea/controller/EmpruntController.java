@@ -83,6 +83,7 @@ public class EmpruntController extends CommonController {
         Optional<LivreModel> livreModel = this.mongoLivreModelRepository.findById(livre.get().getLivreModelId());
         emprunt.setLivreModelId(livreModel.get().getId());
         this.empruntRepository.saveEmprunt(emprunt);
+
         this.userRepository.updateBookStatus(proprietaire, emprunt.getLivreId(), StatutEmprunt.REQUESTED);
 
         String titreBook = livreModel.get().getTitreBook();

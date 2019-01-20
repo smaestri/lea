@@ -78,20 +78,23 @@ public class LivreController extends CommonController {
     /**
      * Détail d'un livre
      *
-     * @param idLivre
+     * @param livreModelId
      * @return
      */
     @RequestMapping(value = "/api/livres/{livremodel}", method = RequestMethod.GET)
-    public LivreModel detailLivreHandler(@PathVariable("livremodel") String idLivre) {
-        LivreModel livreModel = this.mongoLivreModelRepository.findById(idLivre).get();
+    public LivreModel detailLivreHandler(@PathVariable("livremodel") String livreModelId) {
 
-        if (livreModel.getCategorieId() != null) {
-            Categorie cat = this.mongoCategorieRepository.findById(livreModel.getCategorieId()).get();
-            livreModel.setCategorie(cat);
-            return livreModel;
+        Optional<LivreModel> optLm = this.mongoLivreModelRepository.findById(livreModelId);
+
+        if(optLm.isPresent()) {
+            LivreModel livreModel = optLm.get();
+            if (livreModel.getCategorieId() != null) {
+                Categorie cat = this.mongoCategorieRepository.findById(livreModel.getCategorieId()).get();
+                livreModel.setCategorie(cat);
+                return livreModel;
+            }
         }
         return null;
-
     }
 
     //creer un livremodel
@@ -118,18 +121,18 @@ public class LivreController extends CommonController {
     }
 
     // Editer un livremodel
-//    @RequestMapping(value = "/api/livres", method = RequestMethod.PUT)
-//    public Livre editLivre(@Valid @RequestBody Livre newLivre) {
-//        Utilisateur principal = getPrincipal();
-//        Utilisateur user = this.mongoUserRepository.findById(principal.getId()).get();
-//        Optional<Livre> livre = user.getLivre(newLivre.getId());
-//        updateBook(livre, newLivre);
-//        if(livre.isPresent()){
-//            userRepository.saveLivre(user, livre.get());
-//            return livre.get();
-//        }
-//        return null;
-//    }
+    @RequestMapping(value = "/api/updateLivreCategory", method = RequestMethod.PUT)
+    public String editLivre( @RequestParam(value = "livreModelId", required = false) String livreModelId,
+                            @RequestParam(value = "categorieId", required = false) String categorieId) {
+
+        Optional<LivreModel> livre = this.mongoLivreModelRepository.findById(livreModelId);
+        if(livre.isPresent()){
+            livre.get().setCategorieId(categorieId);
+            mongoLivreModelRepository.save(livre.get());
+            return "OK";
+        }
+        return "KO";
+    }
 
     // My books
     @RequestMapping(value = "/api/myBooks", method = RequestMethod.GET)
@@ -164,7 +167,7 @@ public class LivreController extends CommonController {
         return "0";
     }
 
-    private void addBookinlist(Livre livre, String categorieId, String search, List<Livre> res) throws IOException {
+    private void addBookinlist(Livre livre, String categorieId, String search, List<Livre> res)  {
         boolean addLivre = true;
 
         //check categorie

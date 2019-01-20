@@ -29,7 +29,7 @@ class Header extends Component {
 
 	handleSubmit() {
 		let url = '/list-book-by-term/' + this.state.searchTerm;
-		if(!this.state.searchTerm) {
+		if (!this.state.searchTerm) {
 			url = '/list-book/';
 		}
 		this.props.history.push(url)

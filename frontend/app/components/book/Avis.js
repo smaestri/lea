@@ -3,8 +3,8 @@ import Rating from 'react-rating'
 import helpers from '../../helpers/user/api'
 import formatDate from '../../helpers/utils'
 import { SVGIcon } from '../common/SVGIcon'
-import { renderHTML} from '../../helpers/utils'
 import './Avis.scss'
+import TitleBook from './TitleBook';
 
 class Avis extends React.Component {
 
@@ -29,9 +29,9 @@ class Avis extends React.Component {
 		let dateAvis = formatDate(this.state.avis.dateavis);
 		return (
 			<div className='container-avis'>
-				<div className="title-book">
-					{renderHTML(this.state.avis.titrebook)}
-				</div>
+				{this.props.displayImage && <div className="title-book" >
+					<TitleBook titre={this.state.avis.titrebook} />
+				</div>}
 				<div className="avis-livre">
 					{this.props.displayImage && <div className="image-container">
 						<div className="image-content">

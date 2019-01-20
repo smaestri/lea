@@ -11,17 +11,18 @@ class ListCategories extends React.Component {
 	}
 
 	componentDidMount() {
-		helpers.getCategories().then((avis) => {
-			const avisWithAll = [{ id:0, name: 'Tous les livres' }, ...avis]
+		
+		helpers.getCategories().then((cat) => {
+			const allCat = [{ id:0, name: 'Tous les livres' }, ...cat]
 			this.setState({
-				categories: avisWithAll
+				categories: allCat
 			});
 		});
 	}
 
 	render() {
 		const categories = this.state.categories.map(cat => {
-			return <div key={cat.id}><Link to={'/list-book-by-category/' + cat.id}>{cat.name}</Link></div>
+			return <div key={cat.id}><Link to={{pathname: '/list-book-by-category/' + cat.id, state: {categorie: cat.name}}}>{cat.name}</Link></div>
 		});
 
 		return (

@@ -46,7 +46,7 @@ class UserDetail extends React.Component {
 
 		let booksFriends = [];
 		this.state.userFriends.map(subFriend => {
-			booksFriends = subFriend.livres.map(book => {
+			booksFriends = [...booksFriends, subFriend.livres.map(book => {
 				return <Book
 							key={book.id}
 							id={book.id}
@@ -54,7 +54,7 @@ class UserDetail extends React.Component {
 							currentPage="userDetail"
 							userId={this.props.userId}
 						/>
-			});
+			})];
 		})
 
 		return (
@@ -62,7 +62,7 @@ class UserDetail extends React.Component {
 				<h1>Livres de {this.state.name}</h1>
 				{books.length == 0 && <span>Cet utilisateur n'a pas encore de livres.</span>}
 				{books.length > 0 && <div className="books-user">{books}</div>}
-				<h1>Livres des amis de {this.state.name}</h1>
+				{booksFriends.length > 0 && <h1>Livres des amis de {this.state.name}</h1> }
 				{booksFriends.length > 0 && <div className="books-user">{booksFriends}</div>}
 				<Button bsStyle="primary" onClick={this.props.history.goBack}>Retour</Button>
 			</div>

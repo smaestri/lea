@@ -1,6 +1,7 @@
 .container-avis {
     display: flex;
     flex-direction: column;
+    max-width: 500px;
     .avis-livre {
         display: flex;
         align-items: center;

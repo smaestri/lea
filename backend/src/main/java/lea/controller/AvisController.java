@@ -56,7 +56,11 @@ public class AvisController extends CommonController {
                            @PathVariable("bookId") String bookModelId,
                            @RequestBody AvisBean avisBean) {
 
-        LivreModel livreModel = this.mongoLivreModelRepository.findById(bookModelId).get();
+        Optional<LivreModel> byId = this.mongoLivreModelRepository.findById(bookModelId);
+        if(!byId.isPresent()) {
+            return "KO - livre not found";
+        }
+        LivreModel livreModel = byId.get();
         Optional <Avis> optAvis = livreModel.getAvis().stream()
                 .filter(currentAvis -> currentAvis.getId().equals(avisId))
                 .findFirst();
@@ -65,10 +69,12 @@ public class AvisController extends CommonController {
             avis.setLibelle(avisBean.getLibelle());
             avis.setNote(avisBean.getNote());
             avis.setDateavis(new Date());
+        } else {
+            return "KO - avis not found";
         }
 
         this.mongoLivreModelRepository.save(livreModel);
-        return avisId;
+        return "OK";
     }
 
     @RequestMapping(value = "/api/avis/{avisId}", method = RequestMethod.DELETE)

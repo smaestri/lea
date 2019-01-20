@@ -5,7 +5,7 @@ import { Link, Redirect } from 'react-router-dom'
 import Rating from 'react-rating'
 import helpersLoan from '../../helpers/loan-actions/api'
 import helpersFriend from '../../helpers/friend/api'
-import { renderHTML} from '../../helpers/utils'
+import TitleBook from './TitleBook'
 import { SVGIcon } from '../common/SVGIcon'
 import './Book.scss'
 
@@ -16,6 +16,7 @@ class Book extends React.Component {
 		this.handleClick = this.handleClick.bind(this);
 		this.handleLoan = this.handleLoan.bind(this);
 		this.savePendingFriend = this.savePendingFriend.bind(this);
+		
 		this.state = {
 			disableEmprunterButton: false,
 			redirectToMyLoans: false,
@@ -32,7 +33,7 @@ class Book extends React.Component {
 		this.setState({ disableEmprunterButton: true });
 		event.preventDefault();
 		if(!this.props.userId){
-			window.location.replace("/login");
+			window.location.replace("/#/login");
 			return;
 		}
 		helpersLoan.loanBook(this.props.book.id, this.props.book.intermediaireid).then(() => {
@@ -75,11 +76,11 @@ class Book extends React.Component {
 			sum = sum + avis.note;
 		});
 		let moyenne = sum / avis.length;
-		const titre = renderHTML(livreModel.titreBook);
+
 		return (
 			<div className="book-container">
 				<div className="title-book form-horizontal">
-					<p>{titre}</p>
+					<TitleBook titre={livreModel.titreBook} />
 				</div>
 				{isConnected && !(this.props.currentPage == 'myBooks') &&
 					<div><label className="book-preteur">Prêteur : </label>
@@ -116,13 +117,15 @@ class Book extends React.Component {
 				<ButtonToolbar className='container-buttons'>
 					{(isConnected  && (this.props.currentPage == 'myBooks')) &&
 						<Button bsStyle="primary" bsSize="small" onClick={this.handleClick}>Supprimer</Button>}
-
-					{(isConnected  && !(this.props.currentPage == 'myBooks')&& this.props.book.statut == 'FREE') &&
+					{(isConnected  && (this.props.currentPage == 'myBooks')) &&
+						<Link to={'/edit-book/' + livreModel.id }><Button bsStyle="primary" bsSize="small">Modifier</Button></Link>}
+					{(!(this.props.currentPage == 'myBooks')&& this.props.book.statut == 'FREE') &&
 						<Button bsStyle="primary" bsSize="small" disabled={this.state.disableEmprunterButton}
 							onClick={this.handleLoan}>Emprunter</Button>}
 							
-					{(isConnected && !(this.props.currentPage == 'myBooks') && this.props.book.statut != 'FREE') &&
+					{(!(this.props.currentPage == 'myBooks') && this.props.book.statut != 'FREE') &&
 						<span>Livre déjà emprunté</span>}
+						
 				</ButtonToolbar>
 			</div>
 		)

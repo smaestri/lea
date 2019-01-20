@@ -66,28 +66,25 @@ var helpers = {
     },
 
     saveBook: function (bookObj) {
-        // if (bookObj.id) {
-        //     return axios.put('/api/livres/', {
-        //        ...bookObj
-        //     })
-        // }
+
         return axios.post('/api/livres/', {
            ...bookObj
         })
     },
 
+    updateBook: function(bookObj) {
+        if (bookObj.id) {
+            return axios.put('/api/updateLivreCategory?livreModelId=' + bookObj.id + '&categorieId=' + bookObj.categorieId)
+        }
+    },
+
     saveAvis: function (avisObj, idBook) {
+        //edit if id
         if (avisObj.id) {
             return axios.put('/api/avis/' + avisObj.id + '/' + idBook, {
                 note: avisObj.note,
                 libelle: avisObj.libelle,
             })
-                .then(function (response) {
-                    return response.data;
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
         }
 
         return axios.post('/api/avis/' + idBook, {

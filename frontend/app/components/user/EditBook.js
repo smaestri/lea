@@ -20,7 +20,7 @@ class EditBook extends React.Component {
 			redirect: false,
 			manualFill: false,
 			errors: [],
-			disableSubmit: true
+			disableSubmit: !(this.props.match.params != null && this.props.match.params.bookId != null)
 		}
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleChange = this.handleChange.bind(this);
@@ -35,12 +35,16 @@ class EditBook extends React.Component {
 		if (this.props.match.params && this.props.match.params.bookId) {
 			helpersBook.getBookDetail(this.props.match.params.bookId).then((book) => {
 				// if user post avis on his book
-				const auteurAvis = book.avis.find((avis) => {
-					if (this.props.userId == avis.auteur) {
-						return avis;
-					}
-				})
-				this.setState({ book: book, avis: auteurAvis });
+				if(book && book.avis && book.avis.length > 0) {
+					const auteurAvis = book.avis.find((avis) => {
+						if (this.props.userId == avis.auteur) {
+							return avis;
+						}
+					})
+					this.setState({ avis: auteurAvis});
+				}
+				
+				this.setState({ book: book});
 			})
 		} else {
 			this.setState({ book: { titreBook: '', auteur: '', description: '', isbn: '' } });
@@ -50,11 +54,22 @@ class EditBook extends React.Component {
 	handleSubmit(event) {
 		event.preventDefault();
 		this.setState({ disableSubmit: true });
+		// if edit mode, simply change avis + categorie
+		if (this.props.match.params && this.props.match.params.bookId) {
+			// save update category andavis
+			helpersBook.updateBook(this.state.book).then(()=> {
+				helpersBook.saveAvis(this.state.avis, this.state.book.id).then(()=> {
+					this.setState({ redirect: true, disableSubmit: false });
+				});
+			}, ()=>(console.log('error detected during handleSubmit')))
+			return;
+		}
+
 		// first save book
 		helpersBook.saveBook(this.state.book).then((response) => {
 			// then save avis if state modified
 			if (this.state.avis) {
-				helpersBook.saveAvis(this.state.avis, response.data.livreModelId).then(() => {
+				helpersBook.saveAvis(this.state.avis, response.data.livreModel.id).then(() => {
 					this.setState({ redirect: true, disableSubmit: false  });
 				});
 			} else {
@@ -131,6 +146,8 @@ class EditBook extends React.Component {
 			return <option key={category.id} value={category.id}>{category.name}</option>
 		});
 
+		const readonly = this.props.match.params && this.props.match.params.bookId;
+
 		return (
 		
 			<div className="editbook-container">
@@ -150,45 +167,45 @@ class EditBook extends React.Component {
 						{errors && errors.length > 0 && <div className="error-container">{errors}</div>}
 						<Form horizontal>
 							<FormGroup>
-								<Col sm={2}>Isbn:</Col>
-								<Col sm={10}>
-									<FormControl type="text" name="isbn" value={this.state.book.isbn} onChange={this.handleChange} />
+								<Col sm={3}>Isbn:</Col>
+								<Col sm={9}>
+									<FormControl type="text" readOnly={readonly} name="isbn" value={this.state.book.isbn} onChange={this.handleChange} />
 								</Col>
 							</FormGroup>
 							{this.state.book && this.state.book.titreBook && <FormGroup >
-								<Col sm={2} disabled>titre:</Col>
-								<Col sm={10}>
+								<Col sm={3} disabled>titre:</Col>
+								<Col sm={9}>
 									{!this.state.manualFill && renderHTML(this.state.book.titreBook)}
 									{this.state.manualFill && <FormControl disabled type="text" name="titreBook" value={this.state.book.titreBook != ''?renderHTML(this.state.book.titreBook):''} onChange={this.handleChange} />}
 								</Col>
 							</FormGroup>}
 							
 							{this.state.book && this.state.book.auteur && <FormGroup>
-								<Col sm={2}>Auteur:</Col>
-								<Col sm={10}>
+								<Col sm={3}>Auteur:</Col>
+								<Col sm={9}>
 									{!this.state.manualFill && renderHTML(this.state.book.auteur)}
 									{this.state.manualFill && <FormControl disabled type="text" name="auteur" value={this.state.book.auteur} onChange={this.handleChange} />}
 								</Col>
 							</FormGroup>}
 							{this.state.book && this.state.book.description && <FormGroup>
-								<Col sm={2}>description:</Col>
-								<Col sm={10}>
+								<Col sm={3}>description:</Col>
+								<Col sm={9}>
 									{!this.state.manualFill && renderHTML(this.state.book.description)}
 									{this.state.manualFill && <FormControl disabled type="text" name="description" value={this.state.book.description} onChange={this.handleChange} />}
 								</Col>
 							</FormGroup>}
 						
 							{this.state.book && this.state.book.titreBook && <FormGroup>
-								<Col sm={2}>Catégorie:</Col>
-								<Col sm={10}>
+								<Col sm={3}>Catégorie:</Col>
+								<Col sm={9}>
 									 <FormControl name="categorieId" componentClass="select" value={this.state.book.categorieId} placeholder="select" onChange={this.handleChange}>
 										{catReact}
 									</FormControl>
 								</Col>
 							</FormGroup>}
 							{this.state.book && this.state.book.titreBook && <FormGroup>
-								<Col sm={2}>Noter ce livre</Col>
-								<Col sm={10}>
+								<Col sm={3}>Noter ce livre</Col>
+								<Col sm={9}>
 									<AddAvis
 										visibleByDefault={true}
 										showRating={true}
@@ -198,7 +215,10 @@ class EditBook extends React.Component {
 								</Col>
 							</FormGroup>}
 							<ButtonToolbar className="text-center">
-								<Button title="Merci de saisir un ISBN sur 10 ou 13 caractères correct SVP" disabled={this.state.disableSubmit} bsStyle="primary" type="submit" onClick={this.handleSubmit}>Valider</Button>
+								<Button title="Merci de saisir un ISBN sur 10 ou 13 caractères correct SVP"
+										disabled={this.state.disableSubmit}
+										bsStyle="primary" type="submit"
+										onClick={this.handleSubmit}>Valider</Button>
 							</ButtonToolbar>
 							
 						</Form>

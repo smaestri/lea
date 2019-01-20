@@ -22,9 +22,14 @@ class BookDetail extends React.Component {
 	}
 
 	render() {
-		const avis = this.state.book.avis.map(avis => {
-			return <Avis key={avis.id} id={avis.id} avis={avis} displayImage={false}/>		
-		});
+		let avis="";
+		if(this.state.book && this.state.book.avis) {
+			avis = this.state.book.avis.map(avis => {
+				return <Avis key={avis.id} id={avis.id} avis={avis} displayImage={false}/>		
+			});
+
+		}
+
 		return (
 			<div className="book-detail-container">
 				<div className="book-title">
@@ -37,8 +42,9 @@ class BookDetail extends React.Component {
 						</div>
 					</div>
 					{avis.length > 0 && <div className="rating-container">{avis}</div>}
+					{avis.length == 0 && <span>Pas d'avis pour ce livre actuellement.</span>}
 				</div>
-				{avis.length == 0 && <span>Pas d'avis pour ce livre actuellement.</span>}
+				
 				
 				<Button bsStyle="primary" onClick={this.props.history.goBack}>Retour</Button>
 			</div>

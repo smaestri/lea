@@ -16,6 +16,6 @@ export const loanStatus = {
 	SENT: "SENT"
 }
 
-export const renderHTML = (rawHTML) => React.createElement("div", { dangerouslySetInnerHTML: { __html: rawHTML } });
+export const renderHTML = (rawHTML) => React.createElement("div", { className: 'cutLongText', dangerouslySetInnerHTML: { __html: rawHTML } });
 
 export default formatDate

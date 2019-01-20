@@ -15,6 +15,16 @@
     font-weight: 600;
 }
 
+.cutLongText {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tooltip-inner {
+      max-width: inherit;
+  }
+
 #overlay {
     position: fixed;
     width: 100%;

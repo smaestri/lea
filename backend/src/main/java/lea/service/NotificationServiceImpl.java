@@ -70,7 +70,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void sendNewAmiToMyself(String mailDest, String emailAmi, String nameDestinataire) {
-        MailUtils.sendMail(mailDest, "Vous avez ajouté un ami",  " Vous avez ajouté l'ami suivant " + emailAmi+ ". Merci d'attendre sa réponse", nameDestinataire);
+        MailUtils.sendMail(mailDest, "Vous avez ajouté un ami",  " Vous avez ajouté l'ami suivant " + emailAmi+ ". Il a été informé par mail, merci d'attendre qu'il s'inscrive afin d'échanger des livres avec cette personne!", nameDestinataire);
     }
 
     @Override

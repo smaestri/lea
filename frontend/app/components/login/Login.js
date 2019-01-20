@@ -1,7 +1,7 @@
 import React from 'react'
-import { Col, FormGroup, FormControl, Button, Form, ButtonToolbar } from 'react-bootstrap'
+import { Col, FormGroup, FormControl, Button, Form,  ButtonToolbar } from 'react-bootstrap'
 import helpers from '../../helpers/user/api'
-import { Redirect } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import './Login.scss'
 
 class Login extends React.Component {
@@ -49,6 +49,7 @@ class Login extends React.Component {
                             <ButtonToolbar className="text-center">
                                 <Button type="submit" value="Valider" bsStyle="primary">Valider</Button>
                                 <div><a href="/users/resetPwd">J'ai oublié mon mot de passe</a></div>
+                                <Link to='/subscribe'><Button id="linksignup"  bsStyle="primary" bsSize="small">Inscrivez-vous!</Button></Link>
                             </ButtonToolbar>
                         </Form>
                     </div>

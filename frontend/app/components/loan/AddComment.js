@@ -19,7 +19,7 @@ class AddComment extends React.Component {
 		helpers.saveComment(this.state.comm, null, this.props.idLoan).then(() => {
 			this.setState({ comm: '', showInput: false });
 			this.props.reloadEmprunt();
-			this.setState({ disableAddCommentButton: true });
+			this.setState({ disableAddCommentButton: false });
 		});
 	}
 

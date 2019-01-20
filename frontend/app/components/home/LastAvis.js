@@ -23,7 +23,7 @@ class LastAvis extends React.Component {
 			return null;
 		}
 		const avis = this.state.avis.map(avis => {
-			return <Avis key={avis.id} id={avis.id} avis={avis} />
+			return <Avis key={avis.id} id={avis.id} avis={avis}  />
 		});
 
 		return (

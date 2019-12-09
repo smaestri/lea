@@ -20,7 +20,7 @@ Change MongoAuthenticationConfig accordingly
 ./mongo --port 27018 -u "admin" -p "password" --authenticationDatabase "admin"
 
 3/ Add some data
-use test
+use lea
 db.categorie.save({name: 'Roman'})
 db.userProfile.save({type: 'USER'})
 

@@ -13,20 +13,14 @@ import java.util.List;
 public class UserProfileRepositoryImpl implements UserProfileRepository {
 
     @Autowired
-    private MongoUserProfileRepository mongoUserRepository = null;
+    private MongoUserProfileRepository mongoUserProfileRepository = null;
 
     @Autowired
     private MongoTemplate mongoTemplate = null;
 
     @Override
     public UserProfile getProfileUser() {
-
-        mongoUserRepository.findAll();
-
-        Criteria criteria = Criteria.where("type").in("USER");
-        Query query = new Query(criteria);
-        List<UserProfile> userProfiles = mongoTemplate.find(query, UserProfile.class);
-        return userProfiles.get(0);
+        return mongoUserProfileRepository.findByType("USER");
     }
 
 }

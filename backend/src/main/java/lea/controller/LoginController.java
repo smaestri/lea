@@ -58,10 +58,10 @@ public class LoginController {
     @RequestMapping(value = "/api/createUser", method = RequestMethod.POST)
     public ResponseEntity addUser(@Valid @RequestBody Utilisateur user) {
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         UserProfile profileUser = userProfileRepository.getProfileUser();
         List<String> set = new ArrayList<>();
         set.add(profileUser.getId());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setListUserProfilesId(set);
         user.setEnabled(true);
         userRepository.saveUser(user);

@@ -8,4 +8,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  */
 public interface MongoUserProfileRepository extends MongoRepository<UserProfile, String> {
 
+    UserProfile findByType(String type);
+
 }

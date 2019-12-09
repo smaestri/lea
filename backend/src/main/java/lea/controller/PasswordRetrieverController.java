@@ -84,7 +84,7 @@ public class PasswordRetrieverController extends CommonController {
             return "forgot-pwd";
         }
 
-        List<Utilisateur> listUsers = this.userRepository.findByEmail(user.getEmail());
+        List<Utilisateur> listUsers = this.mongoUserRepository.findByEmail(user.getEmail());
 
         if (listUsers == null || listUsers.isEmpty()) {
             result.rejectValue("email", "error_email_not_found");

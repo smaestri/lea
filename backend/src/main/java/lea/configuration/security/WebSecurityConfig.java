@@ -3,23 +3,24 @@ package lea.configuration.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 
-@Configuration
+
+@Profile("!test")
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-@ComponentScan("lea.configuration")
+//@ComponentScan("lea.configuration")
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -33,8 +34,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private MySavedRequestAwareAuthenticationSuccessHandler mySuccessHandler;
-
-
 
     private SimpleUrlAuthenticationFailureHandler myFailureHandler = new SimpleUrlAuthenticationFailureHandler();
 
@@ -66,11 +65,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/api/createUser/**").permitAll()
             .antMatchers("/api/isAuthenticated/**").permitAll() // To know if user is connected
             .antMatchers("/testenvoi/**").permitAll() // To know if user is connected
-            .anyRequest().authenticated()
             .antMatchers("/users/updatePassword*",
                     "/users/savePassword*",
                     "/users/updatePassword*")
             .hasAuthority("CHANGE_PASSWORD_PRIVILEGE")
+            .anyRequest().authenticated()
             .and()
             .formLogin()
             .successHandler(mySuccessHandler)
@@ -91,10 +90,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return encoder;
     }
 
-//    @Bean
-//    public SavedRequestAwareAuthenticationSuccessHandler successHandler() {
-//        SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
-//        successHandler.setTargetUrlParameter("/succeslogin");
-//        return successHandler;
-//    }
 }

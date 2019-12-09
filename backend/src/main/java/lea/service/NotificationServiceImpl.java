@@ -2,11 +2,9 @@ package lea.service;
 
 import lea.commun.MailUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
-@Profile({"default", "dev"})
+@Service
 public class NotificationServiceImpl implements NotificationService {
 
     public void sendNouvelEmprunt(String mailDest, String emprunteur, String livre, String nameDestinataire) {

@@ -1,6 +1,7 @@
 package lea.validator;
 
 import lea.modele.Utilisateur;
+import lea.repository.user.MongoUserRepository;
 import lea.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,7 @@ import java.util.List;
 public class EmailValidator implements ConstraintValidator<EmailConstraint, Utilisateur> {
 
     @Autowired
-    private UserRepository userRepository;
+    private MongoUserRepository mongoUserRepository;
 
     @Override
     public boolean isValid(Utilisateur user, ConstraintValidatorContext constraintValidatorContext) {
@@ -22,7 +23,7 @@ public class EmailValidator implements ConstraintValidator<EmailConstraint, Util
             return true;
         }
 
-        List<Utilisateur> byEmail = userRepository.findByEmail(user.getEmail());
+        List<Utilisateur> byEmail = mongoUserRepository.findByEmail(user.getEmail());
         if (byEmail != null && !byEmail.isEmpty()) {
             return false;
         }

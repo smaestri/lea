@@ -33,13 +33,6 @@ public class UserRepositoryImpl implements UserRepository {
     private MongoTemplate mongoTemplate = null;
 
     @Override
-    public List<Utilisateur> findByEmail(String email) {
-        Criteria criteria = Criteria.where("email").in(email);
-        Query query = new Query(criteria);
-        return mongoTemplate.find(query, Utilisateur.class);
-    }
-
-    @Override
     public List<Utilisateur> findAll() {
         return mongoTemplate.findAll(Utilisateur.class);
     }

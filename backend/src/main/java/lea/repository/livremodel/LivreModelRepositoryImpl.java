@@ -32,7 +32,7 @@ public class LivreModelRepositoryImpl implements LivreModelRepository {
     public List<LivreModel> findByLastAvis() {
         Query q = new Query();
         q.limit(100);
-        q.with(new Sort(Sort.Direction.DESC, "avis.dateavis"));
+        q.with(Sort.by(Sort.Direction.DESC, "avis.dateavis"));
         List<LivreModel> lms = mongoTemplate.find(q, LivreModel.class);
         return lms;
     }

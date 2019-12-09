@@ -1,6 +1,7 @@
 package lea.configuration.security;
 
 import lea.modele.Utilisateur;
+import lea.repository.user.MongoUserRepository;
 import lea.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,9 +21,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private MongoUserRepository mongoUserRepository;
+
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
 
-        List<Utilisateur> users = userRepository.findByEmail(login);
+        List<Utilisateur> users = mongoUserRepository.findByEmail(login);
 
         if (users == null || users.size() == 0) {
             throw new UsernameNotFoundException(login);

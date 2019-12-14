@@ -3,7 +3,6 @@ import Rating from 'react-rating'
 import helpers from '../../helpers/user/api'
 import formatDate from '../../helpers/utils'
 import { SVGIcon } from '../common/SVGIcon'
-import './Avis.scss'
 import TitleBook from './TitleBook';
 
 class Avis extends React.Component {

@@ -7,7 +7,6 @@ import helpersLoan from '../../helpers/loan-actions/api'
 import helpersFriend from '../../helpers/friend/api'
 import TitleBook from './TitleBook'
 import { SVGIcon } from '../common/SVGIcon'
-import './Book.scss'
 
 class Book extends React.Component {
 

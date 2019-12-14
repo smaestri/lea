@@ -3,7 +3,6 @@ import { withRouter } from 'react-router'
 import ButtonsEmprunt from './ButtonsEmprunt'
 import LoanAttributes from './LoanAttributes'
 import { renderHTML} from '../../helpers/utils'
-import './Loan.scss'
 
 class Loan extends React.Component {
 

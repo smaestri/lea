@@ -5,7 +5,6 @@ import helpers from '../../helpers/friend/api'
 import AddFriend from './AddFriend'
 import MyFriend from './MyFriend'
 import PendingFriend from './PendingFriend'
-import style from './MyFriends.scss'
 
 class MyFriends extends React.Component {
 

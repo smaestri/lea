@@ -2,7 +2,6 @@ import React from 'react'
 import helpers from '../../helpers/book/api'
 import Book from './Book'
 import { Button } from 'react-bootstrap'
-import './ListBooks.scss'
 
 class ListBooks extends React.Component {
 

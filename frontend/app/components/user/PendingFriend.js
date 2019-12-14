@@ -2,7 +2,6 @@ import React from 'react'
 import { Button } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import formatDate from '../../helpers/utils'
-import style from './PendingFriend.scss'
 
 class PendingFriend extends React.Component {
 

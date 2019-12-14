@@ -2,7 +2,6 @@ import React from 'react'
 import { FormControl } from 'react-bootstrap'
 import { Button } from 'react-bootstrap'
 import formatDate from '../../helpers/utils'
-import style from './Comment.scss'
 
 class Comment extends React.Component {
 

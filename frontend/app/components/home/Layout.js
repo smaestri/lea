@@ -184,7 +184,7 @@ class Layout extends React.Component {
 		}
 
 		return (
-			<div className="main-content">
+    [			
 				<Header
 					currentUser={this.state.currentUser}
 					isConnected={this.state.isConnected}
@@ -193,7 +193,9 @@ class Layout extends React.Component {
 					nbEmprunt={this.state.nbEmprunt}
 					logout={this.logout.bind(this)}>
 				</Header>
-				{notifications}
+        ,
+        // {notifications}
+        ,
 				<Switch>
 					<Route exact path="/" component={Home}></Route>
 					<Route path="/my-books" component={this.wrappedMyBooks}></Route>
@@ -217,9 +219,9 @@ class Layout extends React.Component {
 					<Route path="/faq" component={Faq} />
 					<Route path="/infos" component={InformationsLegales} />
 					<Route path="/contact" component={Contact} />
-				</Switch>
+				</Switch>,
 				<Footer></Footer>
-			</div>
+    ]
 		);
 	}
 

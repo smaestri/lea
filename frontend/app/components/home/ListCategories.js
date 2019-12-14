@@ -1,7 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import helpers from '../../helpers/book/api'
-import'./ListCategories.scss'
 
 class ListCategories extends React.Component {
 

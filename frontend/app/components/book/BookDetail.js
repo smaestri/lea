@@ -4,7 +4,6 @@ import helpers from '../../helpers/book/api'
 import Avis from './Avis.js'
 import { Button } from 'react-bootstrap'
 import { renderHTML} from '../../helpers/utils'
-import style from './BookDetail.scss'
 
 class BookDetail extends React.Component {
 

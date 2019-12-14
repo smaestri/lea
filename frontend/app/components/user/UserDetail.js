@@ -3,7 +3,6 @@ import helpers from '../../helpers/user/api'
 import Book from '../book/Book'
 import { Button } from 'react-bootstrap'
 import { withRouter } from 'react-router'
-import style from './UserDetail.scss'
 
 class UserDetail extends React.Component {
 	constructor(props) {

@@ -61,7 +61,7 @@ class AddAvis extends React.Component {
 
 	render() {
 		return (
-			<div className="add-avis-container">
+			<div>
 				{!this.state.visibleByDefault &&
 					<Button bsStyle="primary" onClick={this.toggleInput.bind(this)}>Ajouter un avis</Button>
 				}

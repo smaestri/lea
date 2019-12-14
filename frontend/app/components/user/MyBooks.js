@@ -5,7 +5,6 @@ import { Button } from 'react-bootstrap';
 import { Modal } from 'react-bootstrap';
 import { withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
-import theme from './MyBooks.scss'
 
 class MyBooks extends React.Component {
 

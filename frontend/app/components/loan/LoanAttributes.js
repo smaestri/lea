@@ -7,7 +7,6 @@ import helpersLoan from '../../helpers/loan-actions/api'
 import helpersBook from '../../helpers/book/api'
 import AddAvis from '../book/AddAvis'
 import EditAvis from '../book/EditAvis'
-import './LoanAttributes.scss'
 
 class LoanAttributes extends React.Component {
 

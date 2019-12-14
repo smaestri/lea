@@ -1,5 +1,4 @@
 import React from 'react'
-import style from './CommentMarche.scss'
 
 export default class CommentMarche extends React.Component {
     render() {

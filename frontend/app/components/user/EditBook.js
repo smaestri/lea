@@ -6,7 +6,6 @@ import helpersBook from '../../helpers/book/api'
 import helpers from '../../helpers/api'
 import AddAvis from '../book/AddAvis'
 import { renderHTML} from '../../helpers/utils'
-import theme from './EditBook.scss'
 
 class EditBook extends React.Component {
 

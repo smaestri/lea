@@ -1,7 +1,6 @@
 import React from 'react'
 import helpers from '../../helpers/book/api'
 import Avis from '../book/Avis.js'
-import './LastAvis.scss'
 
 class LastAvis extends React.Component {
 

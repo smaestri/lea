@@ -1,7 +1,6 @@
 import React from 'react'
 import LastAvis from './LastAvis'
 import ListCategories from './ListCategories'
-import  './Home.scss'
 
 class Home extends React.Component {
 

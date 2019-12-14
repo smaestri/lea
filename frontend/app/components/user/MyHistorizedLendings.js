@@ -1,7 +1,6 @@
 import React from 'react';
 import Loan from '../loan/Loan'
 import helpers from '../../helpers/loan/api'
-import style from './MyHistorizedLendings.scss'
 
 class MyHistorizedLendings extends React.Component {
 

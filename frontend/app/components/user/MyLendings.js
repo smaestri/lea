@@ -1,7 +1,6 @@
 import React from 'react';
 import Loan from '../loan/Loan'
 import helpers from '../../helpers/loan/api'
-import style from './MyLoans.scss'
 
 class MyLendings extends React.Component {
 

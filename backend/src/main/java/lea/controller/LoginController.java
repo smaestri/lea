@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +68,11 @@ public class LoginController {
         userRepository.saveUser(user);
         userSecurityService.authenticateManually(user);
         ResponseEntity responseEntity = new ResponseEntity(user, HttpStatus.OK);
-        this.notificationService.confirmSubscription(user.getEmail(), user.getFullName());
+        try {
+            this.notificationService.confirmSubscription(user.getEmail(), user.getFullName());
+        } catch (MessagingException e) {
+            System.out.println("Erreur lors de l'envoi du mail");
+        }
         return responseEntity;
     }
 

@@ -1,9 +1,7 @@
 import React from 'react'
 import Rating from 'react-rating'
 import helpers from '../../helpers/user/api'
-import formatDate from '../../helpers/utils'
-import { SVGIcon } from '../common/SVGIcon'
-import TitleBook from './TitleBook';
+import './Avis.scss'
 
 class Avis extends React.Component {
 
@@ -25,32 +23,22 @@ class Avis extends React.Component {
 	}
 
 	render() {
-		let dateAvis = formatDate(this.state.avis.dateavis);
 		return (
-			<div className='container-avis'>
-				{this.props.displayImage && <div className="title-book" >
-					<TitleBook titre={this.state.avis.titrebook} />
-				</div>}
-				<div className="avis-livre">
-					{this.props.displayImage && <div className="image-container">
-						<div className="image-content">
-							<img className="img" src={this.state.avis.image}/>
-						</div>
-					</div> }
-					<div className='avis-infos'>
-						<div>Ajouté le <b>{dateAvis}</b> par <b>{this.state.avis.auteur}</b> :</div>
-						<div>
-							<Rating emptySymbol={<SVGIcon href='#icon-star-empty' className='icon-rating'/>}
-									fullSymbol={<SVGIcon href='#icon-star-full' className='icon-rating'/>}
-									readonly={true}
-									initialRating={this.state.avis.note}/>
-						</div>
-						<div>
-							<blockquote>{this.state.avis.libelle}</blockquote>
-						</div>
-					</div>
-				</div>
-			</div>)
+        <div className="m-2">
+          <div className="media rounded align-items-center pl-3 pr-3 pr-md-4 py-2 shadow-sm bg-white">
+          <img src="/webjars/assets/img/user.png" className="avatar avatar-sm flex-shrink-0 mr-3" />
+            <div className="container-avis">
+              <div className="text-dark mb-0">{this.state.avis.libelle}</div>
+              {<div class="text-dark mb-0">
+                {<Rating
+                    readonly={true}
+                    initialRating={this.state.avis.note}/>}
+              </div>}
+              <div className="text-dark mb-0"><b><i>Livre: {this.state.avis.titrebook}</i></b></div>
+            </div>
+          </div>
+        </div>
+      )
 
 	}
 }

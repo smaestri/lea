@@ -20,12 +20,12 @@ public class LivreModelRepositoryImpl implements LivreModelRepository {
     private MongoTemplate mongoTemplate = null;
 
     @Override
-    public void deleteAvis(String idAvis) {
+    public void deleteAvis(String livreModelId, String idAvis) {
         Query q = new Query();
-        q.addCriteria(Criteria.where("avis.id").is(new ObjectId(idAvis)));
+        q.addCriteria(Criteria.where("id").is(new ObjectId(livreModelId)).and("avis.id").is(new ObjectId(idAvis)));
         Update update = new Update();
-        update.pull("$.avis", Query.query(Criteria.where("id").is(new ObjectId(idAvis))));
-        mongoTemplate.updateFirst(q, update, Utilisateur.class);
+        update.pull("avis", Query.query(Criteria.where("id").is(new ObjectId(idAvis))));
+        mongoTemplate.updateFirst(q, update, LivreModel.class);
     }
 
     @Override
@@ -36,5 +36,6 @@ public class LivreModelRepositoryImpl implements LivreModelRepository {
         List<LivreModel> lms = mongoTemplate.find(q, LivreModel.class);
         return lms;
     }
+
 
 }

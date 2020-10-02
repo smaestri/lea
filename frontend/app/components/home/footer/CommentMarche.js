@@ -2,7 +2,8 @@ import React from 'react'
 
 export default class CommentMarche extends React.Component {
     render() {
-        return (<div>
+        return (<div className="container">
+          <section>
             <h3>Comment ça marche</h3>
 			<div className='container-comment-marche'>
                 <div className="line">
@@ -22,6 +23,8 @@ export default class CommentMarche extends React.Component {
                     <div>Le prêteur a bien reçu le livre, il peut clôre l'emprunt.</div>
                 </div>
 			</div>
+            
+            </section>
             </div>
 		);
     }

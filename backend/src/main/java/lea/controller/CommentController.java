@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.Date;
@@ -62,13 +63,19 @@ public class CommentController extends CommonController {
         Utilisateur emprunteur = mongoUserRepository.findById(emprunt.getEmprunteurId()).get();
         Optional<LivreModel> livreModel = this.mongoLivreModelRepository.findById(emprunt.getLivreModelId());
         // commentaire a moi meme dans tous les cas
-        this.notificationService.confirmCommenToMyself(principal.getEmail(), livreModel.get().getTitreBook(), principal.getFullName() );
-        // commentaire a lautre
-        if(principal.getId().equals(preteur.getId())){
-            this.notificationService.confirmCommenToOther(emprunteur.getEmail(), livreModel.get().getTitreBook(), preteur.getFullName(), emprunteur.getFullName() );
-        } else {
-            this.notificationService.confirmCommenToOther(preteur.getEmail(), livreModel.get().getTitreBook(), emprunteur.getFullName(), preteur.getFullName());
+        try {
+            this.notificationService.confirmCommenToMyself(principal.getEmail(), livreModel.get().getTitreBook(), principal.getFullName() );
+            // commentaire a lautre
+            if(principal.getId().equals(preteur.getId())){
+                this.notificationService.confirmCommenToOther(emprunteur.getEmail(), livreModel.get().getTitreBook(), preteur.getFullName(), emprunteur.getFullName() );
+            } else {
+                this.notificationService.confirmCommenToOther(preteur.getEmail(), livreModel.get().getTitreBook(), emprunteur.getFullName(), preteur.getFullName());
+            }
+
+        } catch (MessagingException e) {
+            System.out.println("Erreur lors de l'envoi du mail");
         }
+
 
         return comm;
     }

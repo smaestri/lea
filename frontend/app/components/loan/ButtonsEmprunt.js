@@ -3,7 +3,6 @@ import { Button } from 'react-bootstrap'
 import { FormControl } from 'react-bootstrap'
 import { withRouter } from 'react-router'
 import { Modal } from 'react-bootstrap'
-import { Redirect } from 'react-router-dom'
 import helpers from '../../helpers/loan-actions/api'
 import { loanStatus } from '../../helpers/utils'
 
@@ -24,14 +23,15 @@ class ButtonsEmprunt extends React.Component {
 			disableSendButton: false,
 			disableCloseButton: false,
 			showModal: false,
-			redirectToHistorizedLendingd: false
 		};
 	}
 
 	acceptLoan() {
+    this.props.displaySpinner();
 		this.setState({ disableAcceptButton: true });
 		helpers.acceptLoan(this.props.loan.id).then(() => {
-			this.props.reloadEmprunt();
+      this.props.reloadEmprunt();
+      this.props.hideSpinner();
 		});
 	}
 
@@ -39,26 +39,30 @@ class ButtonsEmprunt extends React.Component {
 		if (this.state.motifRefus == '') {
 			alert('Veuillez renseigner un motif de refus SVP.');
 			return;
-		}
+    }
+    this.props.displaySpinner();
 		this.setState({ disableAcceptButton: true });
 		helpers.refuseLoan(this.props.loan.id, this.state.motifRefus).then(() => {
-			this.props.onRefreshCount();
-			this.setState({ redirectToHistorizedLendingd: true });
+      this.props.reloadEmprunt();
+      this.props.hideSpinner();
 		});
 	}
 
 	sendLoan() {
+    this.props.displaySpinner();
 		this.setState({ disableSendButton: true });
 		helpers.sendLoan(this.props.loan.id).then(() => {
-			this.props.reloadEmprunt();
+      this.props.reloadEmprunt();
+      this.props.hideSpinner();
 		});
 	}
 
 	closeLoan() {
+    this.props.displaySpinner();
 		this.setState({ disableCloseButton: true });
 		helpers.closeLoan(this.props.loan.id).then(() => {
-			this.props.onRefreshCount();
-			this.setState({ redirectToHistorizedLendingd: true });
+      this.props.reloadEmprunt();
+      this.props.hideSpinner();
 		});
 	}
 
@@ -76,9 +80,6 @@ class ButtonsEmprunt extends React.Component {
 
 	render() {
 
-		if(this.state.redirectToHistorizedLendingd) {
-			return <Redirect to='/historized-lendings'/>;
-		}
 		let displayAcceptButton, displayCloseButton, displaySendButton = false;
 		const loan = this.props.loan;
 		const userConnected = this.props.userId;
@@ -104,16 +105,13 @@ class ButtonsEmprunt extends React.Component {
 		return (
 			<div>
 				{displayAcceptButton &&
-					<Button bsStyle="primary" onClick={this.acceptLoan}
-						disabled={this.state.disableAcceptButton}>Accepter</Button>}
+					<Button bsStyle="primary" onClick={this.acceptLoan} >Accepter</Button>}
 				{displayAcceptButton && <Button bsStyle="primary"
 					onClick={this.showModalRefus}>Refuser</Button>}
 				{displaySendButton &&
-					<Button bsStyle="primary" onClick={this.sendLoan}
-						disabled={this.state.disableSendButton}>Renvoyer</Button>}
+					<Button bsStyle="primary" onClick={this.sendLoan}>Renvoyer</Button>}
 				{displayCloseButton &&
-					<Button bsStyle="primary" onClick={this.closeLoan}
-						disabled={this.state.disableCloseButton}>Clore</Button>}
+					<Button bsStyle="primary" onClick={this.closeLoan} >Clore</Button>}
 				<Modal show={this.state.showModal} onHide={this.closeModalRefus}>
 					<Modal.Header closeButton>
 						<Modal.Title>Motif du refus</Modal.Title>
@@ -126,8 +124,7 @@ class ButtonsEmprunt extends React.Component {
 					<Modal.Footer>
 						<Button onClick={this.closeModalRefus} bsStyle="primary" >Close</Button>
 						{displayAcceptButton &&
-							<Button bsStyle="primary" onClick={this.refuseLoan}
-								disabled={this.state.disableAcceptButton}>Valider</Button>}
+							<Button bsStyle="primary" onClick={this.refuseLoan}>Valider</Button>}
 					</Modal.Footer>
 				</Modal>
 			</div>

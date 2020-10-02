@@ -13,7 +13,9 @@ class MyRequestedFriends extends React.Component {
 	}
 
 	componentDidMount() {
+    this.props.displaySpinner()
 		helpersFriend.getMyRequestedFriends().then((friends) => {
+      this.props.hideSpinner()
 			this.setState({
 				requestedFriends: friends
 			});
@@ -21,8 +23,10 @@ class MyRequestedFriends extends React.Component {
 	}
 
 	acceptRequestFriend(id) {
+    this.props.displaySpinner()
 		this.setState({disableSubmit: true})
 		helpersFriend.acceptFriend(id).then(() => {
+      this.props.hideSpinner()
 			this.props.onRefreshNotification();
 			this.componentDidMount();
 			this.setState({ redirectToMyFriends: true, disableSubmit: false});

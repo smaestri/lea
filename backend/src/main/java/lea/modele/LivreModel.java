@@ -9,12 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
 public class LivreModel extends BaseDocumentImpl  {
 
-    @NotEmpty(message = "{validation.livre.isbn_notEmpty}")
-    @Length(min = 10, message = "{validation.livre.isbn_size}")
-    @IsbnExistingConstraint(message = "{validation.livre.isbn_already_existing}")
-    private String isbn;
+//    @NotEmpty(message = "{validation.livre.isbn_notEmpty}")
+//    @Length(min = 10, message = "{validation.livre.isbn_size}")
+    //@IsbnExistingConstraint(message = "{validation.livre.isbn_already_existing}")
+    private String isbn10;
+
+//    @NotEmpty(message = "{validation.livre.isbn_notEmpty}")
+//    @Length(min = 10, message = "{validation.livre.isbn_size}")
+    //@IsbnExistingConstraint(message = "{validation.livre.isbn_already_existing}")
+    private String isbn13;
 
     private String titreBook;
 
@@ -83,12 +89,21 @@ public class LivreModel extends BaseDocumentImpl  {
         this.image = image;
     }
 
-    public String getIsbn() {
-        return isbn;
+
+    public String getIsbn10() {
+        return isbn10;
     }
 
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
+    public void setIsbn10(String isbn10) {
+        this.isbn10 = isbn10;
+    }
+
+    public String getIsbn13() {
+        return isbn13;
+    }
+
+    public void setIsbn13(String isbn13) {
+        this.isbn13 = isbn13;
     }
 
     public List<Avis> getAvis() {

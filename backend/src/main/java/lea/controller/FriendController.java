@@ -8,13 +8,16 @@ import lea.modele.PendingFriend;
 import lea.modele.Utilisateur;
 import lea.repository.categorie.CategorieRepository;
 import lea.repository.emprunt.EmpruntRepository;
+import lea.repository.emprunt.MongoEmpruntRepository;
 import lea.repository.user.MongoUserRepository;
 import lea.repository.user.UserRepository;
 import lea.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import java.util.Date;
 import java.util.List;
 
@@ -32,7 +35,7 @@ public class FriendController extends CommonController {
     private MongoUserRepository mongoUserRepository;
 
     @Autowired
-    private EmpruntRepository empruntRepository;
+    private MongoEmpruntRepository mongoEmpruntRepository;
 
     @Autowired
     private CategorieRepository categorieRepository;
@@ -109,9 +112,12 @@ public class FriendController extends CommonController {
         addRealFriendAndDeletePending(userConnected, userFriend);
         addRealFriendAndDeletePending(userFriend, userConnected);
 
-        notificationService.sendAmiAccepted(userFriend.getFullName() , userConnected.getFullName() + "(" +userConnected.getEmail() +")", userFriend.getFullName());
-        notificationService.sendAmiAcceptedToMyself(userConnected.getEmail(), userFriend.getFullName() + "(" +userFriend.getEmail() +")", userConnected.getFullName());
-
+        try {
+            notificationService.sendAmiAccepted(userFriend.getFullName(), userConnected.getFullName() + "(" + userConnected.getEmail() + ")", userFriend.getFullName());
+            notificationService.sendAmiAcceptedToMyself(userConnected.getEmail(), userFriend.getFullName() + "(" + userFriend.getEmail() + ")", userConnected.getFullName());
+        } catch (Exception e ) {
+            System.out.println("Erreur lors de l'envoi du mail");
+        }
         return "OK";
     }
 
@@ -120,10 +126,10 @@ public class FriendController extends CommonController {
         Utilisateur userConnected = getPrincipal();
 
         //Check if no current loan with this user before deleting
-        List<Emprunt> emprunts = empruntRepository.findEmprunts(friendId, true);
+        List<Emprunt> emprunts = mongoEmpruntRepository.findByEmprunteurId(friendId, Sort.by(Sort.Direction.DESC, "dateAccept", "dateCloture", "dateRefus"));
         boolean found = isUserLender(emprunts, userConnected.getId());
         if (!found) {
-            List<Emprunt> prets = empruntRepository.findPrets(friendId, true);
+            List<Emprunt> prets = mongoEmpruntRepository.findByPreteurId(friendId, Sort.by(Sort.Direction.DESC, "dateAccept", "dateCloture", "dateRefus"));
             found = isUserLoaner(prets, userConnected.getId());
             if (!found) {
                 userRepository.deleteFriend(userConnected.getId(), friendId);
@@ -164,8 +170,13 @@ public class FriendController extends CommonController {
         pf.setEmail(emailFriend);
         if (StringUtils.hasText(emailFriend) && Utils.checkEmail(emailFriend) && !emailFriend.equals(source.getEmail())) {
             userRepository.addPendingFriend(source, pf);
-            notificationService.sendNewAmi(emailFriend, source.getFullName(), "");
-            notificationService.sendNewAmiToMyself(source.getEmail(), emailFriend, source.getFullName());
+            try {
+                notificationService.sendNewAmi(emailFriend, source.getFullName(), "");
+                notificationService.sendNewAmiToMyself(source.getEmail(), emailFriend, source.getFullName());
+            } catch (MessagingException e) {
+                System.out.println("Erreur lors de l'envoi du mail");
+            }
+
 
         } else {
             return "KO email incorrect";

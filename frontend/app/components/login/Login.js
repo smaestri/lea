@@ -1,6 +1,7 @@
 import React from 'react'
 import helpers from '../../helpers/user/api'
 import { Link, Redirect } from 'react-router-dom'
+import './Login.scss'
 
 class Login extends React.Component {
   constructor(props) {
@@ -27,16 +28,14 @@ class Login extends React.Component {
     if (this.state.error) {
       error = <div className="error">Login ou mot de passe incorrect</div>
     }
-
     return (
-      <div data-overlay className="min-vh-100 bg-light d-flex flex-column justify-content-md-center">
-        <section className="py-3">
+        <section>
           <div className="container">
-            {error}
             <div className="row justify-content-center">
               <div className="col-xl-4 col-lg-5 col-md-6">
+              {error && <div className="error-container">{error}</div>}
                 <div className="card card-body shadow">
-                  <h1 className="h5 text-center">Sign In</h1>
+                  <h1 className="h5 text-center">Connectez-vous</h1>
                   <form onSubmit={this.submit}>
                     <div className="form-group">
                       <input type="email" className="form-control" name="login" placeholder="Email Address" onChange={this.handleChange} />
@@ -44,26 +43,25 @@ class Login extends React.Component {
                     <div className="form-group">
                       <input type="password" className="form-control" name="password" placeholder="Password" onChange={this.handleChange} />
                       <div className="text-right text-small mt-2">
-                        <a href="/users/resetPwd">Forgot Password?</a>
+                        <a href="/users/resetPwd">Mot de passe oublié?</a>
                       </div>
                     </div>
                     <div className="form-group">
                       <div className="custom-control custom-checkbox text-small">
                         <input type="checkbox" className="custom-control-input" id="sign-in-remember" />
-                        <label className="custom-control-label" htmlFor="sign-in-remember">Remember me next time</label>
+                        {/* <label className="custom-control-label" htmlFor="sign-in-remember">Remember me next time</label> */}
                       </div>
                     </div>
-                    <button className="btn btn-primary btn-block" type="submit">Sign In</button>
+                    <button className="btn btn-primary btn-block" type="submit">Se connecter</button>
                   </form>
                 </div>
                 <div className="text-center text-small mt-3">
-                  Don't have an account? <Link to='/subscribe'>Sign up here</Link>
+                  Pas de compte <Link to='/subscribe'>Inscrivez-vous!</Link>
                 </div>
               </div>
             </div>
           </div>
         </section>
-      </div>
 
     );
   }
@@ -77,11 +75,14 @@ class Login extends React.Component {
   submit(e) {
     //needed to prevent form default submit behavior
     e.preventDefault();
+    this.props.displaySpinner()
     helpers.login(this.state.credentials.login, this.state.credentials.password).then(response => {
+      this.props.hideSpinner();
       this.setState({ redirectToHome: true, error: false });
       this.props.refreshUserConnected();
     },
       () => {
+        this.props.hideSpinner();
         this.setState({ error: true });
       })
   }

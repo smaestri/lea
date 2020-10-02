@@ -8,7 +8,8 @@ class MyFriend extends React.Component {
 			<div className="container-myfriend">
 				<div className="imageUser">
 					<Link to={'/user-detail/' + this.props.friend.id}>
-						<img src={this.props.friend.avatar}/>
+					{/* {this.props.friend.avatar  &&<img src={this.props.friend.avatar}/>} */}
+          <img src='/webjars/assets/img/user.png'/>
 					</Link>
 				</div>
 				<div className="linkUser">

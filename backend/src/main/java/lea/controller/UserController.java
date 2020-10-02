@@ -51,7 +51,6 @@ public class UserController extends CommonController {
                 livre.setUserId(friend.getId());
                 livre.setPreteur(friend.getFullName());
                 livre.setMailPreteur(friend.getEmail());
-                LivreController.setBookImage(livreModel);
             }
         }
 
@@ -67,7 +66,6 @@ public class UserController extends CommonController {
                     LivreModel livreModel = this.mongoLivreModelRepository.findById(livre.getLivreModelId()).get();
                     livre.setLivreModel(livreModel);
                     livre.setUserId(subFriend.getId());
-                    LivreController.setBookImage(livreModel);
                     livre.setPreteur(subFriend.getFullName());
                     livre.setIntermediaireid(friend.getId());
                     livre.setMailPreteur(subFriend.getEmail());

@@ -1,8 +1,13 @@
 package lea;
 
-import org.junit.Test;
+import io.cucumber.spring.CucumberTestContext;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.context.annotation.Scope;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+
+@Cucumber
 public class PasswordChecker {
 
     @Test

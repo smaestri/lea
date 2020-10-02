@@ -23,28 +23,9 @@ var helpers = {
             });
     },
 
-    getHistorizedLoans: () => {
-        return axios.get('/api/historized-loans')
-            .then((response) => {
-                return response.data;
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    },
 
     getLendings: function () {
         return axios.get('/api/prets')
-            .then(function (response) {
-                return response.data;
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    },
-
-    getHistorizedLendings: function () {
-        return axios.get('/api/historized-lendings')
             .then(function (response) {
                 return response.data;
             })

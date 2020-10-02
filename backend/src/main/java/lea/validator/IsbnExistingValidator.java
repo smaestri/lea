@@ -29,7 +29,10 @@ public class IsbnExistingValidator implements ConstraintValidator<IsbnExistingCo
     @Override
     public boolean isValid(String isbn, ConstraintValidatorContext constraintValidatorContext) {
         Utilisateur principal = CommonController.getPrincipal();
-        LivreModel livreexist = mongoLivreModelRepository.findByIsbn(isbn);
+        LivreModel livreexist = mongoLivreModelRepository.findByIsbn10(isbn);
+        if(livreexist == null) {
+            livreexist = mongoLivreModelRepository.findByIsbn13(isbn);
+        }
         if(livreexist != null) {
             Utilisateur user = this.mongoUserRepository.findById(principal.getId()).get();
             List<Livre> livres = user.getLivres();

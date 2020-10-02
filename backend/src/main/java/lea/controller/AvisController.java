@@ -77,10 +77,10 @@ public class AvisController extends CommonController {
         return "OK";
     }
 
-    @RequestMapping(value = "/api/avis/{avisId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/api/avis/{livreModelId}/{avisId}", method = RequestMethod.DELETE)
     @ResponseBody
-    public Livre deleteAvis(@PathVariable("avisId") String avisId) throws Exception {
-        livreModelRepository.deleteAvis(avisId);
+    public Livre deleteAvis(@PathVariable("livreModelId") String livreModelId, @PathVariable("avisId") String avisId) throws Exception {
+        livreModelRepository.deleteAvis(livreModelId, avisId);
         return null;
     }
 

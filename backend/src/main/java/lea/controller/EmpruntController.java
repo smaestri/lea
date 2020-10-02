@@ -6,13 +6,16 @@ import lea.dto.EmpruntBean;
 import lea.dto.RefusBean;
 import lea.modele.*;
 import lea.repository.emprunt.EmpruntRepository;
+import lea.repository.emprunt.MongoEmpruntRepository;
 import lea.repository.livremodel.MongoLivreModelRepository;
 import lea.repository.user.MongoUserRepository;
 import lea.repository.user.UserRepository;
 import lea.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.Date;
@@ -35,12 +38,15 @@ public class EmpruntController extends CommonController {
     private MongoLivreModelRepository mongoLivreModelRepository;
 
     @Autowired
+    private MongoEmpruntRepository mongoEmpruntRepository;
+
+    @Autowired
     private NotificationService notificationService;
 
     @RequestMapping(value = "/api/emprunts", method = RequestMethod.GET)
     public List<Emprunt> livresHandler() throws ServletException, IOException {
         Utilisateur principal = getPrincipal();
-        List<Emprunt> emprunts = empruntRepository.findEmprunts(principal.getId(), true);
+        List<Emprunt> emprunts = mongoEmpruntRepository.findByEmprunteurId(principal.getId(), Sort.by(Sort.Direction.DESC, "dateDemande", "dateCloture", "dateRefus") );
         setListEmpruntobjects(emprunts);
         return emprunts;
     }
@@ -48,7 +54,7 @@ public class EmpruntController extends CommonController {
     @RequestMapping(value = "/api/prets", method = RequestMethod.GET)
     public List<Emprunt> livresHandlerPrets() throws ServletException, IOException {
         Utilisateur principal = getPrincipal();
-        List<Emprunt> prets = empruntRepository.findPrets(principal.getId(), true);
+        List<Emprunt> prets = mongoEmpruntRepository.findByPreteurId(principal.getId(), Sort.by(Sort.Direction.DESC, "dateAccept", "dateCloture", "dateRefus"));
         setListEmpruntobjects(prets);
         return prets;
     }
@@ -64,7 +70,7 @@ public class EmpruntController extends CommonController {
     public String findNouveauPret() throws ServletException, IOException {
         Utilisateur principal = getPrincipal();
         Utilisateur userConnected = mongoUserRepository.findById(principal.getId()).get();
-        List<Emprunt> prets = empruntRepository.findPrets(principal.getId(), true);
+        List<Emprunt> prets = mongoEmpruntRepository.findByPreteurId(principal.getId(),Sort.by(Sort.Direction.DESC, "dateAccept", "dateCloture", "dateRefus"));
         setListEmpruntobjects(prets);
         return isNewPret(prets, userConnected) ? "1" : "0";
     }
@@ -87,8 +93,14 @@ public class EmpruntController extends CommonController {
         this.userRepository.updateBookStatus(proprietaire, emprunt.getLivreId(), StatutEmprunt.REQUESTED);
 
         String titreBook = livreModel.get().getTitreBook();
-        notificationService.sendNouvelEmprunt(proprietaire.getEmail(), principal.getFullName(), titreBook, proprietaire.getFullName());
-        notificationService.sendNouvelEmpruntToMyself(principal.getEmail(), proprietaire.getFullName(), titreBook, principal.getFullName());
+
+        try {
+            notificationService.sendNouvelEmprunt(proprietaire.getEmail(), principal.getFullName(), titreBook, proprietaire.getFullName());
+            notificationService.sendNouvelEmpruntToMyself(principal.getEmail(), proprietaire.getFullName(), titreBook, principal.getFullName());
+        } catch (MessagingException e) {
+            System.out.println("Erreur lors de l'envoi du mail");
+        }
+
         return "redirect:/emprunts";
     }
 
@@ -184,36 +196,13 @@ public class EmpruntController extends CommonController {
         return "OK";
     }
 
-    @RequestMapping(value = "/api/historized-loans", method = RequestMethod.GET)
-    public List<Emprunt> empruntsHistories() throws ServletException, IOException {
-        Utilisateur userConnected = getPrincipal();
-        List<Emprunt> emprunts = empruntRepository.findEmprunts(userConnected.getId(), false);
-
-        for (Emprunt emp : emprunts) {
-            this.setEmpruntobjects(emp);
-        }
-        return emprunts;
-    }
-
-    @RequestMapping(value = "/api/historized-lendings", method = RequestMethod.GET)
-    public List<Emprunt> pretHistories() throws ServletException, IOException {
-        Utilisateur userConnected = getPrincipal();
-        List<Emprunt> prets = empruntRepository.findPrets(userConnected.getId(), false);
-
-        for (Emprunt pret : prets) {
-            this.setEmpruntobjects(pret);
-        }
-
-        return prets;
-    }
-
     //TODO PERF
     @RequestMapping(value = "/api/countEmpruntAndPret", method = RequestMethod.GET)
     public CountBean countEmpruntAndPret() {
         Utilisateur principal = getPrincipal();
         CountBean cbean = new CountBean();
-        List<Emprunt> emprunts = empruntRepository.findEmprunts(principal.getId(), true);
-        List<Emprunt> prets = empruntRepository.findPrets(principal.getId(), true);
+        List<Emprunt> emprunts = mongoEmpruntRepository.findByEmprunteurId(principal.getId(),Sort.by(Sort.Direction.DESC, "dateAccept", "dateCloture", "dateRefus"));
+        List<Emprunt> prets = mongoEmpruntRepository.findByPreteurId(principal.getId(),Sort.by(Sort.Direction.DESC, "dateAccept", "dateCloture", "dateRefus"));
         cbean.setNbEmprunt(emprunts.size());
         cbean.setNbPret(prets.size());
         return cbean;

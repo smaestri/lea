@@ -136,10 +136,10 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void saveLivre(Utilisateur user, Livre newLivre) {
         // create
-        if (!bookExist(user, newLivre)) {
+//        if (!bookExist(user, newLivre)) {
             user.getLivres().add(newLivre);
             mongoTemplate.save(user);
-        }
+//        }
         //update
 //        else {
 //            Query q = new Query();
@@ -156,18 +156,18 @@ public class UserRepositoryImpl implements UserRepository {
 //        }
     }
 
-    private boolean bookExist(Utilisateur user, Livre livre) {
-        if (livre.getId() == null) {
-            return false;
-        }
-
-        for (Livre l : user.getLivres()) {
-            if (l.getId().equals(livre.getId())) {
-                return true;
-            }
-        }
-        return false;
-    }
+//    private boolean bookExist(Utilisateur user, Livre livre) {
+//        if (livre.getId() == null) {
+//            return false;
+//        }
+//
+//        for (Livre l : user.getLivres()) {
+//            if (l.getId().equals(livre.getId())) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
 
 

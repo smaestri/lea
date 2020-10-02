@@ -10,8 +10,12 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(AmazonController.class)
@@ -36,10 +40,15 @@ public class Amazo_Controller_Only_Test {
 
         //String frenchIsbn = "9782253066200"; english =9780132350884
 
-        String isbn = "9782253066200";
+        String isbn = "2290065242";
 
         // when
-         mockMvc.perform(get("/api/getBookInfoFromAmazon/" + isbn));
+        MvcResult mvcResult = mockMvc.perform(get("/api/getBookInfoFromAmazon/" + isbn)).andReturn();
+
+        String contentAsString = mvcResult.getResponse().getContentAsString();
+
+        System.out.println(contentAsString);
+
 
     }
 

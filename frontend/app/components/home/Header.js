@@ -3,10 +3,10 @@ import { withRouter } from 'react-router'
 import { Link } from 'react-router-dom'
 import { Redirect } from 'react-router-dom'
 import 'core-js/features/array/from';
-import { SVGInjector } from '@tanem/svg-injector';
+import helpersBook from '../../helpers/book/api'
+import {loadSvg} from '../../helpers/utils'
 import AOS from 'aos'
-import $ from 'jquery'
-import { mrDropdownGrid, mrCountdown, mrCountup, mrSticky, mrUtil } from '../../../js/mrare/index'
+import { mrDropdownGrid, mrCountdown, mrCountup, mrSticky, mrUtil } from '../../../assets/js/index'
 
 
 const { Component } = React;
@@ -15,15 +15,22 @@ class Header extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { searchTerm: '' };
+    this.state = { searchTerm: '', 	categories: null, };
     this.logout = this.logout.bind(this);
     this.handleSearchChange = this.handleSearchChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.redirectToListBook = this.redirectToListBook.bind(this);
+  }
 
+  componentDidMount() {
+    this.props.displaySpinner()
+    helpersBook.getCategories().then((categories) => {
+      this.props.hideSpinner();
+			this.setState({ categories, categorySelected:'' });
+		});
   }
 
   componentDidUpdate() {
-    console.log('componentDidUpdate')
     if (mrDropdownGrid) {
       mrDropdownGrid.init();
     }
@@ -36,22 +43,7 @@ class Header extends Component {
       mrSticky.init();
     }
 
-
-    // we copy manually content from svg-injector.js see if better
-    //  import 'core-js/features/array/from';
-    // import { SVGInjector } from '@tanem/svg-injector';
-
-    SVGInjector(document.querySelectorAll('[data-inject-svg]'), {
-      afterEach(err, svg) {
-        if (typeof jarallax === 'function') {
-          svg.dispatchEvent(new CustomEvent('injected.mr.SVGInjector', { bubbles: true }));
-        }
-      },
-    });
-
-
-
-
+    loadSvg();
   }
 
   logout() {
@@ -63,6 +55,7 @@ class Header extends Component {
   }
 
   handleSubmit() {
+    event.preventDefault();
     let url = '/list-book-by-term/' + this.state.searchTerm;
     if (!this.state.searchTerm) {
       url = '/list-book/';
@@ -70,38 +63,59 @@ class Header extends Component {
     this.props.history.push(url)
   }
 
-  render() {
+  redirectToListBook(categorySelected) {
+    this.setState({categorySelected})
+    this.props.history.push('/list-book-by-category/' + categorySelected)
+  }
 
+  render() {
     // redirect to login if logout triggered
     if (this.props.redirectToLogin && !(this.props.location.pathname === '/login')) {
       return <Redirect to='/login' />;
     }
+    const catReact = this.state.categories && this.state.categories.map(category => {
+      let active = '';
+      if(this.state.categorySelected == category.id){
+        active = 'active';
+      }
 
+			return <Link className={`dropdown-item ${active}`} onClick={() => this.redirectToListBook(category.id)}/* to={{pathname: '/list-book-by-category/' + category.id, state: {categorie: cat.name}}}*/>{category.name}</Link>
+      // <a className="dropdown-item" href="style-guide.html" target="_blank">Style Guide</a><a class="dropdown-item" href="plugins.html" target="_blank">Plugins</a><a class="dropdown-item" href="navigation-bars.html" target="_blank">Navigation Bars</a>
+		});
     const menuGeneral = (
       <>
         <div className="navbar-container">
           <nav className="navbar navbar-expand-lg navbar-light" data-sticky="top">
             <div className="container">
-              <a className="navbar-brand navbar-brand-dynamic-color fade-page" href="index.html">
-                <img alt="Jumpstart" data-inject-svg src="dist/assets/img/logos/jumpstart.svg" />
-              </a>
+              <Link className="navbar-brand navbar-brand-dynamic-color fade-page" to="/">
+                <img alt="logo" src="/webjars/assets/img/logo.png" />
+              </Link>
               <div className="d-flex align-items-center order-lg-3">
                 <button aria-expanded="false" aria-label="Toggle navigation" className="navbar-toggler" data-target=".navbar-collapse" data-toggle="collapse" type="button">
-                  <img alt="Navbar Toggler Open Icon" className="navbar-toggler-open icon icon-sm" data-inject-svg src="dist/assets/img/icons/interface/icon-menu.svg" />
-                  <img alt="Navbar Toggler Close Icon" className="navbar-toggler-close icon icon-sm" data-inject-svg src="dist/assets/img/icons/interface/icon-x.svg" />
+                  <img alt="Navbar Toggler Open Icon" className="navbar-toggler-open icon icon-sm" data-inject-svg src="/webjars/assets/img/icons/interface/icon-menu.svg" />
+                  <img alt="Navbar Toggler Close Icon" className="navbar-toggler-close icon icon-sm" data-inject-svg src="/webjars/assets/img/icons/interface/icon-x.svg" />
                 </button>
               </div>
               <div className="collapse navbar-collapse order-3 order-lg-2 ml-lg-3 justify-content-between">
-                <form className="mt-3 mt-lg-0">
+                <form className="mt-3 mt-lg-0" onSubmit={this.handleSubmit}>
                   <div className="input-group">
-                    <div className="input-group-prepend">
+                    <div className="input-group-prepend"  onClick={this.handleSubmit} >
                       <span className="input-group-text bg-white">
-                        <img alt="Search" className="icon icon-xs bg-dark" data-inject-svg src="dist/assets/img/icons/interface/icon-search.svg" />
+                        <img alt="Search"className="icon icon-xs bg-dark" data-inject-svg src="/webjars/assets/img/icons/interface/icon-search.svg" />
                       </span>
                     </div>
-                    <input className="form-control" placeholder="Type your search" type="search" />
+                    <input className="form-control" placeholder="Recherchez livre, isbn, etc." type="search" onChange={this.handleSearchChange} />
                   </div>
                 </form>
+                <div className="dropdown">
+                  <button aria-expanded="false" aria-haspopup="true" className="btn btn-sm btn-primary dropdown-toggle arrow-bottom" data-toggle="dropdown" type="button">
+                    Catégorie
+                  </button>
+                  <div className="dropdown-menu">
+                    <Link to='/list-book/' key="allcat" className="dropdown-item">Toutes</Link>
+                      {catReact}
+                  </div>
+                </div>
                 {this.props.isConnected && <ul className="navbar-nav my-3 my-lg-0">
                   <li className="nav-item">
                     {this.renderLink("Mes emprunts ", "/my-loans")}
@@ -119,189 +133,41 @@ class Header extends Component {
                     {this.renderLink("S'inscrire", "/subscribe")}
                   </li>
                 </ul>}
-                {this.props.isConnected &&
-                  <div className="collapse navbar-collapse order-3 order-lg-2 justify-content-lg-end" id="navigation-menu">
+              </div>
+              { this.props.isConnected && <div className="collapse navbar-collapse order-3 order-lg-2 justify-content-lg-end" id="navigation-menu">
                     <ul className="navbar-nav my-3 my-lg-0">
                       <li className="nav-item">
                         <div className="dropdown">
-                          <a aria-expanded="false" aria-haspopup="true" className="dropdown-toggle nav-link nav-item arrow-bottom" data-toggle="dropdown-grid" href="#" role="button">Mon compte</a>
+                          <a aria-expanded="false" aria-haspopup="true" className="dropdown-toggle nav-link nav-item arrow-bottom" data-toggle="dropdown-grid" href="#" role="button">Bienvenue, {this.props.currentUser}</a>
                           <div className="row dropdown-menu">
                             <div className="col-auto" data-dropdown-content>
                               <div className="dropdown-grid-menu">
                                 {this.renderLink("Ma bibiliothèque", "/my-books")}
                                 {this.renderLink("Mes amis", "/my-friends/")}
-                                {this.renderLink("Mes emprunts historiés", "/historized-loans")}
-                                {this.renderLink("Mes prêts historiés", "/historized-lendings")}
                                 {this.renderLink("Mon compte", "/account")}
-                                <span onClick={this.logout}>Me déconnecter</span>
+                                <a className="nav-link" href="#" onClick={this.logout}><i>Me déconnecter</i></a>
                               </div>
                             </div>
                           </div>
                         </div>
                       </li>
                     </ul>
-                  </div>
-                }
-              </div>
+                  </div> }
+                  {this.props.notifications}
             </div>
           </nav>
         </div>
         <div data-overlay className="bg-primary-3 jarallax text-white" data-jarallax data-speed="0.2">
         </div>
+        
       </>
     )
     return (
       menuGeneral
-
-      // <div className="navbar-container">
-      //   <nav className="navbar navbar-expand-lg navbar-dark" data-overlay data-sticky="top">
-      //     <div className="container">
-      //       <a className="navbar-brand navbar-brand-dynamic-color fade-page" href="index.html">
-      //         <img alt="Jumpstart" data-inject-svg src="dist/assets/img/logos/jumpstart.svg" />
-      //       </a>
-      //       <div className="d-flex align-items-center order-lg-3">
-      //         <a href="#" className="btn btn-primary ml-lg-4 mr-3 mr-md-4 mr-lg-0 d-none d-sm-block order-lg-3">Purchase Now</a>
-      //         <button aria-expanded="false" aria-label="Toggle navigation" className="navbar-toggler" data-target=".navbar-collapse" data-toggle="collapse" type="button">
-      //           <img alt="Navbar Toggler Open Icon" className="navbar-toggler-open icon icon-sm" data-inject-svg src="dist/assets/img/icons/interface/icon-menu.svg" />
-      //           <img alt="Navbar Toggler Close Icon" className="navbar-toggler-close icon icon-sm" data-inject-svg src="dist/assets/img/icons/interface/icon-x.svg" />
-      //         </button>
-      //       </div>
-      //       <div className="collapse navbar-collapse order-3 order-lg-2 justify-content-lg-end" id="navigation-menu">
-      //         <ul className="navbar-nav my-3 my-lg-0">
-      //           <li className="nav-item">
-      //             <div className="dropdown">
-      //               <a aria-expanded="false" aria-haspopup="true" className="dropdown-toggle nav-link nav-item arrow-bottom" data-toggle="dropdown-grid" href="#" role="button">Demos</a>
-      //               <div className="row dropdown-menu">
-      //                 <div className="col-auto" data-dropdown-content>
-      //                   <div className="dropdown-grid-menu"><a href="index.html" className="dropdown-item fade-page">Overview</a><a href="landing-1.html" className="dropdown-item fade-page">Landing frfr1</a><a href="landing-2.html" className="dropdown-item fade-page">Landing 2</a><a href="landing-3.html" className="dropdown-item fade-page">Landing 3</a><a href="landing-4.html" className="dropdown-item fade-page">Landing 4</a><a href="landing-5.html" className="dropdown-item fade-page">Landing 5</a><a href="landing-6.html" className="dropdown-item fade-page">Landing 6</a>
-      //                   </div>
-      //                 </div>
-      //               </div>
-      //             </div>
-      //           </li>
-      //           <li className="nav-item">
-      //             <div className="dropdown">
-      //               <a aria-expanded="false" aria-haspopup="true" className="dropdown-toggle nav-link nav-item arrow-bottom" data-toggle="dropdown-grid" href="#" role="button">Pages</a>
-      //               <div className="row dropdown-menu">
-      //                 <div className="col-auto" data-dropdown-content>
-      //                   <div className="dropdown-grid-menu">
-      //                     <div className="dropdown">
-      //                       <a aria-expanded="false" aria-haspopup="true" className="dropdown-item" data-toggle="dropdown-grid" href="#" role="button">Company</a>
-      //                       <div className="row dropdown-menu">
-      //                         <div className="col-auto" data-dropdown-content>
-      //                           <div className="dropdown-grid-menu"><a href="company-about-1.html" className="dropdown-item fade-page">About 1</a><a href="company-about-2.html" className="dropdown-item fade-page">About 2</a>
-      //                           </div>
-      //                         </div>
-      //                       </div>
-      //                     </div>
-      //                     <div className="dropdown">
-      //                       <a aria-expanded="false" aria-haspopup="true" className="dropdown-item" data-toggle="dropdown-grid" href="#" role="button">Blog</a>
-      //                       <div className="row dropdown-menu">
-      //                         <div className="col-auto" data-dropdown-content>
-      //                           <div className="dropdown-grid-menu"><a href="blog-listing-1.html" className="dropdown-item fade-page">Blog Listing 1</a><a href="blog-listing-2.html" className="dropdown-item fade-page">Blog Listing 2</a><a href="blog-listing-3.html" className="dropdown-item fade-page">Blog Listing 3</a>
-      //                             <a href="blog-article.html" className="dropdown-item fade-page">Blog Article</a>
-      //                           </div>
-      //                         </div>
-      //                       </div>
-      //                     </div>
-      //                     <div className="dropdown">
-      //                       <a aria-expanded="false" aria-haspopup="true" className="dropdown-item" data-toggle="dropdown-grid" href="#" role="button">Help Center</a>
-      //                       <div className="row dropdown-menu">
-      //                         <div className="col-auto" data-dropdown-content>
-      //                           <div className="dropdown-grid-menu"><a href="help-center-home.html" className="dropdown-item fade-page">Help Center Home</a><a href="help-center-category.html" className="dropdown-item fade-page">Help Center Category</a><a href="help-center-article.html" className="dropdown-item fade-page">Help Center Article</a>
-      //                           </div>
-      //                         </div>
-      //                       </div>
-      //                     </div>
-      //                     <div className="dropdown">
-      //                       <a aria-expanded="false" aria-haspopup="true" className="dropdown-item" data-toggle="dropdown-grid" href="#" role="button">Careers</a>
-      //                       <div className="row dropdown-menu">
-      //                         <div className="col-auto" data-dropdown-content>
-      //                           <div className="dropdown-grid-menu"><a href="careers-1.html" className="dropdown-item fade-page">Careers 1</a><a href="careers-2.html" className="dropdown-item fade-page">Careers 2</a><a href="career-single.html" className="dropdown-item fade-page">Career Single</a>
-      //                           </div>
-      //                         </div>
-      //                       </div>
-      //                     </div>
-      //                     <div className="dropdown">
-      //                       <a aria-expanded="false" aria-haspopup="true" className="dropdown-item" data-toggle="dropdown-grid" href="#" role="button">Case Studies</a>
-      //                       <div className="row dropdown-menu">
-      //                         <div className="col-auto" data-dropdown-content>
-      //                           <div className="dropdown-grid-menu"><a href="case-studies.html" className="dropdown-item fade-page">Case Studies</a><a href="case-study-single.html" className="dropdown-item fade-page">Case Study Single</a>
-      //                           </div>
-      //                         </div>
-      //                       </div>
-      //                     </div>
-      //                     <div className="dropdown">
-      //                       <a aria-expanded="false" aria-haspopup="true" className="dropdown-item" data-toggle="dropdown-grid" href="#" role="button">Pricing</a>
-      //                       <div className="row dropdown-menu">
-      //                         <div className="col-auto" data-dropdown-content>
-      //                           <div className="dropdown-grid-menu"><a href="pricing-plans.html" className="dropdown-item fade-page">Pricing Plans</a><a href="pricing-table.html" className="dropdown-item fade-page">Pricing Table</a>
-      //                           </div>
-      //                         </div>
-      //                       </div>
-      //                     </div>
-      //                     <div className="dropdown">
-      //                       <a aria-expanded="false" aria-haspopup="true" className="dropdown-item" data-toggle="dropdown-grid" href="#" role="button">Contact</a>
-      //                       <div className="row dropdown-menu">
-      //                         <div className="col-auto" data-dropdown-content>
-      //                           <div className="dropdown-grid-menu"><a href="contact.html" className="dropdown-item fade-page">Contact</a><a href="contact-map.html" className="dropdown-item fade-page">Contact Map</a><a href="contact-planner.html" className="dropdown-item fade-page">Contact Planner</a>
-      //                           </div>
-      //                         </div>
-      //                       </div>
-      //                     </div>
-      //                     <div className="dropdown">
-      //                       <a aria-expanded="false" aria-haspopup="true" className="dropdown-item" data-toggle="dropdown-grid" href="#" role="button">Account</a>
-      //                       <div className="row dropdown-menu">
-      //                         <div className="col-auto" data-dropdown-content>
-      //                           <div className="dropdown-grid-menu"><a href="account-settings.html" className="dropdown-item fade-page">Account Settings</a><a href="account-invoice.html" className="dropdown-item fade-page">Invoice</a><a href="account-sign-up-cover.html" className="dropdown-item fade-page">Sign Up - Cover</a>
-      //                             <a href="account-sign-in-cover.html" className="dropdown-item fade-page">Sign In - Cover</a><a href="account-sign-up-simple.html" className="dropdown-item fade-page">Sign Up - Simple</a><a href="account-sign-in-simple.html" className="dropdown-item fade-page">Sign In - Simple</a><a href="account-forgot-password.html" className="dropdown-item fade-page">Forgot Password</a>
-      //                           </div>
-      //                         </div>
-      //                       </div>
-      //                     </div>
-      //                     <div className="dropdown">
-      //                       <a aria-expanded="false" aria-haspopup="true" className="dropdown-item" data-toggle="dropdown-grid" href="#" role="button">Utility</a>
-      //                       <div className="row dropdown-menu">
-      //                         <div className="col-auto" data-dropdown-content>
-      //                           <div className="dropdown-grid-menu"><a href="utility-coming-soon-subscribe.html" className="dropdown-item fade-page">Coming Soon Subscribe</a><a href="utility-coming-soon-countdown.html" className="dropdown-item fade-page">Coming Soon Countdown</a><a href="utility-coming-soon-social.html" className="dropdown-item fade-page">Coming Soon Social</a><a href="utility-legal-terms.html" className="dropdown-item fade-page">Legal Terms</a><a href="404.html" className="dropdown-item fade-page">404</a>
-      //                           </div>
-      //                         </div>
-      //                       </div>
-      //                     </div>
-      //                   </div>
-      //                 </div>
-      //               </div>
-      //             </div>
-      //           </li>
-      //           <li className="nav-item">
-      //             <div className="dropdown">
-      //               <a aria-expanded="false" aria-haspopup="true" className="dropdown-toggle nav-link nav-item arrow-bottom" data-toggle="dropdown-grid" href="#" role="button">Features</a>
-      //               <div className="row dropdown-menu">
-      //                 <div className="col-auto" data-dropdown-content>
-      //                   <div className="dropdown-grid-menu"><a href="style-guide.html" className="dropdown-item fade-page">Style Guide</a><a href="plugins.html" className="dropdown-item fade-page">Plugins</a><a href="navigation-bars.html" className="dropdown-item fade-page">Navigation Bars</a>
-      //                   </div>
-      //                 </div>
-      //               </div>
-      //             </div>
-      //           </li>
-      //           <li className="nav-item">
-      //             <div className="dropdown">
-      //               <a aria-expanded="false" aria-haspopup="true" className="dropdown-toggle nav-link nav-item arrow-bottom" data-toggle="dropdown-grid" href="#" role="button">Support</a>
-      //               <div className="row dropdown-menu">
-      //                 <div className="col-auto" data-dropdown-content>
-      //                   <div className="dropdown-grid-menu"><a href="documentation/index.html" className="dropdown-item" target="_blank">Documentation</a><a href="documentation/changelog.html" className="dropdown-item" target="_blank">Changelog</a><a href="https://mediumrare.ticksy.com/" className="dropdown-item" target="_blank">Get Help</a>
-      //                   </div>
-      //                 </div>
-      //               </div>
-      //             </div>
-      //           </li>
-      //         </ul>
-      //       </div>
-      //     </div>
-      //   </nav>
-      // </div>
     )
   }
+
+
 
   renderLink(lib, link) {
     //close menu

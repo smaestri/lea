@@ -7,7 +7,7 @@ import java.util.List;
 public interface LivreModelRepository {
 
 
-    void deleteAvis(String idAvis);
+    void deleteAvis(String livreModelId, String idAvis);
 
     List<LivreModel> findByLastAvis();
 }

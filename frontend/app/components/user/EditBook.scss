@@ -1,0 +1,32 @@
+.editbook-container {	
+  .error-container {	
+      color: red	
+  }	
+  .main-content {	
+      display: flex;	
+
+      .content-image {	
+          .container-image {	
+              width: 100px;	
+
+              .content-image {	
+                  width: 100%;	
+              }	
+          }	
+      }	
+
+      .content-form {	
+          padding: 10px;	
+
+          button {	
+              float: none;	
+          }	
+      }	
+  }	
+
+  .btn[disabled] {	
+      background: initial;	
+      background-color: grey	
+
+  }	
+}

@@ -2,6 +2,7 @@ import React from 'react'
 import helpers from '../../helpers/book/api'
 import Book from './Book'
 import { Button } from 'react-bootstrap'
+import './ListBook.scss'
 
 class ListBooks extends React.Component {
 
@@ -33,8 +34,10 @@ class ListBooks extends React.Component {
 	}
 
 	fetchBook(category, search) {
-		this.setState({ displaySpinner: true });
+    this.setState({ displaySpinner: true });
+    this.props.displaySpinner();
 		helpers.getAllBooks(category, search).then((books) => {
+      this.props.hideSpinner();
 			this.setState({ books, displaySpinner: false });
 			if( category == 0) {
 				this.setState({ categoryName: 'Toutes' })
@@ -55,10 +58,6 @@ class ListBooks extends React.Component {
 		this._getBooks();
 	}
 
-	componentWillReceiveProps(nextProps) {
-		this._getBooks(nextProps);
-	}
-
 	render() {
 		const books = this.state.books.map(book => {
 			return (
@@ -68,25 +67,32 @@ class ListBooks extends React.Component {
 					book={book}
 					currentPage="listBook"
 					pendingFriends={this.state.pendingFriends}
-					userId={this.props.userId}
+          userId={this.props.userId}
+          displaySpinner={this.props.displaySpinner}
+          hideSpinner={this.props.hideSpinner}
 				/>)
 		});
 
 		return (
-			<div className='container-list-book'>
-				<div>
-					{this.state.displaySpinner && <div id="overlay"><div className="spinner-bg" /></div>}
-					{this.props.location && this.props.location.pathname && this.props.location.pathname.indexOf('list-book-by-category') != -1 &&  this.props.match.params.category != 0 &&
-						<h1>Liste des livres pour la catégorie {this.state.categoryName} </h1>}
-					{this.props.location && this.props.location.pathname && (this.props.location.pathname == '/list-book/' || (this.props.location.pathname.indexOf('list-book-by-category') != -1 &&  this.props.match.params.category == 0))&&
-						<h1>Tous les livres </h1>}
-					{this.props.location && this.props.location.pathname && this.props.location.pathname.indexOf('list-book-by-term') != -1 && this.props.match.params.search &&
-						<h1>Liste des livres pour le terme '{this.props.match.params.search}'</h1>}
-					{books.length == 0 && <span>Pas de résultat.</span>}
-					{books.length > 0 && <div className="list-book">{books}</div>}
-				</div>
-				<Button bsStyle="primary" onClick={this.props.history.goBack}>Retour</Button>
-			</div>
+      <section>
+        <div className='container'>
+        {this.props.location && this.props.location.pathname && this.props.location.pathname.indexOf('list-book-by-category') != -1 &&
+          <h1>Liste des livres pour la catégorie {this.state.categoryName} </h1>}
+          {this.props.location && this.props.location.pathname && (this.props.location.pathname == '/list-book/')&&
+          <h1>Tous les livres </h1>}
+          {this.props.location && this.props.location.pathname && this.props.location.pathname.indexOf('list-book-by-term') != -1 && this.props.match.params.search &&
+          <h1>Liste des livres pour le terme '{this.props.match.params.search}'</h1>}
+          <div className="row justify-content-center">
+              <div className="col d-flex flex-wrap justify-content-center">
+              {this.state.displaySpinner && <div id="overlay"><div className="spinner-bg" /></div>}
+              
+              {books.length == 0 && <div >Pas de résultat.</div>}
+              {books.length > 0 && <div className="list-book">{books}</div>}
+            </div>
+            {/* <Button bsStyle="primary" onClick={this.props.history.goBack}>Retour</Button> */}
+          </div>
+        </div>
+      </section>
 			
 		)
 	}

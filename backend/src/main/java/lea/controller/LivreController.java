@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletException;
+import javax.validation.ConstraintValidatorContext;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -104,20 +105,45 @@ public class LivreController extends CommonController {
         Utilisateur user = this.mongoUserRepository.findById(principal.getId()).get();
         Livre userLivre = new Livre();
         userLivre.setStatut(StatutEmprunt.FREE);
-        LivreModel newLivreModel = this.mongoLivreModelRepository.findByIsbn(livreModel.getIsbn());
-        if (newLivreModel == null) {
-            //save only first 10 of isbn
-            if (livreModel.getIsbn().length() > 10) {
-                livreModel.setIsbn(livreModel.getIsbn().substring(0, 9));
-            }
-            this.mongoLivreModelRepository.save(livreModel);
-            newLivreModel = livreModel;
+        String isbn10 = livreModel.getIsbn10();
+        String isbn13 = livreModel.getIsbn13();
+//        if(StringUtils.isBlank(isbn10) && StringUtils.isBlank(isbn13) ){
+//            return null;
+//        }
+        LivreModel bookExisting = null;
+        if(StringUtils.isNotBlank(isbn10)) {
+            bookExisting = this.mongoLivreModelRepository.findByIsbn10(isbn10);
+        } else if (StringUtils.isNotBlank(isbn13) ) {
+            bookExisting = this.mongoLivreModelRepository.findByIsbn13(isbn13);
         }
+
+        if (bookExisting == null) {
+            this.mongoLivreModelRepository.save(livreModel);
+        } else {
+            // check is user already hs this book
+            for (Livre livre : user.getLivres()) {
+                if (livre.getLivreModelId().equals(bookExisting.getId())) {
+                    return null;
+                }
+            }
+
+            // get real model livre
+            if(StringUtils.isNotBlank(livreModel.getIsbn10() )) {
+                livreModel = this.mongoLivreModelRepository.findByIsbn10(livreModel.getIsbn10());
+            } else {
+                livreModel = this.mongoLivreModelRepository.findByIsbn13(livreModel.getIsbn13());
+            }
+        }
+
         //save user book
-        userLivre.setLivreModel(newLivreModel);
-        userLivre.setLivreModelId(newLivreModel.getId());
-        userRepository.saveLivre(user, userLivre);
-        return userLivre;
+        if(livreModel.getId() != null ){
+            userLivre.setLivreModel(livreModel);
+            userLivre.setLivreModelId(livreModel.getId());
+            userRepository.saveLivre(user, userLivre);
+            return userLivre;
+        }
+        return null;
+
     }
 
     // Editer un livremodel
@@ -144,7 +170,6 @@ public class LivreController extends CommonController {
             for (Livre livre : livres) {
                 // retrive bookmodel
                 LivreModel livremodel = this.mongoLivreModelRepository.findById(livre.getLivreModelId()).get();
-                this.setBookImage(livremodel);
                 livre.setUserId(user.getId());
                 ;
                 livre.setLivreModel(livremodel);
@@ -167,6 +192,8 @@ public class LivreController extends CommonController {
         return "0";
     }
 
+
+
     private void addBookinlist(Livre livre, String categorieId, String search, List<Livre> res)  {
         boolean addLivre = true;
 
@@ -178,23 +205,17 @@ public class LivreController extends CommonController {
             }
         }
 
-        //Check search : title, auteur, description
+        //Check search : title, auteur, descriptim run serveon
         if (search != null && !StringUtils.containsIgnoreCase(livre.getLivreModel().getTitreBook(), search)
                 && !StringUtils.containsIgnoreCase(livre.getLivreModel().getAuteur(), search)
                 && !StringUtils.containsIgnoreCase(livre.getLivreModel().getDescription(), search)) {
             addLivre = false;
         }
 
-        setBookImage(livre.getLivreModel());
-        if (addLivre) {
+       if (addLivre) {
             res.add(livre);
         }
 
     }
 
-    public static void setBookImage(LivreModel livre) {
-        if (livre.getImage() == null || livre.getImage().isEmpty()) {
-            livre.setImage("/webjars/app-react/1.0.0/img/book.png");
-        }
-    }
 }

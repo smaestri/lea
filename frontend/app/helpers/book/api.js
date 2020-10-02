@@ -101,8 +101,8 @@ var helpers = {
             });
     },
 
-    deleteAvis: function (idAvis) {
-        return axios.delete('/api/avis/' + idAvis/*, {
+    deleteAvis: function (livreModelId, idAvis) {
+        return axios.delete('/api/avis/' + livreModelId +'/' + idAvis/*, {
 			headers: { 'X-CSRF-Token': getCsrf() },
 		}*/)
             .then(function (response) {

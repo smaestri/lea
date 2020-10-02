@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.UUID;
@@ -97,7 +98,11 @@ public class PasswordRetrieverController extends CommonController {
         String token = UUID.randomUUID().toString();
         userSecurityService.createPasswordResetTokenForUser(userFound, token);
         String link = getAppUrl(request) + "/users/changePassword?id=" + userFound.getId() + "&token=" + token;
-        notificationService.sendResetPassword(userFound.getEmail(), link, userFound.getFullName());
+        try {
+            notificationService.sendResetPassword(userFound.getEmail(), link, userFound.getFullName());
+        } catch (MessagingException e) {
+            System.out.println("Erreur lors de l'envoi du mail");
+        }
         return "confirm-forgot-pwd";
     }
 

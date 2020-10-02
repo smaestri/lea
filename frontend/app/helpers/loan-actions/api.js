@@ -93,7 +93,6 @@ var helpers = {
     },
     
     deleteComment: function (idComm) {
-		console.log('DELETE COMM')
 		return axios.delete('/api/comments/' + idComm/*, {
 			headers: { 'X-CSRF-Token': getCsrf() },
 		}*/)

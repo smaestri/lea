@@ -7,13 +7,9 @@ import java.util.List;
 
 public interface EmpruntRepository {
 
-    List<Emprunt> findEmprunts(String idUser, boolean b);
-
     Emprunt findEmpruntFromCommentid(String idComment);
 
     List<Commentaire> getCommentaires(String empruntId);
-
-    List<Emprunt> findPrets(String id, boolean b);
 
     Emprunt saveEmprunt(Emprunt emprunt);
 

@@ -12,8 +12,10 @@ class PendingFriend extends React.Component {
 	}
 
 	handleSubmit() {
-		this.setState({disableSubmit: true})
+    this.setState({disableSubmit: true})
+    this.props.displaySpinner()
 		this.props.acceptRequestFriend(this.props.friend.id).then(()=> {
+      this.props.hideSpinner()
 			this.setState({disableSubmit: false})
 		});
 	}
@@ -22,7 +24,7 @@ class PendingFriend extends React.Component {
 		return (
 			<div className="container-pending-friend">
 				<div className="imageUser">
-					<img src="/webjars/app-react/1.0.0/img/add-friend.png"/>
+					<img src="assets/img/add-friend.png"/>
 				</div>
 				{!this.props.showAcceptButton &&
 				<div>
@@ -31,7 +33,7 @@ class PendingFriend extends React.Component {
 				}
 				{!this.props.showAcceptButton &&
 				<div>
-					<span>Vous avez ajouté cet ami {formatDate(this.props.friend.dateDemande)}</span>
+					<span>Vous avez ajouté cet ami {formatDate(this.props.friend.dateDemande)}, attente de sa validation</span>
 				</div>
 				}
 				{this.props.showAcceptButton &&

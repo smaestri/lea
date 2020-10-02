@@ -1,0 +1,29 @@
+.friends-container {	
+  display: flex;	
+  flex-wrap: wrap;	
+  .friend {	
+    .imageUser {	
+      display: flex;	
+      justify-content: center;	
+      align-items: center;	
+    }	
+
+    .linkUser {	
+      display: flex;	
+      justify-content: center;	
+      align-items: center;	
+    }	
+
+    .accept-button {	
+      display: flex;	
+      justify-content: center;	
+    }	
+  }	
+}	
+
+.add-friend {	
+  .txt-add-friend {	
+    width: 250px;	
+  }	
+
+}

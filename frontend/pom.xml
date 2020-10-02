@@ -48,13 +48,14 @@
                 <executions>
                     <execution>
                         <id>copy-resources</id>
-                        <!-- here the phase you need -->
+                        <!-- Need to copy assets (JS, CSS, IMG ...) INSIDE WEBJAR-->
                         <phase>validate</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/target/classes/META-INF/resources/webjars/app-react/1.0.0/
+                            <!-- <outputDirectory>${basedir}/target/classes/META-INF/resources/webjars/app-react/1.0.0/assets/ -->
+                            <outputDirectory>${basedir}/target/classes/META-INF/resources/webjars/assets/
                             </outputDirectory>
                             <resources>
                                 <resource>
@@ -64,6 +65,7 @@
                             </resources>
                         </configuration>
                     </execution>
+                    
                 </executions>
             </plugin>
         </plugins>

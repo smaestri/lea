@@ -1,33 +1,19 @@
-/*
- var HtmlWebpackPlugin = require('html-webpack-plugin')
- var HTMLWebpackPluginConfig = new HtmlWebpackPlugin({
- template: __dirname + '/src/main/webapp/thymeleaf/index.html',
- filename: 'index.html',
- inject: 'body'
- });
- */
-var packageJSON = require('./package.json');
+//var packageJSON = require('./package.json');
 var path = require('path');
 const webpack = require('webpack')
+const CopyPlugin = require('copy-webpack-plugin');
 
 const PATHS = {
-  build: path.join(__dirname, 'target', 'classes', 'META-INF', 'resources', 'webjars', packageJSON.name, packageJSON.version)
+  // build: path.join(__dirname, 'target', 'classes', 'META-INF', 'resources', 'webjars', packageJSON.name, packageJSON.version)
+  build: path.join(__dirname, 'target', 'classes', 'META-INF', 'resources', 'webjars')
 };
-
-console.log('test')
-console.log(path.join(__dirname, 'js', 'mrare', 'dropdown-grid.js'))
-
-
 module.exports = {
-  // mode: 'production',
   entry: './app/App.js',
   output: {
     path: PATHS.build,
     filename: 'bundle.js',
-    publicPath: '/built/',
+    publicPath: '/webjars/',
   },
-
-
 
   devServer: {
     inline: true,
@@ -64,11 +50,6 @@ module.exports = {
 
   module: {
     rules: [
-      // {
-      //   test: /\.js$/,
-      //   exclude: /node_modules/,
-      //   loader: 'script-loader',
-      // },
       {
         test: /\.js$/,
         include: /app/,
@@ -77,16 +58,15 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-      //  loader: 'babel-loader',
       },
       {
         test: /\.scss$/,
         loaders: ["style-loader", "css-loader", "sass-loader"]
       },
-      {
-        test: /\.svg$/,
-        loader: 'file-loader'
-      },
+      // {
+      //   test: /\.svg$/,
+      //   loader: 'file-loader'
+      // },
     ],
   },
   plugins: [
@@ -94,7 +74,10 @@ module.exports = {
       '$': 'jquery',
       '_': 'lodash',
       'jQuery': 'jquery'
-    })
+    }),
+    new CopyPlugin([
+      { from: 'index.html', to: (PATHS.build + '/')},
+    ]),
   ],
   target: 'web'
 }
